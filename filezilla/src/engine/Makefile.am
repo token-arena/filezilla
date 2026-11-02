@@ -128,6 +128,16 @@ noinst_HEADERS += \
 		azure/azurecontrolsocket.h
 endif
 
+if ENABLE_BOX
+libfzclient_private_la_SOURCES += \
+		box/boxcontrolsocket.cpp \
+		box/boxjson.cpp
+
+noinst_HEADERS += \
+		box/boxcontrolsocket.h \
+		box/boxjson.h
+endif
+
 if ENABLE_DROPBOX
 libfzclient_private_la_SOURCES += \
 		dropbox/dropboxcontrolsocket.cpp \

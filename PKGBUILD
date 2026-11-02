@@ -84,6 +84,7 @@ build() {
     --enable-gdrive \
     --enable-onedrive \
     --enable-dropbox \
+    --enable-box \
     --with-wx-config="${MINGW_PREFIX}/bin/wx-config-${_wx_basever}"
 
   make

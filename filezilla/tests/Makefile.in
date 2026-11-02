@@ -93,8 +93,8 @@ build_triplet = @build@
 host_triplet = @host@
 TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
-	$(am__EXEEXT_7) $(am__EXEEXT_8)
-check_PROGRAMS = $(am__EXEEXT_9)
+	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9)
+check_PROGRAMS = $(am__EXEEXT_10)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -132,9 +132,11 @@ CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_GDRIVE_TRUE@am__EXEEXT_6 = driveselftest$(EXEEXT)
 @ENABLE_ONEDRIVE_TRUE@am__EXEEXT_7 = graphselftest$(EXEEXT)
 @ENABLE_DROPBOX_TRUE@am__EXEEXT_8 = dropboxselftest$(EXEEXT)
-am__EXEEXT_9 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
+@ENABLE_BOX_TRUE@am__EXEEXT_9 = boxselftest$(EXEEXT)
+am__EXEEXT_10 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
 	$(am__EXEEXT_3) $(am__EXEEXT_4) $(am__EXEEXT_5) \
-	$(am__EXEEXT_6) $(am__EXEEXT_7) $(am__EXEEXT_8)
+	$(am__EXEEXT_6) $(am__EXEEXT_7) $(am__EXEEXT_8) \
+	$(am__EXEEXT_9)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_azureselftest_OBJECTS = azureselftest-azureselftest.$(OBJEXT) \
 	../src/engine/azure/azureselftest-azureblob.$(OBJEXT) \
@@ -156,6 +158,13 @@ b2selftest_LDADD = $(LDADD)
 b2selftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(b2selftest_LDFLAGS) $(LDFLAGS) -o $@
+am_boxselftest_OBJECTS = boxselftest-boxselftest.$(OBJEXT) \
+	../src/engine/box/boxselftest-boxjson.$(OBJEXT)
+boxselftest_OBJECTS = $(am_boxselftest_OBJECTS)
+boxselftest_LDADD = $(LDADD)
+boxselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(boxselftest_LDFLAGS) $(LDFLAGS) -o $@
 am_driveselftest_OBJECTS = driveselftest-driveselftest.$(OBJEXT) \
 	../src/engine/gdrive/driveselftest-drivejson.$(OBJEXT)
 driveselftest_OBJECTS = $(am_driveselftest_OBJECTS)
@@ -230,6 +239,7 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade =  \
 	../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po \
 	../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po \
+	../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Po \
 	../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po \
 	../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po \
 	../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po \
@@ -240,6 +250,7 @@ am__depfiles_remade =  \
 	../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po \
 	./$(DEPDIR)/azureselftest-azureselftest.Po \
 	./$(DEPDIR)/b2selftest-b2selftest.Po \
+	./$(DEPDIR)/boxselftest-boxselftest.Po \
 	./$(DEPDIR)/driveselftest-driveselftest.Po \
 	./$(DEPDIR)/dropboxselftest-dropboxselftest.Po \
 	./$(DEPDIR)/gcsselftest-gcsselftest.Po \
@@ -270,14 +281,15 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
-	$(driveselftest_SOURCES) $(dropboxselftest_SOURCES) \
-	$(gcsselftest_SOURCES) $(graphselftest_SOURCES) \
-	$(gui_test_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
+	$(boxselftest_SOURCES) $(driveselftest_SOURCES) \
+	$(dropboxselftest_SOURCES) $(gcsselftest_SOURCES) \
+	$(graphselftest_SOURCES) $(gui_test_SOURCES) \
+	$(s3selftest_SOURCES) $(test_SOURCES)
 DIST_SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
-	$(driveselftest_SOURCES) $(dropboxselftest_SOURCES) \
-	$(gcsselftest_SOURCES) $(graphselftest_SOURCES) \
-	$(am__gui_test_SOURCES_DIST) $(s3selftest_SOURCES) \
-	$(test_SOURCES)
+	$(boxselftest_SOURCES) $(driveselftest_SOURCES) \
+	$(dropboxselftest_SOURCES) $(gcsselftest_SOURCES) \
+	$(graphselftest_SOURCES) $(am__gui_test_SOURCES_DIST) \
+	$(s3selftest_SOURCES) $(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -712,6 +724,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_GDRIVE_TRUE@MAYBE_DRIVE_SELFTEST = driveselftest
 @ENABLE_ONEDRIVE_TRUE@MAYBE_GRAPH_SELFTEST = graphselftest
 @ENABLE_DROPBOX_TRUE@MAYBE_DROPBOX_SELFTEST = dropboxselftest
+@ENABLE_BOX_TRUE@MAYBE_BOX_SELFTEST = boxselftest
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.
@@ -772,6 +785,14 @@ dropboxselftest_SOURCES = \
 
 dropboxselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 dropboxselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Box logic layer.
+boxselftest_SOURCES = \
+	boxselftest.cpp \
+	../src/engine/box/boxjson.cpp
+
+boxselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+boxselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 test_SOURCES = \
 	test.cpp \
 	dirparsertest.cpp \
@@ -873,6 +894,19 @@ azureselftest$(EXEEXT): $(azureselftest_OBJECTS) $(azureselftest_DEPENDENCIES) $
 b2selftest$(EXEEXT): $(b2selftest_OBJECTS) $(b2selftest_DEPENDENCIES) $(EXTRA_b2selftest_DEPENDENCIES) 
 	@rm -f b2selftest$(EXEEXT)
 	$(AM_V_CXXLD)$(b2selftest_LINK) $(b2selftest_OBJECTS) $(b2selftest_LDADD) $(LIBS)
+../src/engine/box/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/box
+	@: >>../src/engine/box/$(am__dirstamp)
+../src/engine/box/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/box/$(DEPDIR)
+	@: >>../src/engine/box/$(DEPDIR)/$(am__dirstamp)
+../src/engine/box/boxselftest-boxjson.$(OBJEXT):  \
+	../src/engine/box/$(am__dirstamp) \
+	../src/engine/box/$(DEPDIR)/$(am__dirstamp)
+
+boxselftest$(EXEEXT): $(boxselftest_OBJECTS) $(boxselftest_DEPENDENCIES) $(EXTRA_boxselftest_DEPENDENCIES) 
+	@rm -f boxselftest$(EXEEXT)
+	$(AM_V_CXXLD)$(boxselftest_LINK) $(boxselftest_OBJECTS) $(boxselftest_LDADD) $(LIBS)
 ../src/engine/gdrive/$(am__dirstamp):
 	@$(MKDIR_P) ../src/engine/gdrive
 	@: >>../src/engine/gdrive/$(am__dirstamp)
@@ -957,6 +991,7 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f ../src/engine/azure/*.$(OBJEXT)
 	-rm -f ../src/engine/b2/*.$(OBJEXT)
+	-rm -f ../src/engine/box/*.$(OBJEXT)
 	-rm -f ../src/engine/dropbox/*.$(OBJEXT)
 	-rm -f ../src/engine/gcs/*.$(OBJEXT)
 	-rm -f ../src/engine/gdrive/*.$(OBJEXT)
@@ -969,6 +1004,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po@am__quote@ # am--include-marker
@@ -979,6 +1015,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/azureselftest-azureselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/b2selftest-b2selftest.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boxselftest-boxselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/driveselftest-driveselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dropboxselftest-dropboxselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcsselftest-gcsselftest.Po@am__quote@ # am--include-marker
@@ -1090,6 +1127,34 @@ b2selftest-b2selftest.obj: b2selftest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/b2/b2json.cpp' object='../src/engine/b2/b2selftest-b2json.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(b2selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/b2/b2selftest-b2json.obj `if test -f '../src/engine/b2/b2json.cpp'; then $(CYGPATH_W) '../src/engine/b2/b2json.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/b2/b2json.cpp'; fi`
+
+boxselftest-boxselftest.o: boxselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(boxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT boxselftest-boxselftest.o -MD -MP -MF $(DEPDIR)/boxselftest-boxselftest.Tpo -c -o boxselftest-boxselftest.o `test -f 'boxselftest.cpp' || echo '$(srcdir)/'`boxselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/boxselftest-boxselftest.Tpo $(DEPDIR)/boxselftest-boxselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='boxselftest.cpp' object='boxselftest-boxselftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(boxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o boxselftest-boxselftest.o `test -f 'boxselftest.cpp' || echo '$(srcdir)/'`boxselftest.cpp
+
+boxselftest-boxselftest.obj: boxselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(boxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT boxselftest-boxselftest.obj -MD -MP -MF $(DEPDIR)/boxselftest-boxselftest.Tpo -c -o boxselftest-boxselftest.obj `if test -f 'boxselftest.cpp'; then $(CYGPATH_W) 'boxselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/boxselftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/boxselftest-boxselftest.Tpo $(DEPDIR)/boxselftest-boxselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='boxselftest.cpp' object='boxselftest-boxselftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(boxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o boxselftest-boxselftest.obj `if test -f 'boxselftest.cpp'; then $(CYGPATH_W) 'boxselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/boxselftest.cpp'; fi`
+
+../src/engine/box/boxselftest-boxjson.o: ../src/engine/box/boxjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(boxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/box/boxselftest-boxjson.o -MD -MP -MF ../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Tpo -c -o ../src/engine/box/boxselftest-boxjson.o `test -f '../src/engine/box/boxjson.cpp' || echo '$(srcdir)/'`../src/engine/box/boxjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Tpo ../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/box/boxjson.cpp' object='../src/engine/box/boxselftest-boxjson.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(boxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/box/boxselftest-boxjson.o `test -f '../src/engine/box/boxjson.cpp' || echo '$(srcdir)/'`../src/engine/box/boxjson.cpp
+
+../src/engine/box/boxselftest-boxjson.obj: ../src/engine/box/boxjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(boxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/box/boxselftest-boxjson.obj -MD -MP -MF ../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Tpo -c -o ../src/engine/box/boxselftest-boxjson.obj `if test -f '../src/engine/box/boxjson.cpp'; then $(CYGPATH_W) '../src/engine/box/boxjson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/box/boxjson.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Tpo ../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/box/boxjson.cpp' object='../src/engine/box/boxselftest-boxjson.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(boxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/box/boxselftest-boxjson.obj `if test -f '../src/engine/box/boxjson.cpp'; then $(CYGPATH_W) '../src/engine/box/boxjson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/box/boxjson.cpp'; fi`
 
 driveselftest-driveselftest.o: driveselftest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT driveselftest-driveselftest.o -MD -MP -MF $(DEPDIR)/driveselftest-driveselftest.Tpo -c -o driveselftest-driveselftest.o `test -f 'driveselftest.cpp' || echo '$(srcdir)/'`driveselftest.cpp
@@ -1630,6 +1695,13 @@ dropboxselftest.log: dropboxselftest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+boxselftest.log: boxselftest$(EXEEXT)
+	@p='boxselftest$(EXEEXT)'; \
+	b='boxselftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1716,6 +1788,8 @@ distclean-generic:
 	-$(am__rm_f) ../src/engine/azure/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/box/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/box/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/dropbox/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/dropbox/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/gcs/$(DEPDIR)/$(am__dirstamp)
@@ -1740,6 +1814,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 distclean: distclean-am
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
+	-rm -f ../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Po
 	-rm -f ../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
@@ -1750,6 +1825,7 @@ distclean: distclean-am
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
+	-rm -f ./$(DEPDIR)/boxselftest-boxselftest.Po
 	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/dropboxselftest-dropboxselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
@@ -1808,6 +1884,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
+	-rm -f ../src/engine/box/$(DEPDIR)/boxselftest-boxjson.Po
 	-rm -f ../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
@@ -1818,6 +1895,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
+	-rm -f ./$(DEPDIR)/boxselftest-boxselftest.Po
 	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/dropboxselftest-dropboxselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
