@@ -89,3 +89,23 @@ pacman -U mingw-w64-ucrt-x86_64-filezilla-3.71.1-1-any.pkg.tar.zst
 - 只构建 `ucrt64`；`clang64` / `clangarm64` 未构建（可用 `MINGW_ARCH="ucrt64 clang64"`）
 - `check()` 未运行（`--nocheck`）；PKGBUILD 里它本身是 `|| true`
 - 包 `Packager` 为 `Unknown Packager`（PKGBUILD 未设 `PACKAGER`），不影响安装
+
+---
+
+## 云存储协议（8 个，均已启用）
+
+`PKGBUILD` 的 configure 现在带这些开关（默认全开）：
+
+`--enable-s3`、`--enable-b2`、`--enable-azureblob`、`--enable-gcs`、
+`--enable-gdrive`、`--enable-onedrive`、`--enable-dropbox`、`--enable-box`
+
+对应的自测程序随 `make check` 构建（各自只链 libfilezilla，秒级）：
+
+```bash
+MINGW_ARCH=ucrt64 makepkg-mingw -s --noconfirm --nocheck   # 打包
+# 或在 build 目录里单独跑协议自测：
+cd build-UCRT64/tests && for t in s3 b2 azure gcs drive graph dropbox box; do make ${t}selftest.exe && ./${t}selftest.exe; done
+```
+
+各协议状态、已知限制见 `docs/PROTOCOL-STATUS.md` 与 `docs/PARKED.md`，
+我们对上游源码的每一处改动见 `docs/upstream-hooks.md`。

@@ -74,3 +74,7 @@ DigitalOcean Spaces、阿里云 OSS / 腾讯 COS / 七牛（自定义 endpoint +
 - **M2** F2/F3（B2、Azure Blob）
 - **M3** F4（GCS）
 - **M4** F5–F8（OAuth 系）
+
+---
+
+**第一轮执行结果：F1–F8 全部落地，详见 [PROTOCOL-STATUS.md](PROTOCOL-STATUS.md) 与 [PARKED.md](PARKED.md)。**
