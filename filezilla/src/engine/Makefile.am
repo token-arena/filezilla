@@ -118,6 +118,18 @@ noinst_HEADERS += \
 		sftp/sftpcontrolsocket.h
 endif
 
+if ENABLE_S3
+libfzclient_private_la_SOURCES += \
+		s3/s3controlsocket.cpp \
+		s3/s3response.cpp \
+		s3/s3signer.cpp
+
+noinst_HEADERS += \
+		s3/s3controlsocket.h \
+		s3/s3response.h \
+		s3/s3signer.h
+endif
+
 if ENABLE_STORJ
 libfzclient_private_la_SOURCES += \
 		storj/connect.cpp \

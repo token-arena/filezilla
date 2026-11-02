@@ -8,6 +8,9 @@
 #include "http/httpcontrolsocket.h"
 #include "logging_private.h"
 #include "pathcache.h"
+#if ENABLE_S3
+#include "s3/s3controlsocket.h"
+#endif
 #if ENABLE_SFTP
 #include "sftp/sftpcontrolsocket.h"
 #endif
@@ -534,6 +537,12 @@ int CFileZillaEnginePrivate::ContinueConnect()
 	case STORJ:
 	case STORJ_GRANT:
 		controlSocket_ = std::make_unique<CStorjControlSocket>(*this);
+		break;
+#endif
+#if ENABLE_S3
+	case S3:
+	case CLOUDFLARE_R2:
+		controlSocket_ = std::make_unique<CS3ControlSocket>(*this);
 		break;
 #endif
 	default:

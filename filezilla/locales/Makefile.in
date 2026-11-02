@@ -593,7 +593,12 @@ filezilla.pot: $(srcdir)/../src/include/*.h $(srcdir)/../src/engine/*.h $(srcdir
 	@touch $@.new
 
 	FILES="`find $(srcdir)/../src -name '*.h' -o -name '*.cpp'`"; \
-	$(XGETTEXT) $(XGETTEXT_ARGS) -o $@.new $$FILES || exit 1
+	if command -v cygpath >/dev/null 2>&1; then \
+	  FILES="`printf '%s\n' "$$FILES" | cygpath -w -f -`"; \
+	fi; \
+	echo "$$FILES" > $@.files; \
+	$(XGETTEXT) $(XGETTEXT_ARGS) -f $@.files -o $@.new || exit 1; \
+	rm -f $@.files
 
 # change charset declaration in template file to UTF-8
 	cat $@.new | sed -e "s/^\"Content-Type: .*$$/\"Content-Type: text\\/plain; charset=UTF-8\\\\n\"/" > $@.new~

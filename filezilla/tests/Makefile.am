@@ -1,11 +1,29 @@
 # Rules for the test code (use `make check` to execute)
 
+# The S3 self-test compiles protocol sources that live outside this directory.
+AUTOMAKE_OPTIONS = subdir-objects
+
 if ENABLE_GUI
   MAYBE_GUI_TEST = gui_test
 endif
 
-TESTS = test $(MAYBE_GUI_TEST)
+if ENABLE_S3
+  MAYBE_S3_SELFTEST = s3selftest
+endif
+
+TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST)
 check_PROGRAMS = $(TESTS)
+
+# Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
+# Links only against libfilezilla so it builds in seconds.
+s3selftest_SOURCES = \
+	s3selftest.cpp \
+	../src/engine/s3/s3signer.cpp \
+	../src/engine/s3/s3response.cpp \
+	../src/pugixml/pugixml.cpp
+
+s3selftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+s3selftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 test_SOURCES = \
 	test.cpp \

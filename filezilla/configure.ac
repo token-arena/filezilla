@@ -688,6 +688,17 @@ if test "$buildmain" = "yes"; then
     AC_SUBST(LIBUPLINK_CFLAGS)
     AC_SUBST(LIBUPLINK_LIBS)
   fi
+
+  AC_ARG_ENABLE(s3, AS_HELP_STRING([--enable-s3@<:@=ARG@:>@],[Enable support for Amazon S3 and S3-compatible object storage. Default: no]),
+    [
+    ],
+    [
+      enable_s3="no"
+    ])
+  if test "$enable_s3" != "no"; then
+    AC_DEFINE([ENABLE_S3], [1], [Define if building with Amazon S3 support.])
+    enable_s3="yes"
+  fi
 fi
 
 # Everything translation related
@@ -765,6 +776,7 @@ AM_CONDITIONAL(HAS_CPPUNIT, [test "$has_cppunit" = "yes"])
 AM_CONDITIONAL(HAVE_LIBPUGIXML, [test "x$with_pugixml" = "xsystem"])
 AM_CONDITIONAL(HAVE_DBUS, [test "x$with_dbus" = "xyes"])
 AM_CONDITIONAL(ENABLE_STORJ, [test "x$enable_storj" = "xyes"])
+AM_CONDITIONAL(ENABLE_S3, [test "x$enable_s3" = "xyes"])
 AM_CONDITIONAL(ENABLE_FTP, [test "x$enable_ftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_SFTP, [test "x$enable_sftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_GUI, [test "x$enable_gui" = "xyes"])

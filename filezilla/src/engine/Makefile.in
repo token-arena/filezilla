@@ -143,7 +143,17 @@ host_triplet = @host@
 @ENABLE_SFTP_TRUE@		sftp/rmd.h \
 @ENABLE_SFTP_TRUE@		sftp/sftpcontrolsocket.h
 
-@ENABLE_STORJ_TRUE@am__append_5 = \
+@ENABLE_S3_TRUE@am__append_5 = \
+@ENABLE_S3_TRUE@		s3/s3controlsocket.cpp \
+@ENABLE_S3_TRUE@		s3/s3response.cpp \
+@ENABLE_S3_TRUE@		s3/s3signer.cpp
+
+@ENABLE_S3_TRUE@am__append_6 = \
+@ENABLE_S3_TRUE@		s3/s3controlsocket.h \
+@ENABLE_S3_TRUE@		s3/s3response.h \
+@ENABLE_S3_TRUE@		s3/s3signer.h
+
+@ENABLE_STORJ_TRUE@am__append_7 = \
 @ENABLE_STORJ_TRUE@		storj/connect.cpp \
 @ENABLE_STORJ_TRUE@		storj/delete.cpp \
 @ENABLE_STORJ_TRUE@		storj/file_transfer.cpp \
@@ -153,7 +163,7 @@ host_triplet = @host@
 @ENABLE_STORJ_TRUE@		storj/rmd.cpp \
 @ENABLE_STORJ_TRUE@		storj/storjcontrolsocket.cpp
 
-@ENABLE_STORJ_TRUE@am__append_6 = \
+@ENABLE_STORJ_TRUE@am__append_8 = \
 @ENABLE_STORJ_TRUE@		storj/connect.h \
 @ENABLE_STORJ_TRUE@		storj/delete.h \
 @ENABLE_STORJ_TRUE@		storj/event.h \
@@ -164,8 +174,8 @@ host_triplet = @host@
 @ENABLE_STORJ_TRUE@		storj/rmd.h \
 @ENABLE_STORJ_TRUE@		storj/storjcontrolsocket.h
 
-@HAVE_LIBPUGIXML_FALSE@am__append_7 = ../pugixml/pugixml.cpp
-@FZ_MAC_TRUE@am__append_8 = -framework CoreServices
+@HAVE_LIBPUGIXML_FALSE@am__append_9 = ../pugixml/pugixml.cpp
+@FZ_MAC_TRUE@am__append_10 = -framework CoreServices
 subdir = src/engine
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -243,9 +253,11 @@ am__libfzclient_private_la_SOURCES_DIST = activity_logger.cpp \
 	ftp/transfersocket.cpp sftp/chmod.cpp sftp/connect.cpp \
 	sftp/delete.cpp sftp/filetransfer.cpp sftp/list.cpp \
 	sftp/mkd.cpp sftp/rename.cpp sftp/rmd.cpp \
-	sftp/sftpcontrolsocket.cpp storj/connect.cpp storj/delete.cpp \
-	storj/file_transfer.cpp storj/input_thread.cpp storj/list.cpp \
-	storj/mkd.cpp storj/rmd.cpp storj/storjcontrolsocket.cpp \
+	sftp/sftpcontrolsocket.cpp s3/s3controlsocket.cpp \
+	s3/s3response.cpp s3/s3signer.cpp storj/connect.cpp \
+	storj/delete.cpp storj/file_transfer.cpp \
+	storj/input_thread.cpp storj/list.cpp storj/mkd.cpp \
+	storj/rmd.cpp storj/storjcontrolsocket.cpp \
 	../pugixml/pugixml.cpp
 am__dirstamp = $(am__leading_dot)dirstamp
 @ENABLE_FTP_TRUE@am__objects_1 = ftp/libfzclient_private_la-chmod.lo \
@@ -271,7 +283,11 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @ENABLE_SFTP_TRUE@	sftp/libfzclient_private_la-rename.lo \
 @ENABLE_SFTP_TRUE@	sftp/libfzclient_private_la-rmd.lo \
 @ENABLE_SFTP_TRUE@	sftp/libfzclient_private_la-sftpcontrolsocket.lo
-@ENABLE_STORJ_TRUE@am__objects_3 =  \
+@ENABLE_S3_TRUE@am__objects_3 =  \
+@ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3controlsocket.lo \
+@ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3response.lo \
+@ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3signer.lo
+@ENABLE_STORJ_TRUE@am__objects_4 =  \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-connect.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-delete.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-file_transfer.lo \
@@ -280,7 +296,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-mkd.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-rmd.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-storjcontrolsocket.lo
-@HAVE_LIBPUGIXML_FALSE@am__objects_4 = ../pugixml/libfzclient_private_la-pugixml.lo
+@HAVE_LIBPUGIXML_FALSE@am__objects_5 = ../pugixml/libfzclient_private_la-pugixml.lo
 am_libfzclient_private_la_OBJECTS =  \
 	libfzclient_private_la-activity_logger.lo \
 	libfzclient_private_la-activity_logger_layer.lo \
@@ -315,7 +331,8 @@ am_libfzclient_private_la_OBJECTS =  \
 	libfzclient_private_la-tls.lo \
 	libfzclient_private_la-version.lo \
 	libfzclient_private_la-xmlutils.lo $(am__objects_1) \
-	$(am__objects_2) $(am__objects_3) $(am__objects_4)
+	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
+	$(am__objects_5)
 libfzclient_private_la_OBJECTS = $(am_libfzclient_private_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -389,6 +406,9 @@ am__depfiles_remade =  \
 	http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo \
 	http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo \
 	http/$(DEPDIR)/libfzclient_private_la-request.Plo \
+	s3/$(DEPDIR)/libfzclient_private_la-s3controlsocket.Plo \
+	s3/$(DEPDIR)/libfzclient_private_la-s3response.Plo \
+	s3/$(DEPDIR)/libfzclient_private_la-s3signer.Plo \
 	sftp/$(DEPDIR)/libfzclient_private_la-chmod.Plo \
 	sftp/$(DEPDIR)/libfzclient_private_la-connect.Plo \
 	sftp/$(DEPDIR)/libfzclient_private_la-delete.Plo \
@@ -442,9 +462,10 @@ am__noinst_HEADERS_DIST = activity_logger_layer.h controlsocket.h \
 	ftp/rename.h ftp/rawcommand.h ftp/rawtransfer.h ftp/rmd.h \
 	ftp/transfersocket.h sftp/chmod.h sftp/connect.h sftp/delete.h \
 	sftp/filetransfer.h sftp/list.h sftp/mkd.h sftp/rename.h \
-	sftp/rmd.h sftp/sftpcontrolsocket.h storj/connect.h \
-	storj/delete.h storj/event.h storj/file_transfer.h \
-	storj/input_thread.h storj/list.h storj/mkd.h storj/rmd.h \
+	sftp/rmd.h sftp/sftpcontrolsocket.h s3/s3controlsocket.h \
+	s3/s3response.h s3/s3signer.h storj/connect.h storj/delete.h \
+	storj/event.h storj/file_transfer.h storj/input_thread.h \
+	storj/list.h storj/mkd.h storj/rmd.h \
 	storj/storjcontrolsocket.h
 HEADERS = $(noinst_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
@@ -670,18 +691,20 @@ libfzclient_private_la_SOURCES = activity_logger.cpp \
 	pathcache.cpp posix_chmod.cpp proxy.cpp rtt.cpp server.cpp \
 	servercapabilities.cpp serverpath.cpp sizeformatting.cpp \
 	tls.cpp version.cpp xmlutils.cpp $(am__append_1) \
-	$(am__append_3) $(am__append_5) $(am__append_7)
+	$(am__append_3) $(am__append_5) $(am__append_7) \
+	$(am__append_9)
 noinst_HEADERS = activity_logger_layer.h controlsocket.h \
 	directorycache.h directorylistingparser.h engineprivate.h \
 	filezilla.h http/filetransfer.h http/httpcontrolsocket.h \
 	http/request.h logging_private.h lookup.h oplock_manager.h \
 	pathcache.h proxy.h rtt.h servercapabilities.h tls.h \
-	$(am__append_2) $(am__append_4) $(am__append_6)
+	$(am__append_2) $(am__append_4) $(am__append_6) \
+	$(am__append_8)
 libfzclient_private_la_CXXFLAGS = -fvisibility=hidden
 libfzclient_private_la_LDFLAGS = -no-undefined -release \
 	$(ENGINE_VERSION_MAJOR).$(ENGINE_VERSION_MINOR).$(ENGINE_VERSION_MICRO) \
 	$(LIBFZSSH_LIBS) $(LIBFILEZILLA_LIBS) $(IDN_LIB) \
-	$(am__append_8)
+	$(am__append_10)
 CLEANFILES = filezilla.h.gch
 DISTCLEANFILES = ./$(DEPDIR)/filezilla.Po
 @ENABLE_PRECOMP_TRUE@BUILT_SOURCES = filezilla.h.gch
@@ -820,6 +843,18 @@ sftp/libfzclient_private_la-rmd.lo: sftp/$(am__dirstamp) \
 	sftp/$(DEPDIR)/$(am__dirstamp)
 sftp/libfzclient_private_la-sftpcontrolsocket.lo:  \
 	sftp/$(am__dirstamp) sftp/$(DEPDIR)/$(am__dirstamp)
+s3/$(am__dirstamp):
+	@$(MKDIR_P) s3
+	@: >>s3/$(am__dirstamp)
+s3/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) s3/$(DEPDIR)
+	@: >>s3/$(DEPDIR)/$(am__dirstamp)
+s3/libfzclient_private_la-s3controlsocket.lo: s3/$(am__dirstamp) \
+	s3/$(DEPDIR)/$(am__dirstamp)
+s3/libfzclient_private_la-s3response.lo: s3/$(am__dirstamp) \
+	s3/$(DEPDIR)/$(am__dirstamp)
+s3/libfzclient_private_la-s3signer.lo: s3/$(am__dirstamp) \
+	s3/$(DEPDIR)/$(am__dirstamp)
 storj/$(am__dirstamp):
 	@$(MKDIR_P) storj
 	@: >>storj/$(am__dirstamp)
@@ -863,6 +898,8 @@ mostlyclean-compile:
 	-rm -f ftp/*.lo
 	-rm -f http/*.$(OBJEXT)
 	-rm -f http/*.lo
+	-rm -f s3/*.$(OBJEXT)
+	-rm -f s3/*.lo
 	-rm -f sftp/*.$(OBJEXT)
 	-rm -f sftp/*.lo
 	-rm -f storj/*.$(OBJEXT)
@@ -919,6 +956,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-request.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@s3/$(DEPDIR)/libfzclient_private_la-s3controlsocket.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@s3/$(DEPDIR)/libfzclient_private_la-s3response.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@s3/$(DEPDIR)/libfzclient_private_la-s3signer.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sftp/$(DEPDIR)/libfzclient_private_la-chmod.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sftp/$(DEPDIR)/libfzclient_private_la-connect.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sftp/$(DEPDIR)/libfzclient_private_la-delete.Plo@am__quote@ # am--include-marker
@@ -1359,6 +1399,27 @@ sftp/libfzclient_private_la-sftpcontrolsocket.lo: sftp/sftpcontrolsocket.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o sftp/libfzclient_private_la-sftpcontrolsocket.lo `test -f 'sftp/sftpcontrolsocket.cpp' || echo '$(srcdir)/'`sftp/sftpcontrolsocket.cpp
 
+s3/libfzclient_private_la-s3controlsocket.lo: s3/s3controlsocket.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT s3/libfzclient_private_la-s3controlsocket.lo -MD -MP -MF s3/$(DEPDIR)/libfzclient_private_la-s3controlsocket.Tpo -c -o s3/libfzclient_private_la-s3controlsocket.lo `test -f 's3/s3controlsocket.cpp' || echo '$(srcdir)/'`s3/s3controlsocket.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) s3/$(DEPDIR)/libfzclient_private_la-s3controlsocket.Tpo s3/$(DEPDIR)/libfzclient_private_la-s3controlsocket.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='s3/s3controlsocket.cpp' object='s3/libfzclient_private_la-s3controlsocket.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o s3/libfzclient_private_la-s3controlsocket.lo `test -f 's3/s3controlsocket.cpp' || echo '$(srcdir)/'`s3/s3controlsocket.cpp
+
+s3/libfzclient_private_la-s3response.lo: s3/s3response.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT s3/libfzclient_private_la-s3response.lo -MD -MP -MF s3/$(DEPDIR)/libfzclient_private_la-s3response.Tpo -c -o s3/libfzclient_private_la-s3response.lo `test -f 's3/s3response.cpp' || echo '$(srcdir)/'`s3/s3response.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) s3/$(DEPDIR)/libfzclient_private_la-s3response.Tpo s3/$(DEPDIR)/libfzclient_private_la-s3response.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='s3/s3response.cpp' object='s3/libfzclient_private_la-s3response.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o s3/libfzclient_private_la-s3response.lo `test -f 's3/s3response.cpp' || echo '$(srcdir)/'`s3/s3response.cpp
+
+s3/libfzclient_private_la-s3signer.lo: s3/s3signer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT s3/libfzclient_private_la-s3signer.lo -MD -MP -MF s3/$(DEPDIR)/libfzclient_private_la-s3signer.Tpo -c -o s3/libfzclient_private_la-s3signer.lo `test -f 's3/s3signer.cpp' || echo '$(srcdir)/'`s3/s3signer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) s3/$(DEPDIR)/libfzclient_private_la-s3signer.Tpo s3/$(DEPDIR)/libfzclient_private_la-s3signer.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='s3/s3signer.cpp' object='s3/libfzclient_private_la-s3signer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o s3/libfzclient_private_la-s3signer.lo `test -f 's3/s3signer.cpp' || echo '$(srcdir)/'`s3/s3signer.cpp
+
 storj/libfzclient_private_la-connect.lo: storj/connect.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT storj/libfzclient_private_la-connect.lo -MD -MP -MF storj/$(DEPDIR)/libfzclient_private_la-connect.Tpo -c -o storj/libfzclient_private_la-connect.lo `test -f 'storj/connect.cpp' || echo '$(srcdir)/'`storj/connect.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) storj/$(DEPDIR)/libfzclient_private_la-connect.Tpo storj/$(DEPDIR)/libfzclient_private_la-connect.Plo
@@ -1430,6 +1491,7 @@ clean-libtool:
 	-rm -rf ../pugixml/.libs ../pugixml/_libs
 	-rm -rf ftp/.libs ftp/_libs
 	-rm -rf http/.libs http/_libs
+	-rm -rf s3/.libs s3/_libs
 	-rm -rf sftp/.libs sftp/_libs
 	-rm -rf storj/.libs storj/_libs
 
@@ -1561,6 +1623,8 @@ distclean-generic:
 	-$(am__rm_f) ftp/$(am__dirstamp)
 	-$(am__rm_f) http/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) http/$(am__dirstamp)
+	-$(am__rm_f) s3/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) s3/$(am__dirstamp)
 	-$(am__rm_f) sftp/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) sftp/$(am__dirstamp)
 	-$(am__rm_f) storj/$(DEPDIR)/$(am__dirstamp)
@@ -1624,6 +1688,9 @@ distclean: distclean-am
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-request.Plo
+	-rm -f s3/$(DEPDIR)/libfzclient_private_la-s3controlsocket.Plo
+	-rm -f s3/$(DEPDIR)/libfzclient_private_la-s3response.Plo
+	-rm -f s3/$(DEPDIR)/libfzclient_private_la-s3signer.Plo
 	-rm -f sftp/$(DEPDIR)/libfzclient_private_la-chmod.Plo
 	-rm -f sftp/$(DEPDIR)/libfzclient_private_la-connect.Plo
 	-rm -f sftp/$(DEPDIR)/libfzclient_private_la-delete.Plo
@@ -1734,6 +1801,9 @@ maintainer-clean: maintainer-clean-am
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-request.Plo
+	-rm -f s3/$(DEPDIR)/libfzclient_private_la-s3controlsocket.Plo
+	-rm -f s3/$(DEPDIR)/libfzclient_private_la-s3response.Plo
+	-rm -f s3/$(DEPDIR)/libfzclient_private_la-s3signer.Plo
 	-rm -f sftp/$(DEPDIR)/libfzclient_private_la-chmod.Plo
 	-rm -f sftp/$(DEPDIR)/libfzclient_private_la-connect.Plo
 	-rm -f sftp/$(DEPDIR)/libfzclient_private_la-delete.Plo

@@ -91,8 +91,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = test$(EXEEXT) $(am__EXEEXT_1)
-check_PROGRAMS = $(am__EXEEXT_2)
+TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2)
+check_PROGRAMS = $(am__EXEEXT_3)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -123,7 +123,8 @@ CONFIG_HEADER = $(top_builddir)/config/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_GUI_TRUE@am__EXEEXT_1 = gui_test$(EXEEXT)
-am__EXEEXT_2 = test$(EXEEXT) $(am__EXEEXT_1)
+@ENABLE_S3_TRUE@am__EXEEXT_2 = s3selftest$(EXEEXT)
+am__EXEEXT_3 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2)
 am__gui_test_SOURCES_DIST = cmpnatural.cpp gui_test.cpp
 @ENABLE_GUI_TRUE@am_gui_test_OBJECTS = gui_test-cmpnatural.$(OBJEXT) \
 @ENABLE_GUI_TRUE@	gui_test-gui_test.$(OBJEXT)
@@ -136,6 +137,16 @@ am__v_lt_1 =
 gui_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(gui_test_CXXFLAGS) \
 	$(CXXFLAGS) $(gui_test_LDFLAGS) $(LDFLAGS) -o $@
+am__dirstamp = $(am__leading_dot)dirstamp
+am_s3selftest_OBJECTS = s3selftest-s3selftest.$(OBJEXT) \
+	../src/engine/s3/s3selftest-s3signer.$(OBJEXT) \
+	../src/engine/s3/s3selftest-s3response.$(OBJEXT) \
+	../src/pugixml/s3selftest-pugixml.$(OBJEXT)
+s3selftest_OBJECTS = $(am_s3selftest_OBJECTS)
+s3selftest_LDADD = $(LDADD)
+s3selftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(s3selftest_LDFLAGS) $(LDFLAGS) -o $@
 am_test_OBJECTS = test-test.$(OBJEXT) test-dirparsertest.$(OBJEXT) \
 	test-localpathtest.$(OBJEXT) test-serverpathtest.$(OBJEXT)
 test_OBJECTS = $(am_test_OBJECTS)
@@ -158,8 +169,13 @@ am__v_at_1 =
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/gui_test-cmpnatural.Po \
+am__depfiles_remade =  \
+	../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po \
+	../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po \
+	../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po \
+	./$(DEPDIR)/gui_test-cmpnatural.Po \
 	./$(DEPDIR)/gui_test-gui_test.Po \
+	./$(DEPDIR)/s3selftest-s3selftest.Po \
 	./$(DEPDIR)/test-dirparsertest.Po \
 	./$(DEPDIR)/test-localpathtest.Po \
 	./$(DEPDIR)/test-serverpathtest.Po ./$(DEPDIR)/test-test.Po
@@ -182,8 +198,9 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(gui_test_SOURCES) $(test_SOURCES)
-DIST_SOURCES = $(am__gui_test_SOURCES_DIST) $(test_SOURCES)
+SOURCES = $(gui_test_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
+DIST_SOURCES = $(am__gui_test_SOURCES_DIST) $(s3selftest_SOURCES) \
+	$(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -607,7 +624,22 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 xdgopen = @xdgopen@
 xgettext = @xgettext@
+
+# The S3 self-test compiles protocol sources that live outside this directory.
+AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_GUI_TRUE@MAYBE_GUI_TEST = gui_test
+@ENABLE_S3_TRUE@MAYBE_S3_SELFTEST = s3selftest
+
+# Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
+# Links only against libfilezilla so it builds in seconds.
+s3selftest_SOURCES = \
+	s3selftest.cpp \
+	../src/engine/s3/s3signer.cpp \
+	../src/engine/s3/s3response.cpp \
+	../src/pugixml/pugixml.cpp
+
+s3selftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+s3selftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 test_SOURCES = \
 	test.cpp \
 	dirparsertest.cpp \
@@ -678,6 +710,31 @@ clean-checkPROGRAMS:
 gui_test$(EXEEXT): $(gui_test_OBJECTS) $(gui_test_DEPENDENCIES) $(EXTRA_gui_test_DEPENDENCIES) 
 	@rm -f gui_test$(EXEEXT)
 	$(AM_V_CXXLD)$(gui_test_LINK) $(gui_test_OBJECTS) $(gui_test_LDADD) $(LIBS)
+../src/engine/s3/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/s3
+	@: >>../src/engine/s3/$(am__dirstamp)
+../src/engine/s3/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/s3/$(DEPDIR)
+	@: >>../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
+../src/engine/s3/s3selftest-s3signer.$(OBJEXT):  \
+	../src/engine/s3/$(am__dirstamp) \
+	../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
+../src/engine/s3/s3selftest-s3response.$(OBJEXT):  \
+	../src/engine/s3/$(am__dirstamp) \
+	../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
+../src/pugixml/$(am__dirstamp):
+	@$(MKDIR_P) ../src/pugixml
+	@: >>../src/pugixml/$(am__dirstamp)
+../src/pugixml/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/pugixml/$(DEPDIR)
+	@: >>../src/pugixml/$(DEPDIR)/$(am__dirstamp)
+../src/pugixml/s3selftest-pugixml.$(OBJEXT):  \
+	../src/pugixml/$(am__dirstamp) \
+	../src/pugixml/$(DEPDIR)/$(am__dirstamp)
+
+s3selftest$(EXEEXT): $(s3selftest_OBJECTS) $(s3selftest_DEPENDENCIES) $(EXTRA_s3selftest_DEPENDENCIES) 
+	@rm -f s3selftest$(EXEEXT)
+	$(AM_V_CXXLD)$(s3selftest_LINK) $(s3selftest_OBJECTS) $(s3selftest_LDADD) $(LIBS)
 
 test$(EXEEXT): $(test_OBJECTS) $(test_DEPENDENCIES) $(EXTRA_test_DEPENDENCIES) 
 	@rm -f test$(EXEEXT)
@@ -685,12 +742,18 @@ test$(EXEEXT): $(test_OBJECTS) $(test_DEPENDENCIES) $(EXTRA_test_DEPENDENCIES)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ../src/engine/s3/*.$(OBJEXT)
+	-rm -f ../src/pugixml/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-cmpnatural.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-gui_test.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s3selftest-s3selftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-dirparsertest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-localpathtest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-serverpathtest.Po@am__quote@ # am--include-marker
@@ -703,22 +766,25 @@ $(am__depfiles_remade):
 am--depfiles: $(am__depfiles_remade)
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
@@ -750,6 +816,62 @@ gui_test-gui_test.obj: gui_test.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui_test.cpp' object='gui_test-gui_test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gui_test_CPPFLAGS) $(CPPFLAGS) $(gui_test_CXXFLAGS) $(CXXFLAGS) -c -o gui_test-gui_test.obj `if test -f 'gui_test.cpp'; then $(CYGPATH_W) 'gui_test.cpp'; else $(CYGPATH_W) '$(srcdir)/gui_test.cpp'; fi`
+
+s3selftest-s3selftest.o: s3selftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT s3selftest-s3selftest.o -MD -MP -MF $(DEPDIR)/s3selftest-s3selftest.Tpo -c -o s3selftest-s3selftest.o `test -f 's3selftest.cpp' || echo '$(srcdir)/'`s3selftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/s3selftest-s3selftest.Tpo $(DEPDIR)/s3selftest-s3selftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='s3selftest.cpp' object='s3selftest-s3selftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o s3selftest-s3selftest.o `test -f 's3selftest.cpp' || echo '$(srcdir)/'`s3selftest.cpp
+
+s3selftest-s3selftest.obj: s3selftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT s3selftest-s3selftest.obj -MD -MP -MF $(DEPDIR)/s3selftest-s3selftest.Tpo -c -o s3selftest-s3selftest.obj `if test -f 's3selftest.cpp'; then $(CYGPATH_W) 's3selftest.cpp'; else $(CYGPATH_W) '$(srcdir)/s3selftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/s3selftest-s3selftest.Tpo $(DEPDIR)/s3selftest-s3selftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='s3selftest.cpp' object='s3selftest-s3selftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o s3selftest-s3selftest.obj `if test -f 's3selftest.cpp'; then $(CYGPATH_W) 's3selftest.cpp'; else $(CYGPATH_W) '$(srcdir)/s3selftest.cpp'; fi`
+
+../src/engine/s3/s3selftest-s3signer.o: ../src/engine/s3/s3signer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/s3/s3selftest-s3signer.o -MD -MP -MF ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Tpo -c -o ../src/engine/s3/s3selftest-s3signer.o `test -f '../src/engine/s3/s3signer.cpp' || echo '$(srcdir)/'`../src/engine/s3/s3signer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Tpo ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/s3/s3signer.cpp' object='../src/engine/s3/s3selftest-s3signer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/s3/s3selftest-s3signer.o `test -f '../src/engine/s3/s3signer.cpp' || echo '$(srcdir)/'`../src/engine/s3/s3signer.cpp
+
+../src/engine/s3/s3selftest-s3signer.obj: ../src/engine/s3/s3signer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/s3/s3selftest-s3signer.obj -MD -MP -MF ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Tpo -c -o ../src/engine/s3/s3selftest-s3signer.obj `if test -f '../src/engine/s3/s3signer.cpp'; then $(CYGPATH_W) '../src/engine/s3/s3signer.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/s3/s3signer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Tpo ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/s3/s3signer.cpp' object='../src/engine/s3/s3selftest-s3signer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/s3/s3selftest-s3signer.obj `if test -f '../src/engine/s3/s3signer.cpp'; then $(CYGPATH_W) '../src/engine/s3/s3signer.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/s3/s3signer.cpp'; fi`
+
+../src/engine/s3/s3selftest-s3response.o: ../src/engine/s3/s3response.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/s3/s3selftest-s3response.o -MD -MP -MF ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Tpo -c -o ../src/engine/s3/s3selftest-s3response.o `test -f '../src/engine/s3/s3response.cpp' || echo '$(srcdir)/'`../src/engine/s3/s3response.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Tpo ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/s3/s3response.cpp' object='../src/engine/s3/s3selftest-s3response.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/s3/s3selftest-s3response.o `test -f '../src/engine/s3/s3response.cpp' || echo '$(srcdir)/'`../src/engine/s3/s3response.cpp
+
+../src/engine/s3/s3selftest-s3response.obj: ../src/engine/s3/s3response.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/s3/s3selftest-s3response.obj -MD -MP -MF ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Tpo -c -o ../src/engine/s3/s3selftest-s3response.obj `if test -f '../src/engine/s3/s3response.cpp'; then $(CYGPATH_W) '../src/engine/s3/s3response.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/s3/s3response.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Tpo ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/s3/s3response.cpp' object='../src/engine/s3/s3selftest-s3response.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/s3/s3selftest-s3response.obj `if test -f '../src/engine/s3/s3response.cpp'; then $(CYGPATH_W) '../src/engine/s3/s3response.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/s3/s3response.cpp'; fi`
+
+../src/pugixml/s3selftest-pugixml.o: ../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/pugixml/s3selftest-pugixml.o -MD -MP -MF ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Tpo -c -o ../src/pugixml/s3selftest-pugixml.o `test -f '../src/pugixml/pugixml.cpp' || echo '$(srcdir)/'`../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Tpo ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/pugixml/pugixml.cpp' object='../src/pugixml/s3selftest-pugixml.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/pugixml/s3selftest-pugixml.o `test -f '../src/pugixml/pugixml.cpp' || echo '$(srcdir)/'`../src/pugixml/pugixml.cpp
+
+../src/pugixml/s3selftest-pugixml.obj: ../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/pugixml/s3selftest-pugixml.obj -MD -MP -MF ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Tpo -c -o ../src/pugixml/s3selftest-pugixml.obj `if test -f '../src/pugixml/pugixml.cpp'; then $(CYGPATH_W) '../src/pugixml/pugixml.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/pugixml/pugixml.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Tpo ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/pugixml/pugixml.cpp' object='../src/pugixml/s3selftest-pugixml.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(s3selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/pugixml/s3selftest-pugixml.obj `if test -f '../src/pugixml/pugixml.cpp'; then $(CYGPATH_W) '../src/pugixml/pugixml.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/pugixml/pugixml.cpp'; fi`
 
 test-test.o: test.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_CPPFLAGS) $(CPPFLAGS) $(test_CXXFLAGS) $(CXXFLAGS) -MT test-test.o -MD -MP -MF $(DEPDIR)/test-test.Tpo -c -o test-test.o `test -f 'test.cpp' || echo '$(srcdir)/'`test.cpp
@@ -1045,6 +1167,13 @@ gui_test.log: gui_test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+s3selftest.log: s3selftest$(EXEEXT)
+	@p='s3selftest$(EXEEXT)'; \
+	b='s3selftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1127,6 +1256,10 @@ clean-generic:
 distclean-generic:
 	-$(am__rm_f) $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || $(am__rm_f) $(CONFIG_CLEAN_VPATH_FILES)
+	-$(am__rm_f) ../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/s3/$(am__dirstamp)
+	-$(am__rm_f) ../src/pugixml/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/pugixml/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1137,8 +1270,12 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
+	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
+	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
+	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
+	-rm -f ./$(DEPDIR)/s3selftest-s3selftest.Po
 	-rm -f ./$(DEPDIR)/test-dirparsertest.Po
 	-rm -f ./$(DEPDIR)/test-localpathtest.Po
 	-rm -f ./$(DEPDIR)/test-serverpathtest.Po
@@ -1188,8 +1325,12 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
+	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
+	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
+	-rm -f ./$(DEPDIR)/s3selftest-s3selftest.Po
 	-rm -f ./$(DEPDIR)/test-dirparsertest.Po
 	-rm -f ./$(DEPDIR)/test-localpathtest.Po
 	-rm -f ./$(DEPDIR)/test-serverpathtest.Po

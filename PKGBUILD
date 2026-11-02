@@ -77,6 +77,7 @@ build() {
     --disable-manualupdatecheck \
     --disable-autoupdatecheck \
     --with-pugixml=builtin \
+    --enable-s3 \
     --with-wx-config="${MINGW_PREFIX}/bin/wx-config-${_wx_basever}"
 
   make

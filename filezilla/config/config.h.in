@@ -11,6 +11,9 @@
 /* Define if building with FTP(S) support. */
 #undef ENABLE_FTP
 
+/* Define if building with Amazon S3 support. */
+#undef ENABLE_S3
+
 /* Define if building with SFTP support. */
 #undef ENABLE_SFTP
 
