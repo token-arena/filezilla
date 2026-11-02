@@ -91,8 +91,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3)
-check_PROGRAMS = $(am__EXEEXT_4)
+TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
+	$(am__EXEEXT_4)
+check_PROGRAMS = $(am__EXEEXT_5)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -125,17 +126,27 @@ CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_GUI_TRUE@am__EXEEXT_1 = gui_test$(EXEEXT)
 @ENABLE_S3_TRUE@am__EXEEXT_2 = s3selftest$(EXEEXT)
 @ENABLE_B2_TRUE@am__EXEEXT_3 = b2selftest$(EXEEXT)
-am__EXEEXT_4 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
-	$(am__EXEEXT_3)
+@ENABLE_AZURE_BLOB_TRUE@am__EXEEXT_4 = azureselftest$(EXEEXT)
+am__EXEEXT_5 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
+	$(am__EXEEXT_3) $(am__EXEEXT_4)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_b2selftest_OBJECTS = b2selftest-b2selftest.$(OBJEXT) \
-	../src/engine/b2/b2selftest-b2json.$(OBJEXT)
-b2selftest_OBJECTS = $(am_b2selftest_OBJECTS)
-b2selftest_LDADD = $(LDADD)
+am_azureselftest_OBJECTS = azureselftest-azureselftest.$(OBJEXT) \
+	../src/engine/azure/azureselftest-azureblob.$(OBJEXT) \
+	../src/pugixml/azureselftest-pugixml.$(OBJEXT)
+azureselftest_OBJECTS = $(am_azureselftest_OBJECTS)
+azureselftest_LDADD = $(LDADD)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+azureselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(azureselftest_LDFLAGS) $(LDFLAGS) \
+	-o $@
+am_b2selftest_OBJECTS = b2selftest-b2selftest.$(OBJEXT) \
+	../src/engine/b2/b2selftest-b2json.$(OBJEXT)
+b2selftest_OBJECTS = $(am_b2selftest_OBJECTS)
+b2selftest_LDADD = $(LDADD)
 b2selftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(b2selftest_LDFLAGS) $(LDFLAGS) -o $@
@@ -178,10 +189,14 @@ am__v_at_1 =
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po \
+am__depfiles_remade =  \
+	../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po \
+	../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po \
+	../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po \
 	../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po \
+	./$(DEPDIR)/azureselftest-azureselftest.Po \
 	./$(DEPDIR)/b2selftest-b2selftest.Po \
 	./$(DEPDIR)/gui_test-cmpnatural.Po \
 	./$(DEPDIR)/gui_test-gui_test.Po \
@@ -208,10 +223,11 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(b2selftest_SOURCES) $(gui_test_SOURCES) \
-	$(s3selftest_SOURCES) $(test_SOURCES)
-DIST_SOURCES = $(b2selftest_SOURCES) $(am__gui_test_SOURCES_DIST) \
-	$(s3selftest_SOURCES) $(test_SOURCES)
+SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
+	$(gui_test_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
+DIST_SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
+	$(am__gui_test_SOURCES_DIST) $(s3selftest_SOURCES) \
+	$(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -641,6 +657,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_GUI_TRUE@MAYBE_GUI_TEST = gui_test
 @ENABLE_S3_TRUE@MAYBE_S3_SELFTEST = s3selftest
 @ENABLE_B2_TRUE@MAYBE_B2_SELFTEST = b2selftest
+@ENABLE_AZURE_BLOB_TRUE@MAYBE_AZURE_SELFTEST = azureselftest
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.
@@ -660,6 +677,15 @@ b2selftest_SOURCES = \
 
 b2selftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 b2selftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Azure Blob logic layer (SharedKey signing).
+azureselftest_SOURCES = \
+	azureselftest.cpp \
+	../src/engine/azure/azureblob.cpp \
+	../src/pugixml/pugixml.cpp
+
+azureselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+azureselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 test_SOURCES = \
 	test.cpp \
 	dirparsertest.cpp \
@@ -726,6 +752,28 @@ $(am__aclocal_m4_deps):
 clean-checkPROGRAMS:
 	$(am__rm_f) $(check_PROGRAMS)
 	test -z "$(EXEEXT)" || $(am__rm_f) $(check_PROGRAMS:$(EXEEXT)=)
+../src/engine/azure/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/azure
+	@: >>../src/engine/azure/$(am__dirstamp)
+../src/engine/azure/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/azure/$(DEPDIR)
+	@: >>../src/engine/azure/$(DEPDIR)/$(am__dirstamp)
+../src/engine/azure/azureselftest-azureblob.$(OBJEXT):  \
+	../src/engine/azure/$(am__dirstamp) \
+	../src/engine/azure/$(DEPDIR)/$(am__dirstamp)
+../src/pugixml/$(am__dirstamp):
+	@$(MKDIR_P) ../src/pugixml
+	@: >>../src/pugixml/$(am__dirstamp)
+../src/pugixml/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/pugixml/$(DEPDIR)
+	@: >>../src/pugixml/$(DEPDIR)/$(am__dirstamp)
+../src/pugixml/azureselftest-pugixml.$(OBJEXT):  \
+	../src/pugixml/$(am__dirstamp) \
+	../src/pugixml/$(DEPDIR)/$(am__dirstamp)
+
+azureselftest$(EXEEXT): $(azureselftest_OBJECTS) $(azureselftest_DEPENDENCIES) $(EXTRA_azureselftest_DEPENDENCIES) 
+	@rm -f azureselftest$(EXEEXT)
+	$(AM_V_CXXLD)$(azureselftest_LINK) $(azureselftest_OBJECTS) $(azureselftest_LDADD) $(LIBS)
 ../src/engine/b2/$(am__dirstamp):
 	@$(MKDIR_P) ../src/engine/b2
 	@: >>../src/engine/b2/$(am__dirstamp)
@@ -755,12 +803,6 @@ gui_test$(EXEEXT): $(gui_test_OBJECTS) $(gui_test_DEPENDENCIES) $(EXTRA_gui_test
 ../src/engine/s3/s3selftest-s3response.$(OBJEXT):  \
 	../src/engine/s3/$(am__dirstamp) \
 	../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
-../src/pugixml/$(am__dirstamp):
-	@$(MKDIR_P) ../src/pugixml
-	@: >>../src/pugixml/$(am__dirstamp)
-../src/pugixml/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) ../src/pugixml/$(DEPDIR)
-	@: >>../src/pugixml/$(DEPDIR)/$(am__dirstamp)
 ../src/pugixml/s3selftest-pugixml.$(OBJEXT):  \
 	../src/pugixml/$(am__dirstamp) \
 	../src/pugixml/$(DEPDIR)/$(am__dirstamp)
@@ -775,6 +817,7 @@ test$(EXEEXT): $(test_OBJECTS) $(test_DEPENDENCIES) $(EXTRA_test_DEPENDENCIES)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ../src/engine/azure/*.$(OBJEXT)
 	-rm -f ../src/engine/b2/*.$(OBJEXT)
 	-rm -f ../src/engine/s3/*.$(OBJEXT)
 	-rm -f ../src/pugixml/*.$(OBJEXT)
@@ -782,10 +825,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/azureselftest-azureselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/b2selftest-b2selftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-cmpnatural.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-gui_test.Po@am__quote@ # am--include-marker
@@ -824,6 +870,48 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+azureselftest-azureselftest.o: azureselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT azureselftest-azureselftest.o -MD -MP -MF $(DEPDIR)/azureselftest-azureselftest.Tpo -c -o azureselftest-azureselftest.o `test -f 'azureselftest.cpp' || echo '$(srcdir)/'`azureselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/azureselftest-azureselftest.Tpo $(DEPDIR)/azureselftest-azureselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='azureselftest.cpp' object='azureselftest-azureselftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o azureselftest-azureselftest.o `test -f 'azureselftest.cpp' || echo '$(srcdir)/'`azureselftest.cpp
+
+azureselftest-azureselftest.obj: azureselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT azureselftest-azureselftest.obj -MD -MP -MF $(DEPDIR)/azureselftest-azureselftest.Tpo -c -o azureselftest-azureselftest.obj `if test -f 'azureselftest.cpp'; then $(CYGPATH_W) 'azureselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/azureselftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/azureselftest-azureselftest.Tpo $(DEPDIR)/azureselftest-azureselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='azureselftest.cpp' object='azureselftest-azureselftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o azureselftest-azureselftest.obj `if test -f 'azureselftest.cpp'; then $(CYGPATH_W) 'azureselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/azureselftest.cpp'; fi`
+
+../src/engine/azure/azureselftest-azureblob.o: ../src/engine/azure/azureblob.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/azure/azureselftest-azureblob.o -MD -MP -MF ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Tpo -c -o ../src/engine/azure/azureselftest-azureblob.o `test -f '../src/engine/azure/azureblob.cpp' || echo '$(srcdir)/'`../src/engine/azure/azureblob.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Tpo ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/azure/azureblob.cpp' object='../src/engine/azure/azureselftest-azureblob.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/azure/azureselftest-azureblob.o `test -f '../src/engine/azure/azureblob.cpp' || echo '$(srcdir)/'`../src/engine/azure/azureblob.cpp
+
+../src/engine/azure/azureselftest-azureblob.obj: ../src/engine/azure/azureblob.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/azure/azureselftest-azureblob.obj -MD -MP -MF ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Tpo -c -o ../src/engine/azure/azureselftest-azureblob.obj `if test -f '../src/engine/azure/azureblob.cpp'; then $(CYGPATH_W) '../src/engine/azure/azureblob.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/azure/azureblob.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Tpo ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/azure/azureblob.cpp' object='../src/engine/azure/azureselftest-azureblob.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/azure/azureselftest-azureblob.obj `if test -f '../src/engine/azure/azureblob.cpp'; then $(CYGPATH_W) '../src/engine/azure/azureblob.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/azure/azureblob.cpp'; fi`
+
+../src/pugixml/azureselftest-pugixml.o: ../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/pugixml/azureselftest-pugixml.o -MD -MP -MF ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Tpo -c -o ../src/pugixml/azureselftest-pugixml.o `test -f '../src/pugixml/pugixml.cpp' || echo '$(srcdir)/'`../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Tpo ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/pugixml/pugixml.cpp' object='../src/pugixml/azureselftest-pugixml.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/pugixml/azureselftest-pugixml.o `test -f '../src/pugixml/pugixml.cpp' || echo '$(srcdir)/'`../src/pugixml/pugixml.cpp
+
+../src/pugixml/azureselftest-pugixml.obj: ../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/pugixml/azureselftest-pugixml.obj -MD -MP -MF ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Tpo -c -o ../src/pugixml/azureselftest-pugixml.obj `if test -f '../src/pugixml/pugixml.cpp'; then $(CYGPATH_W) '../src/pugixml/pugixml.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/pugixml/pugixml.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Tpo ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/pugixml/pugixml.cpp' object='../src/pugixml/azureselftest-pugixml.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(azureselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/pugixml/azureselftest-pugixml.obj `if test -f '../src/pugixml/pugixml.cpp'; then $(CYGPATH_W) '../src/pugixml/pugixml.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/pugixml/pugixml.cpp'; fi`
 
 b2selftest-b2selftest.o: b2selftest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(b2selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT b2selftest-b2selftest.o -MD -MP -MF $(DEPDIR)/b2selftest-b2selftest.Tpo -c -o b2selftest-b2selftest.o `test -f 'b2selftest.cpp' || echo '$(srcdir)/'`b2selftest.cpp
@@ -1245,6 +1333,13 @@ b2selftest.log: b2selftest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+azureselftest.log: azureselftest$(EXEEXT)
+	@p='azureselftest$(EXEEXT)'; \
+	b='azureselftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1327,6 +1422,8 @@ clean-generic:
 distclean-generic:
 	-$(am__rm_f) $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || $(am__rm_f) $(CONFIG_CLEAN_VPATH_FILES)
+	-$(am__rm_f) ../src/engine/azure/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/azure/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
@@ -1343,10 +1440,13 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
+	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
+	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
+	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
@@ -1400,10 +1500,13 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
+	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
+	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po

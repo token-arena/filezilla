@@ -8,6 +8,9 @@
 /* Buildtype, indicates official builds and nightly builds */
 #undef BUILDTYPE
 
+/* Define if building with Azure Blob Storage support. */
+#undef ENABLE_AZURE_BLOB
+
 /* Define if building with Backblaze B2 support. */
 #undef ENABLE_B2
 

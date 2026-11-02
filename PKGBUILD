@@ -79,6 +79,7 @@ build() {
     --with-pugixml=builtin \
     --enable-s3 \
     --enable-b2 \
+    --enable-azureblob \
     --with-wx-config="${MINGW_PREFIX}/bin/wx-config-${_wx_basever}"
 
   make

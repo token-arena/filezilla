@@ -662,6 +662,8 @@ ENABLE_SFTP_FALSE
 ENABLE_SFTP_TRUE
 ENABLE_FTP_FALSE
 ENABLE_FTP_TRUE
+ENABLE_AZURE_BLOB_FALSE
+ENABLE_AZURE_BLOB_TRUE
 ENABLE_B2_FALSE
 ENABLE_B2_TRUE
 ENABLE_S3_FALSE
@@ -921,6 +923,7 @@ enable_sftp
 enable_storj
 enable_s3
 enable_b2
+enable_azureblob
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1622,6 +1625,8 @@ Optional Features:
   --enable-s3[=ARG]       Enable support for Amazon S3 and S3-compatible
                           object storage. Default: no
   --enable-b2[=ARG]       Enable support for Backblaze B2. Default: no
+  --enable-azureblob[=ARG]
+                          Enable support for Azure Blob Storage. Default: no
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -26919,6 +26924,25 @@ printf "%s\n" "#define ENABLE_B2 1" >>confdefs.h
 
     enable_b2="yes"
   fi
+
+  # Check whether --enable-azureblob was given.
+if test ${enable_azureblob+y}
+then :
+  enableval=$enable_azureblob;
+
+else case e in #(
+  e)
+      enable_azureblob="no"
+     ;;
+esac
+fi
+
+  if test "$enable_azureblob" != "no"; then
+
+printf "%s\n" "#define ENABLE_AZURE_BLOB 1" >>confdefs.h
+
+    enable_azureblob="yes"
+  fi
 fi
 
 # Everything translation related
@@ -27289,6 +27313,14 @@ else
   ENABLE_B2_FALSE=
 fi
 
+ if test "x$enable_azureblob" = "xyes"; then
+  ENABLE_AZURE_BLOB_TRUE=
+  ENABLE_AZURE_BLOB_FALSE='#'
+else
+  ENABLE_AZURE_BLOB_TRUE='#'
+  ENABLE_AZURE_BLOB_FALSE=
+fi
+
  if test "x$enable_ftp" = "xyes"; then
   ENABLE_FTP_TRUE=
   ENABLE_FTP_FALSE='#'
@@ -27531,6 +27563,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_B2_TRUE}" && test -z "${ENABLE_B2_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_B2\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ENABLE_AZURE_BLOB_TRUE}" && test -z "${ENABLE_AZURE_BLOB_FALSE}"; then
+  as_fn_error $? "conditional \"ENABLE_AZURE_BLOB\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_FTP_TRUE}" && test -z "${ENABLE_FTP_FALSE}"; then

@@ -15,7 +15,11 @@ if ENABLE_B2
   MAYBE_B2_SELFTEST = b2selftest
 endif
 
-TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST)
+if ENABLE_AZURE_BLOB
+  MAYBE_AZURE_SELFTEST = azureselftest
+endif
+
+TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST)
 check_PROGRAMS = $(TESTS)
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
@@ -36,6 +40,15 @@ b2selftest_SOURCES = \
 
 b2selftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 b2selftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Azure Blob logic layer (SharedKey signing).
+azureselftest_SOURCES = \
+	azureselftest.cpp \
+	../src/engine/azure/azureblob.cpp \
+	../src/pugixml/pugixml.cpp
+
+azureselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+azureselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 test_SOURCES = \
 	test.cpp \

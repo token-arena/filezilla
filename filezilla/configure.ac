@@ -710,6 +710,17 @@ if test "$buildmain" = "yes"; then
     AC_DEFINE([ENABLE_B2], [1], [Define if building with Backblaze B2 support.])
     enable_b2="yes"
   fi
+
+  AC_ARG_ENABLE(azureblob, AS_HELP_STRING([--enable-azureblob@<:@=ARG@:>@],[Enable support for Azure Blob Storage. Default: no]),
+    [
+    ],
+    [
+      enable_azureblob="no"
+    ])
+  if test "$enable_azureblob" != "no"; then
+    AC_DEFINE([ENABLE_AZURE_BLOB], [1], [Define if building with Azure Blob Storage support.])
+    enable_azureblob="yes"
+  fi
 fi
 
 # Everything translation related
@@ -789,6 +800,7 @@ AM_CONDITIONAL(HAVE_DBUS, [test "x$with_dbus" = "xyes"])
 AM_CONDITIONAL(ENABLE_STORJ, [test "x$enable_storj" = "xyes"])
 AM_CONDITIONAL(ENABLE_S3, [test "x$enable_s3" = "xyes"])
 AM_CONDITIONAL(ENABLE_B2, [test "x$enable_b2" = "xyes"])
+AM_CONDITIONAL(ENABLE_AZURE_BLOB, [test "x$enable_azureblob" = "xyes"])
 AM_CONDITIONAL(ENABLE_FTP, [test "x$enable_ftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_SFTP, [test "x$enable_sftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_GUI, [test "x$enable_gui" = "xyes"])

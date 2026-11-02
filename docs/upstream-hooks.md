@@ -91,3 +91,11 @@ endif
 - `src/engine/engineprivate.cpp`：`#include "b2/b2controlsocket.h"`（ENABLE_B2 保护）+
   `switch` 里 `case B2:` → `CB2ControlSocket`
 - `tests/Makefile.am`：`b2selftest` 程序（纯逻辑，只链 libfilezilla）
+
+## 8. Azure Blob Storage（F3）
+
+- `configure.ac`：新增 `--enable-azureblob`（默认 no）→ `AC_DEFINE([ENABLE_AZURE_BLOB])`，
+  `AM_CONDITIONAL(ENABLE_AZURE_BLOB, ...)`
+- `src/engine/Makefile.am`：`if ENABLE_AZURE_BLOB` 段（`azure/azureblob.cpp`、`azure/azurecontrolsocket.cpp`）
+- `src/engine/engineprivate.cpp`：`#include "azure/azurecontrolsocket.h"` + `case AZURE_BLOB:` → `CAzureBlobControlSocket`
+- `tests/Makefile.am`：`azureselftest` 程序

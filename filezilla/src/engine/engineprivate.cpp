@@ -8,6 +8,9 @@
 #include "http/httpcontrolsocket.h"
 #include "logging_private.h"
 #include "pathcache.h"
+#if ENABLE_AZURE_BLOB
+#include "azure/azurecontrolsocket.h"
+#endif
 #if ENABLE_B2
 #include "b2/b2controlsocket.h"
 #endif
@@ -540,6 +543,11 @@ int CFileZillaEnginePrivate::ContinueConnect()
 	case STORJ:
 	case STORJ_GRANT:
 		controlSocket_ = std::make_unique<CStorjControlSocket>(*this);
+		break;
+#endif
+#if ENABLE_AZURE_BLOB
+	case AZURE_BLOB:
+		controlSocket_ = std::make_unique<CAzureBlobControlSocket>(*this);
 		break;
 #endif
 #if ENABLE_B2

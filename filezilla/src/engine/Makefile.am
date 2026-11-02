@@ -118,6 +118,16 @@ noinst_HEADERS += \
 		sftp/sftpcontrolsocket.h
 endif
 
+if ENABLE_AZURE_BLOB
+libfzclient_private_la_SOURCES += \
+		azure/azureblob.cpp \
+		azure/azurecontrolsocket.cpp
+
+noinst_HEADERS += \
+		azure/azureblob.h \
+		azure/azurecontrolsocket.h
+endif
+
 if ENABLE_B2
 libfzclient_private_la_SOURCES += \
 		b2/b2controlsocket.cpp \
