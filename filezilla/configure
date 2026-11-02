@@ -662,6 +662,8 @@ ENABLE_SFTP_FALSE
 ENABLE_SFTP_TRUE
 ENABLE_FTP_FALSE
 ENABLE_FTP_TRUE
+ENABLE_ONEDRIVE_FALSE
+ENABLE_ONEDRIVE_TRUE
 ENABLE_GDRIVE_FALSE
 ENABLE_GDRIVE_TRUE
 ENABLE_GCS_FALSE
@@ -930,6 +932,7 @@ enable_b2
 enable_azureblob
 enable_gcs
 enable_gdrive
+enable_onedrive
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1635,6 +1638,7 @@ Optional Features:
                           Enable support for Azure Blob Storage. Default: no
   --enable-gcs[=ARG]      Enable support for Google Cloud Storage. Default: no
   --enable-gdrive[=ARG]   Enable support for Google Drive. Default: no
+  --enable-onedrive[=ARG] Enable support for Microsoft OneDrive. Default: no
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -26989,6 +26993,25 @@ printf "%s\n" "#define ENABLE_GDRIVE 1" >>confdefs.h
 
     enable_gdrive="yes"
   fi
+
+  # Check whether --enable-onedrive was given.
+if test ${enable_onedrive+y}
+then :
+  enableval=$enable_onedrive;
+
+else case e in #(
+  e)
+      enable_onedrive="no"
+     ;;
+esac
+fi
+
+  if test "$enable_onedrive" != "no"; then
+
+printf "%s\n" "#define ENABLE_ONEDRIVE 1" >>confdefs.h
+
+    enable_onedrive="yes"
+  fi
 fi
 
 # Everything translation related
@@ -27383,6 +27406,14 @@ else
   ENABLE_GDRIVE_FALSE=
 fi
 
+ if test "x$enable_onedrive" = "xyes"; then
+  ENABLE_ONEDRIVE_TRUE=
+  ENABLE_ONEDRIVE_FALSE='#'
+else
+  ENABLE_ONEDRIVE_TRUE='#'
+  ENABLE_ONEDRIVE_FALSE=
+fi
+
  if test "x$enable_ftp" = "xyes"; then
   ENABLE_FTP_TRUE=
   ENABLE_FTP_FALSE='#'
@@ -27637,6 +27668,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_GDRIVE_TRUE}" && test -z "${ENABLE_GDRIVE_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_GDRIVE\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ENABLE_ONEDRIVE_TRUE}" && test -z "${ENABLE_ONEDRIVE_FALSE}"; then
+  as_fn_error $? "conditional \"ENABLE_ONEDRIVE\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_FTP_TRUE}" && test -z "${ENABLE_FTP_FALSE}"; then

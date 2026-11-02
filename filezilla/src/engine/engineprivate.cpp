@@ -11,6 +11,9 @@
 #if ENABLE_AZURE_BLOB
 #include "azure/azurecontrolsocket.h"
 #endif
+#if ENABLE_ONEDRIVE
+#include "onedrive/graphcontrolsocket.h"
+#endif
 #if ENABLE_GDRIVE
 #include "gdrive/drivecontrolsocket.h"
 #endif
@@ -554,6 +557,11 @@ int CFileZillaEnginePrivate::ContinueConnect()
 #if ENABLE_AZURE_BLOB
 	case AZURE_BLOB:
 		controlSocket_ = std::make_unique<CAzureBlobControlSocket>(*this);
+		break;
+#endif
+#if ENABLE_ONEDRIVE
+	case ONEDRIVE:
+		controlSocket_ = std::make_unique<COneDriveControlSocket>(*this);
 		break;
 #endif
 #if ENABLE_GDRIVE

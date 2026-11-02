@@ -743,6 +743,17 @@ if test "$buildmain" = "yes"; then
     AC_DEFINE([ENABLE_GDRIVE], [1], [Define if building with Google Drive support.])
     enable_gdrive="yes"
   fi
+
+  AC_ARG_ENABLE(onedrive, AS_HELP_STRING([--enable-onedrive@<:@=ARG@:>@],[Enable support for Microsoft OneDrive. Default: no]),
+    [
+    ],
+    [
+      enable_onedrive="no"
+    ])
+  if test "$enable_onedrive" != "no"; then
+    AC_DEFINE([ENABLE_ONEDRIVE], [1], [Define if building with Microsoft OneDrive support.])
+    enable_onedrive="yes"
+  fi
 fi
 
 # Everything translation related
@@ -825,6 +836,7 @@ AM_CONDITIONAL(ENABLE_B2, [test "x$enable_b2" = "xyes"])
 AM_CONDITIONAL(ENABLE_AZURE_BLOB, [test "x$enable_azureblob" = "xyes"])
 AM_CONDITIONAL(ENABLE_GCS, [test "x$enable_gcs" = "xyes"])
 AM_CONDITIONAL(ENABLE_GDRIVE, [test "x$enable_gdrive" = "xyes"])
+AM_CONDITIONAL(ENABLE_ONEDRIVE, [test "x$enable_onedrive" = "xyes"])
 AM_CONDITIONAL(ENABLE_FTP, [test "x$enable_ftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_SFTP, [test "x$enable_sftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_GUI, [test "x$enable_gui" = "xyes"])

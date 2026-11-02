@@ -113,3 +113,10 @@ endif
 - `src/engine/Makefile.am`：`if ENABLE_GDRIVE` 段（`gdrive/drivejson.cpp`、`gdrive/drivecontrolsocket.cpp`）
 - `src/engine/engineprivate.cpp`：`#include "gdrive/drivecontrolsocket.h"` + `case GOOGLE_DRIVE:` → `CGDriveControlSocket`
 - `tests/Makefile.am`：`driveselftest` 程序
+## 11. Microsoft OneDrive（F6）
+
+- `configure.ac`：新增 `--enable-onedrive`（默认 no）→ `AC_DEFINE([ENABLE_ONEDRIVE])`，
+  `AM_CONDITIONAL(ENABLE_ONEDRIVE, ...)`
+- `src/engine/Makefile.am`：`if ENABLE_ONEDRIVE` 段（`onedrive/graphjson.cpp`、`onedrive/graphcontrolsocket.cpp`）
+- `src/engine/engineprivate.cpp`：`#include "onedrive/graphcontrolsocket.h"` + `case ONEDRIVE:` → `COneDriveControlSocket`
+- `tests/Makefile.am`：`graphselftest` 程序

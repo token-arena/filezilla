@@ -23,6 +23,9 @@
 /* Define if building with Google Drive support. */
 #undef ENABLE_GDRIVE
 
+/* Define if building with Microsoft OneDrive support. */
+#undef ENABLE_ONEDRIVE
+
 /* Define if building with Amazon S3 support. */
 #undef ENABLE_S3
 

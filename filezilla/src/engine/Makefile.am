@@ -128,6 +128,16 @@ noinst_HEADERS += \
 		azure/azurecontrolsocket.h
 endif
 
+if ENABLE_ONEDRIVE
+libfzclient_private_la_SOURCES += \
+		onedrive/graphcontrolsocket.cpp \
+		onedrive/graphjson.cpp
+
+noinst_HEADERS += \
+		onedrive/graphcontrolsocket.h \
+		onedrive/graphjson.h
+endif
+
 if ENABLE_GDRIVE
 libfzclient_private_la_SOURCES += \
 		gdrive/drivecontrolsocket.cpp \

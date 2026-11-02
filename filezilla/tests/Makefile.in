@@ -92,8 +92,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6)
-check_PROGRAMS = $(am__EXEEXT_7)
+	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
+	$(am__EXEEXT_7)
+check_PROGRAMS = $(am__EXEEXT_8)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -129,9 +130,10 @@ CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_AZURE_BLOB_TRUE@am__EXEEXT_4 = azureselftest$(EXEEXT)
 @ENABLE_GCS_TRUE@am__EXEEXT_5 = gcsselftest$(EXEEXT)
 @ENABLE_GDRIVE_TRUE@am__EXEEXT_6 = driveselftest$(EXEEXT)
-am__EXEEXT_7 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
+@ENABLE_ONEDRIVE_TRUE@am__EXEEXT_7 = graphselftest$(EXEEXT)
+am__EXEEXT_8 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
 	$(am__EXEEXT_3) $(am__EXEEXT_4) $(am__EXEEXT_5) \
-	$(am__EXEEXT_6)
+	$(am__EXEEXT_6) $(am__EXEEXT_7)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_azureselftest_OBJECTS = azureselftest-azureselftest.$(OBJEXT) \
 	../src/engine/azure/azureselftest-azureblob.$(OBJEXT) \
@@ -168,6 +170,14 @@ gcsselftest_LDADD = $(LDADD)
 gcsselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(gcsselftest_LDFLAGS) $(LDFLAGS) -o $@
+am_graphselftest_OBJECTS = graphselftest-graphselftest.$(OBJEXT) \
+	../src/engine/onedrive/graphselftest-graphjson.$(OBJEXT)
+graphselftest_OBJECTS = $(am_graphselftest_OBJECTS)
+graphselftest_LDADD = $(LDADD)
+graphselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(graphselftest_LDFLAGS) $(LDFLAGS) \
+	-o $@
 am__gui_test_SOURCES_DIST = cmpnatural.cpp gui_test.cpp
 @ENABLE_GUI_TRUE@am_gui_test_OBJECTS = gui_test-cmpnatural.$(OBJEXT) \
 @ENABLE_GUI_TRUE@	gui_test-gui_test.$(OBJEXT)
@@ -212,6 +222,7 @@ am__depfiles_remade =  \
 	../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po \
 	../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po \
 	../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po \
+	../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po \
 	../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po \
@@ -220,6 +231,7 @@ am__depfiles_remade =  \
 	./$(DEPDIR)/b2selftest-b2selftest.Po \
 	./$(DEPDIR)/driveselftest-driveselftest.Po \
 	./$(DEPDIR)/gcsselftest-gcsselftest.Po \
+	./$(DEPDIR)/graphselftest-graphselftest.Po \
 	./$(DEPDIR)/gui_test-cmpnatural.Po \
 	./$(DEPDIR)/gui_test-gui_test.Po \
 	./$(DEPDIR)/s3selftest-s3selftest.Po \
@@ -247,11 +259,12 @@ am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
 	$(driveselftest_SOURCES) $(gcsselftest_SOURCES) \
-	$(gui_test_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
+	$(graphselftest_SOURCES) $(gui_test_SOURCES) \
+	$(s3selftest_SOURCES) $(test_SOURCES)
 DIST_SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
 	$(driveselftest_SOURCES) $(gcsselftest_SOURCES) \
-	$(am__gui_test_SOURCES_DIST) $(s3selftest_SOURCES) \
-	$(test_SOURCES)
+	$(graphselftest_SOURCES) $(am__gui_test_SOURCES_DIST) \
+	$(s3selftest_SOURCES) $(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -684,6 +697,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_AZURE_BLOB_TRUE@MAYBE_AZURE_SELFTEST = azureselftest
 @ENABLE_GCS_TRUE@MAYBE_GCS_SELFTEST = gcsselftest
 @ENABLE_GDRIVE_TRUE@MAYBE_DRIVE_SELFTEST = driveselftest
+@ENABLE_ONEDRIVE_TRUE@MAYBE_GRAPH_SELFTEST = graphselftest
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.
@@ -728,6 +742,14 @@ driveselftest_SOURCES = \
 
 driveselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 driveselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Microsoft Graph (OneDrive) logic layer.
+graphselftest_SOURCES = \
+	graphselftest.cpp \
+	../src/engine/onedrive/graphjson.cpp
+
+graphselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+graphselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 test_SOURCES = \
 	test.cpp \
 	dirparsertest.cpp \
@@ -855,6 +877,19 @@ driveselftest$(EXEEXT): $(driveselftest_OBJECTS) $(driveselftest_DEPENDENCIES) $
 gcsselftest$(EXEEXT): $(gcsselftest_OBJECTS) $(gcsselftest_DEPENDENCIES) $(EXTRA_gcsselftest_DEPENDENCIES) 
 	@rm -f gcsselftest$(EXEEXT)
 	$(AM_V_CXXLD)$(gcsselftest_LINK) $(gcsselftest_OBJECTS) $(gcsselftest_LDADD) $(LIBS)
+../src/engine/onedrive/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/onedrive
+	@: >>../src/engine/onedrive/$(am__dirstamp)
+../src/engine/onedrive/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/onedrive/$(DEPDIR)
+	@: >>../src/engine/onedrive/$(DEPDIR)/$(am__dirstamp)
+../src/engine/onedrive/graphselftest-graphjson.$(OBJEXT):  \
+	../src/engine/onedrive/$(am__dirstamp) \
+	../src/engine/onedrive/$(DEPDIR)/$(am__dirstamp)
+
+graphselftest$(EXEEXT): $(graphselftest_OBJECTS) $(graphselftest_DEPENDENCIES) $(EXTRA_graphselftest_DEPENDENCIES) 
+	@rm -f graphselftest$(EXEEXT)
+	$(AM_V_CXXLD)$(graphselftest_LINK) $(graphselftest_OBJECTS) $(graphselftest_LDADD) $(LIBS)
 
 gui_test$(EXEEXT): $(gui_test_OBJECTS) $(gui_test_DEPENDENCIES) $(EXTRA_gui_test_DEPENDENCIES) 
 	@rm -f gui_test$(EXEEXT)
@@ -889,6 +924,7 @@ mostlyclean-compile:
 	-rm -f ../src/engine/b2/*.$(OBJEXT)
 	-rm -f ../src/engine/gcs/*.$(OBJEXT)
 	-rm -f ../src/engine/gdrive/*.$(OBJEXT)
+	-rm -f ../src/engine/onedrive/*.$(OBJEXT)
 	-rm -f ../src/engine/s3/*.$(OBJEXT)
 	-rm -f ../src/pugixml/*.$(OBJEXT)
 
@@ -899,6 +935,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po@am__quote@ # am--include-marker
@@ -907,6 +944,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/b2selftest-b2selftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/driveselftest-driveselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcsselftest-gcsselftest.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/graphselftest-graphselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-cmpnatural.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-gui_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s3selftest-s3selftest.Po@am__quote@ # am--include-marker
@@ -1070,6 +1108,34 @@ gcsselftest-gcsselftest.obj: gcsselftest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/gcs/gcsjson.cpp' object='../src/engine/gcs/gcsselftest-gcsjson.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/gcs/gcsselftest-gcsjson.obj `if test -f '../src/engine/gcs/gcsjson.cpp'; then $(CYGPATH_W) '../src/engine/gcs/gcsjson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/gcs/gcsjson.cpp'; fi`
+
+graphselftest-graphselftest.o: graphselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(graphselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT graphselftest-graphselftest.o -MD -MP -MF $(DEPDIR)/graphselftest-graphselftest.Tpo -c -o graphselftest-graphselftest.o `test -f 'graphselftest.cpp' || echo '$(srcdir)/'`graphselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/graphselftest-graphselftest.Tpo $(DEPDIR)/graphselftest-graphselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='graphselftest.cpp' object='graphselftest-graphselftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(graphselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o graphselftest-graphselftest.o `test -f 'graphselftest.cpp' || echo '$(srcdir)/'`graphselftest.cpp
+
+graphselftest-graphselftest.obj: graphselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(graphselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT graphselftest-graphselftest.obj -MD -MP -MF $(DEPDIR)/graphselftest-graphselftest.Tpo -c -o graphselftest-graphselftest.obj `if test -f 'graphselftest.cpp'; then $(CYGPATH_W) 'graphselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/graphselftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/graphselftest-graphselftest.Tpo $(DEPDIR)/graphselftest-graphselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='graphselftest.cpp' object='graphselftest-graphselftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(graphselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o graphselftest-graphselftest.obj `if test -f 'graphselftest.cpp'; then $(CYGPATH_W) 'graphselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/graphselftest.cpp'; fi`
+
+../src/engine/onedrive/graphselftest-graphjson.o: ../src/engine/onedrive/graphjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(graphselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/onedrive/graphselftest-graphjson.o -MD -MP -MF ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Tpo -c -o ../src/engine/onedrive/graphselftest-graphjson.o `test -f '../src/engine/onedrive/graphjson.cpp' || echo '$(srcdir)/'`../src/engine/onedrive/graphjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Tpo ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/onedrive/graphjson.cpp' object='../src/engine/onedrive/graphselftest-graphjson.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(graphselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/onedrive/graphselftest-graphjson.o `test -f '../src/engine/onedrive/graphjson.cpp' || echo '$(srcdir)/'`../src/engine/onedrive/graphjson.cpp
+
+../src/engine/onedrive/graphselftest-graphjson.obj: ../src/engine/onedrive/graphjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(graphselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/onedrive/graphselftest-graphjson.obj -MD -MP -MF ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Tpo -c -o ../src/engine/onedrive/graphselftest-graphjson.obj `if test -f '../src/engine/onedrive/graphjson.cpp'; then $(CYGPATH_W) '../src/engine/onedrive/graphjson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/onedrive/graphjson.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Tpo ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/onedrive/graphjson.cpp' object='../src/engine/onedrive/graphselftest-graphjson.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(graphselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/onedrive/graphselftest-graphjson.obj `if test -f '../src/engine/onedrive/graphjson.cpp'; then $(CYGPATH_W) '../src/engine/onedrive/graphjson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/onedrive/graphjson.cpp'; fi`
 
 gui_test-cmpnatural.o: cmpnatural.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gui_test_CPPFLAGS) $(CPPFLAGS) $(gui_test_CXXFLAGS) $(CXXFLAGS) -MT gui_test-cmpnatural.o -MD -MP -MF $(DEPDIR)/gui_test-cmpnatural.Tpo -c -o gui_test-cmpnatural.o `test -f 'cmpnatural.cpp' || echo '$(srcdir)/'`cmpnatural.cpp
@@ -1484,6 +1550,13 @@ driveselftest.log: driveselftest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+graphselftest.log: graphselftest$(EXEEXT)
+	@p='graphselftest$(EXEEXT)'; \
+	b='graphselftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1574,6 +1647,8 @@ distclean-generic:
 	-$(am__rm_f) ../src/engine/gcs/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/gdrive/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/gdrive/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/onedrive/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/onedrive/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/s3/$(am__dirstamp)
 	-$(am__rm_f) ../src/pugixml/$(DEPDIR)/$(am__dirstamp)
@@ -1592,6 +1667,7 @@ distclean: distclean-am
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
+	-rm -f ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
@@ -1600,6 +1676,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
 	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
+	-rm -f ./$(DEPDIR)/graphselftest-graphselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
 	-rm -f ./$(DEPDIR)/s3selftest-s3selftest.Po
@@ -1656,6 +1733,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
+	-rm -f ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
@@ -1664,6 +1742,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
 	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
+	-rm -f ./$(DEPDIR)/graphselftest-graphselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
 	-rm -f ./$(DEPDIR)/s3selftest-s3selftest.Po
