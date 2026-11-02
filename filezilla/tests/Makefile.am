@@ -23,7 +23,11 @@ if ENABLE_GCS
   MAYBE_GCS_SELFTEST = gcsselftest
 endif
 
-TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST)
+if ENABLE_GDRIVE
+  MAYBE_DRIVE_SELFTEST = driveselftest
+endif
+
+TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST)
 check_PROGRAMS = $(TESTS)
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
@@ -61,6 +65,14 @@ gcsselftest_SOURCES = \
 
 gcsselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 gcsselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Google Drive logic layer.
+driveselftest_SOURCES = \
+	driveselftest.cpp \
+	../src/engine/gdrive/drivejson.cpp
+
+driveselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+driveselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 test_SOURCES = \
 	test.cpp \

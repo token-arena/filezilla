@@ -106,3 +106,10 @@ endif
 - `src/engine/Makefile.am`：`if ENABLE_GCS` 段（`gcs/gcsjson.cpp`、`gcs/gcscontrolsocket.cpp`）
 - `src/engine/engineprivate.cpp`：`#include "gcs/gcscontrolsocket.h"` + `case GOOGLE_CLOUD:` → `CGcsControlSocket`
 - `tests/Makefile.am`：`gcsselftest` 程序
+## 10. Google Drive（F5）
+
+- `configure.ac`：新增 `--enable-gdrive`（默认 no）→ `AC_DEFINE([ENABLE_GDRIVE])`，
+  `AM_CONDITIONAL(ENABLE_GDRIVE, ...)`
+- `src/engine/Makefile.am`：`if ENABLE_GDRIVE` 段（`gdrive/drivejson.cpp`、`gdrive/drivecontrolsocket.cpp`）
+- `src/engine/engineprivate.cpp`：`#include "gdrive/drivecontrolsocket.h"` + `case GOOGLE_DRIVE:` → `CGDriveControlSocket`
+- `tests/Makefile.am`：`driveselftest` 程序

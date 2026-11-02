@@ -20,6 +20,9 @@
 /* Define if building with Google Cloud Storage support. */
 #undef ENABLE_GCS
 
+/* Define if building with Google Drive support. */
+#undef ENABLE_GDRIVE
+
 /* Define if building with Amazon S3 support. */
 #undef ENABLE_S3
 

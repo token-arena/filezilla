@@ -128,6 +128,16 @@ noinst_HEADERS += \
 		azure/azurecontrolsocket.h
 endif
 
+if ENABLE_GDRIVE
+libfzclient_private_la_SOURCES += \
+		gdrive/drivecontrolsocket.cpp \
+		gdrive/drivejson.cpp
+
+noinst_HEADERS += \
+		gdrive/drivecontrolsocket.h \
+		gdrive/drivejson.h
+endif
+
 if ENABLE_GCS
 libfzclient_private_la_SOURCES += \
 		gcs/gcscontrolsocket.cpp \

@@ -151,33 +151,41 @@ host_triplet = @host@
 @ENABLE_AZURE_BLOB_TRUE@		azure/azureblob.h \
 @ENABLE_AZURE_BLOB_TRUE@		azure/azurecontrolsocket.h
 
-@ENABLE_GCS_TRUE@am__append_7 = \
+@ENABLE_GDRIVE_TRUE@am__append_7 = \
+@ENABLE_GDRIVE_TRUE@		gdrive/drivecontrolsocket.cpp \
+@ENABLE_GDRIVE_TRUE@		gdrive/drivejson.cpp
+
+@ENABLE_GDRIVE_TRUE@am__append_8 = \
+@ENABLE_GDRIVE_TRUE@		gdrive/drivecontrolsocket.h \
+@ENABLE_GDRIVE_TRUE@		gdrive/drivejson.h
+
+@ENABLE_GCS_TRUE@am__append_9 = \
 @ENABLE_GCS_TRUE@		gcs/gcscontrolsocket.cpp \
 @ENABLE_GCS_TRUE@		gcs/gcsjson.cpp
 
-@ENABLE_GCS_TRUE@am__append_8 = \
+@ENABLE_GCS_TRUE@am__append_10 = \
 @ENABLE_GCS_TRUE@		gcs/gcscontrolsocket.h \
 @ENABLE_GCS_TRUE@		gcs/gcsjson.h
 
-@ENABLE_B2_TRUE@am__append_9 = \
+@ENABLE_B2_TRUE@am__append_11 = \
 @ENABLE_B2_TRUE@		b2/b2controlsocket.cpp \
 @ENABLE_B2_TRUE@		b2/b2json.cpp
 
-@ENABLE_B2_TRUE@am__append_10 = \
+@ENABLE_B2_TRUE@am__append_12 = \
 @ENABLE_B2_TRUE@		b2/b2controlsocket.h \
 @ENABLE_B2_TRUE@		b2/b2json.h
 
-@ENABLE_S3_TRUE@am__append_11 = \
+@ENABLE_S3_TRUE@am__append_13 = \
 @ENABLE_S3_TRUE@		s3/s3controlsocket.cpp \
 @ENABLE_S3_TRUE@		s3/s3response.cpp \
 @ENABLE_S3_TRUE@		s3/s3signer.cpp
 
-@ENABLE_S3_TRUE@am__append_12 = \
+@ENABLE_S3_TRUE@am__append_14 = \
 @ENABLE_S3_TRUE@		s3/s3controlsocket.h \
 @ENABLE_S3_TRUE@		s3/s3response.h \
 @ENABLE_S3_TRUE@		s3/s3signer.h
 
-@ENABLE_STORJ_TRUE@am__append_13 = \
+@ENABLE_STORJ_TRUE@am__append_15 = \
 @ENABLE_STORJ_TRUE@		storj/connect.cpp \
 @ENABLE_STORJ_TRUE@		storj/delete.cpp \
 @ENABLE_STORJ_TRUE@		storj/file_transfer.cpp \
@@ -187,7 +195,7 @@ host_triplet = @host@
 @ENABLE_STORJ_TRUE@		storj/rmd.cpp \
 @ENABLE_STORJ_TRUE@		storj/storjcontrolsocket.cpp
 
-@ENABLE_STORJ_TRUE@am__append_14 = \
+@ENABLE_STORJ_TRUE@am__append_16 = \
 @ENABLE_STORJ_TRUE@		storj/connect.h \
 @ENABLE_STORJ_TRUE@		storj/delete.h \
 @ENABLE_STORJ_TRUE@		storj/event.h \
@@ -198,8 +206,8 @@ host_triplet = @host@
 @ENABLE_STORJ_TRUE@		storj/rmd.h \
 @ENABLE_STORJ_TRUE@		storj/storjcontrolsocket.h
 
-@HAVE_LIBPUGIXML_FALSE@am__append_15 = ../pugixml/pugixml.cpp
-@FZ_MAC_TRUE@am__append_16 = -framework CoreServices
+@HAVE_LIBPUGIXML_FALSE@am__append_17 = ../pugixml/pugixml.cpp
+@FZ_MAC_TRUE@am__append_18 = -framework CoreServices
 subdir = src/engine
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -278,10 +286,11 @@ am__libfzclient_private_la_SOURCES_DIST = activity_logger.cpp \
 	sftp/delete.cpp sftp/filetransfer.cpp sftp/list.cpp \
 	sftp/mkd.cpp sftp/rename.cpp sftp/rmd.cpp \
 	sftp/sftpcontrolsocket.cpp azure/azureblob.cpp \
-	azure/azurecontrolsocket.cpp gcs/gcscontrolsocket.cpp \
-	gcs/gcsjson.cpp b2/b2controlsocket.cpp b2/b2json.cpp \
-	s3/s3controlsocket.cpp s3/s3response.cpp s3/s3signer.cpp \
-	storj/connect.cpp storj/delete.cpp storj/file_transfer.cpp \
+	azure/azurecontrolsocket.cpp gdrive/drivecontrolsocket.cpp \
+	gdrive/drivejson.cpp gcs/gcscontrolsocket.cpp gcs/gcsjson.cpp \
+	b2/b2controlsocket.cpp b2/b2json.cpp s3/s3controlsocket.cpp \
+	s3/s3response.cpp s3/s3signer.cpp storj/connect.cpp \
+	storj/delete.cpp storj/file_transfer.cpp \
 	storj/input_thread.cpp storj/list.cpp storj/mkd.cpp \
 	storj/rmd.cpp storj/storjcontrolsocket.cpp \
 	../pugixml/pugixml.cpp
@@ -311,16 +320,18 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @ENABLE_SFTP_TRUE@	sftp/libfzclient_private_la-sftpcontrolsocket.lo
 @ENABLE_AZURE_BLOB_TRUE@am__objects_3 = azure/libfzclient_private_la-azureblob.lo \
 @ENABLE_AZURE_BLOB_TRUE@	azure/libfzclient_private_la-azurecontrolsocket.lo
-@ENABLE_GCS_TRUE@am__objects_4 = gcs/libfzclient_private_la-gcscontrolsocket.lo \
+@ENABLE_GDRIVE_TRUE@am__objects_4 = gdrive/libfzclient_private_la-drivecontrolsocket.lo \
+@ENABLE_GDRIVE_TRUE@	gdrive/libfzclient_private_la-drivejson.lo
+@ENABLE_GCS_TRUE@am__objects_5 = gcs/libfzclient_private_la-gcscontrolsocket.lo \
 @ENABLE_GCS_TRUE@	gcs/libfzclient_private_la-gcsjson.lo
-@ENABLE_B2_TRUE@am__objects_5 =  \
+@ENABLE_B2_TRUE@am__objects_6 =  \
 @ENABLE_B2_TRUE@	b2/libfzclient_private_la-b2controlsocket.lo \
 @ENABLE_B2_TRUE@	b2/libfzclient_private_la-b2json.lo
-@ENABLE_S3_TRUE@am__objects_6 =  \
+@ENABLE_S3_TRUE@am__objects_7 =  \
 @ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3controlsocket.lo \
 @ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3response.lo \
 @ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3signer.lo
-@ENABLE_STORJ_TRUE@am__objects_7 =  \
+@ENABLE_STORJ_TRUE@am__objects_8 =  \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-connect.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-delete.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-file_transfer.lo \
@@ -329,7 +340,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-mkd.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-rmd.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-storjcontrolsocket.lo
-@HAVE_LIBPUGIXML_FALSE@am__objects_8 = ../pugixml/libfzclient_private_la-pugixml.lo
+@HAVE_LIBPUGIXML_FALSE@am__objects_9 = ../pugixml/libfzclient_private_la-pugixml.lo
 am_libfzclient_private_la_OBJECTS =  \
 	libfzclient_private_la-activity_logger.lo \
 	libfzclient_private_la-activity_logger_layer.lo \
@@ -366,7 +377,7 @@ am_libfzclient_private_la_OBJECTS =  \
 	libfzclient_private_la-xmlutils.lo $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
 	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
-	$(am__objects_8)
+	$(am__objects_8) $(am__objects_9)
 libfzclient_private_la_OBJECTS = $(am_libfzclient_private_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -443,6 +454,8 @@ am__depfiles_remade =  \
 	ftp/$(DEPDIR)/libfzclient_private_la-transfersocket.Plo \
 	gcs/$(DEPDIR)/libfzclient_private_la-gcscontrolsocket.Plo \
 	gcs/$(DEPDIR)/libfzclient_private_la-gcsjson.Plo \
+	gdrive/$(DEPDIR)/libfzclient_private_la-drivecontrolsocket.Plo \
+	gdrive/$(DEPDIR)/libfzclient_private_la-drivejson.Plo \
 	http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo \
 	http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo \
 	http/$(DEPDIR)/libfzclient_private_la-request.Plo \
@@ -503,12 +516,13 @@ am__noinst_HEADERS_DIST = activity_logger_layer.h controlsocket.h \
 	ftp/transfersocket.h sftp/chmod.h sftp/connect.h sftp/delete.h \
 	sftp/filetransfer.h sftp/list.h sftp/mkd.h sftp/rename.h \
 	sftp/rmd.h sftp/sftpcontrolsocket.h azure/azureblob.h \
-	azure/azurecontrolsocket.h gcs/gcscontrolsocket.h \
-	gcs/gcsjson.h b2/b2controlsocket.h b2/b2json.h \
-	s3/s3controlsocket.h s3/s3response.h s3/s3signer.h \
-	storj/connect.h storj/delete.h storj/event.h \
-	storj/file_transfer.h storj/input_thread.h storj/list.h \
-	storj/mkd.h storj/rmd.h storj/storjcontrolsocket.h
+	azure/azurecontrolsocket.h gdrive/drivecontrolsocket.h \
+	gdrive/drivejson.h gcs/gcscontrolsocket.h gcs/gcsjson.h \
+	b2/b2controlsocket.h b2/b2json.h s3/s3controlsocket.h \
+	s3/s3response.h s3/s3signer.h storj/connect.h storj/delete.h \
+	storj/event.h storj/file_transfer.h storj/input_thread.h \
+	storj/list.h storj/mkd.h storj/rmd.h \
+	storj/storjcontrolsocket.h
 HEADERS = $(noinst_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
@@ -735,7 +749,7 @@ libfzclient_private_la_SOURCES = activity_logger.cpp \
 	tls.cpp version.cpp xmlutils.cpp $(am__append_1) \
 	$(am__append_3) $(am__append_5) $(am__append_7) \
 	$(am__append_9) $(am__append_11) $(am__append_13) \
-	$(am__append_15)
+	$(am__append_15) $(am__append_17)
 noinst_HEADERS = activity_logger_layer.h controlsocket.h \
 	directorycache.h directorylistingparser.h engineprivate.h \
 	filezilla.h http/filetransfer.h http/httpcontrolsocket.h \
@@ -743,12 +757,12 @@ noinst_HEADERS = activity_logger_layer.h controlsocket.h \
 	pathcache.h proxy.h rtt.h servercapabilities.h tls.h \
 	$(am__append_2) $(am__append_4) $(am__append_6) \
 	$(am__append_8) $(am__append_10) $(am__append_12) \
-	$(am__append_14)
+	$(am__append_14) $(am__append_16)
 libfzclient_private_la_CXXFLAGS = -fvisibility=hidden
 libfzclient_private_la_LDFLAGS = -no-undefined -release \
 	$(ENGINE_VERSION_MAJOR).$(ENGINE_VERSION_MINOR).$(ENGINE_VERSION_MICRO) \
 	$(LIBFZSSH_LIBS) $(LIBFILEZILLA_LIBS) $(IDN_LIB) \
-	$(am__append_16)
+	$(am__append_18)
 CLEANFILES = filezilla.h.gch
 DISTCLEANFILES = ./$(DEPDIR)/filezilla.Po
 @ENABLE_PRECOMP_TRUE@BUILT_SOURCES = filezilla.h.gch
@@ -897,6 +911,16 @@ azure/libfzclient_private_la-azureblob.lo: azure/$(am__dirstamp) \
 	azure/$(DEPDIR)/$(am__dirstamp)
 azure/libfzclient_private_la-azurecontrolsocket.lo:  \
 	azure/$(am__dirstamp) azure/$(DEPDIR)/$(am__dirstamp)
+gdrive/$(am__dirstamp):
+	@$(MKDIR_P) gdrive
+	@: >>gdrive/$(am__dirstamp)
+gdrive/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) gdrive/$(DEPDIR)
+	@: >>gdrive/$(DEPDIR)/$(am__dirstamp)
+gdrive/libfzclient_private_la-drivecontrolsocket.lo:  \
+	gdrive/$(am__dirstamp) gdrive/$(DEPDIR)/$(am__dirstamp)
+gdrive/libfzclient_private_la-drivejson.lo: gdrive/$(am__dirstamp) \
+	gdrive/$(DEPDIR)/$(am__dirstamp)
 gcs/$(am__dirstamp):
 	@$(MKDIR_P) gcs
 	@: >>gcs/$(am__dirstamp)
@@ -976,6 +1000,8 @@ mostlyclean-compile:
 	-rm -f ftp/*.lo
 	-rm -f gcs/*.$(OBJEXT)
 	-rm -f gcs/*.lo
+	-rm -f gdrive/*.$(OBJEXT)
+	-rm -f gdrive/*.lo
 	-rm -f http/*.$(OBJEXT)
 	-rm -f http/*.lo
 	-rm -f s3/*.$(OBJEXT)
@@ -1039,6 +1065,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ftp/$(DEPDIR)/libfzclient_private_la-transfersocket.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@gcs/$(DEPDIR)/libfzclient_private_la-gcscontrolsocket.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@gcs/$(DEPDIR)/libfzclient_private_la-gcsjson.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@gdrive/$(DEPDIR)/libfzclient_private_la-drivecontrolsocket.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@gdrive/$(DEPDIR)/libfzclient_private_la-drivejson.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-request.Plo@am__quote@ # am--include-marker
@@ -1499,6 +1527,20 @@ azure/libfzclient_private_la-azurecontrolsocket.lo: azure/azurecontrolsocket.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o azure/libfzclient_private_la-azurecontrolsocket.lo `test -f 'azure/azurecontrolsocket.cpp' || echo '$(srcdir)/'`azure/azurecontrolsocket.cpp
 
+gdrive/libfzclient_private_la-drivecontrolsocket.lo: gdrive/drivecontrolsocket.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT gdrive/libfzclient_private_la-drivecontrolsocket.lo -MD -MP -MF gdrive/$(DEPDIR)/libfzclient_private_la-drivecontrolsocket.Tpo -c -o gdrive/libfzclient_private_la-drivecontrolsocket.lo `test -f 'gdrive/drivecontrolsocket.cpp' || echo '$(srcdir)/'`gdrive/drivecontrolsocket.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gdrive/$(DEPDIR)/libfzclient_private_la-drivecontrolsocket.Tpo gdrive/$(DEPDIR)/libfzclient_private_la-drivecontrolsocket.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gdrive/drivecontrolsocket.cpp' object='gdrive/libfzclient_private_la-drivecontrolsocket.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o gdrive/libfzclient_private_la-drivecontrolsocket.lo `test -f 'gdrive/drivecontrolsocket.cpp' || echo '$(srcdir)/'`gdrive/drivecontrolsocket.cpp
+
+gdrive/libfzclient_private_la-drivejson.lo: gdrive/drivejson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT gdrive/libfzclient_private_la-drivejson.lo -MD -MP -MF gdrive/$(DEPDIR)/libfzclient_private_la-drivejson.Tpo -c -o gdrive/libfzclient_private_la-drivejson.lo `test -f 'gdrive/drivejson.cpp' || echo '$(srcdir)/'`gdrive/drivejson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gdrive/$(DEPDIR)/libfzclient_private_la-drivejson.Tpo gdrive/$(DEPDIR)/libfzclient_private_la-drivejson.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gdrive/drivejson.cpp' object='gdrive/libfzclient_private_la-drivejson.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o gdrive/libfzclient_private_la-drivejson.lo `test -f 'gdrive/drivejson.cpp' || echo '$(srcdir)/'`gdrive/drivejson.cpp
+
 gcs/libfzclient_private_la-gcscontrolsocket.lo: gcs/gcscontrolsocket.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT gcs/libfzclient_private_la-gcscontrolsocket.lo -MD -MP -MF gcs/$(DEPDIR)/libfzclient_private_la-gcscontrolsocket.Tpo -c -o gcs/libfzclient_private_la-gcscontrolsocket.lo `test -f 'gcs/gcscontrolsocket.cpp' || echo '$(srcdir)/'`gcs/gcscontrolsocket.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gcs/$(DEPDIR)/libfzclient_private_la-gcscontrolsocket.Tpo gcs/$(DEPDIR)/libfzclient_private_la-gcscontrolsocket.Plo
@@ -1621,6 +1663,7 @@ clean-libtool:
 	-rm -rf b2/.libs b2/_libs
 	-rm -rf ftp/.libs ftp/_libs
 	-rm -rf gcs/.libs gcs/_libs
+	-rm -rf gdrive/.libs gdrive/_libs
 	-rm -rf http/.libs http/_libs
 	-rm -rf s3/.libs s3/_libs
 	-rm -rf sftp/.libs sftp/_libs
@@ -1758,6 +1801,8 @@ distclean-generic:
 	-$(am__rm_f) ftp/$(am__dirstamp)
 	-$(am__rm_f) gcs/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) gcs/$(am__dirstamp)
+	-$(am__rm_f) gdrive/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) gdrive/$(am__dirstamp)
 	-$(am__rm_f) http/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) http/$(am__dirstamp)
 	-$(am__rm_f) s3/$(DEPDIR)/$(am__dirstamp)
@@ -1828,6 +1873,8 @@ distclean: distclean-am
 	-rm -f ftp/$(DEPDIR)/libfzclient_private_la-transfersocket.Plo
 	-rm -f gcs/$(DEPDIR)/libfzclient_private_la-gcscontrolsocket.Plo
 	-rm -f gcs/$(DEPDIR)/libfzclient_private_la-gcsjson.Plo
+	-rm -f gdrive/$(DEPDIR)/libfzclient_private_la-drivecontrolsocket.Plo
+	-rm -f gdrive/$(DEPDIR)/libfzclient_private_la-drivejson.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-request.Plo
@@ -1947,6 +1994,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ftp/$(DEPDIR)/libfzclient_private_la-transfersocket.Plo
 	-rm -f gcs/$(DEPDIR)/libfzclient_private_la-gcscontrolsocket.Plo
 	-rm -f gcs/$(DEPDIR)/libfzclient_private_la-gcsjson.Plo
+	-rm -f gdrive/$(DEPDIR)/libfzclient_private_la-drivecontrolsocket.Plo
+	-rm -f gdrive/$(DEPDIR)/libfzclient_private_la-drivejson.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-request.Plo

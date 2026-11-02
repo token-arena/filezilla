@@ -662,6 +662,8 @@ ENABLE_SFTP_FALSE
 ENABLE_SFTP_TRUE
 ENABLE_FTP_FALSE
 ENABLE_FTP_TRUE
+ENABLE_GDRIVE_FALSE
+ENABLE_GDRIVE_TRUE
 ENABLE_GCS_FALSE
 ENABLE_GCS_TRUE
 ENABLE_AZURE_BLOB_FALSE
@@ -927,6 +929,7 @@ enable_s3
 enable_b2
 enable_azureblob
 enable_gcs
+enable_gdrive
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1631,6 +1634,7 @@ Optional Features:
   --enable-azureblob[=ARG]
                           Enable support for Azure Blob Storage. Default: no
   --enable-gcs[=ARG]      Enable support for Google Cloud Storage. Default: no
+  --enable-gdrive[=ARG]   Enable support for Google Drive. Default: no
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -26966,6 +26970,25 @@ printf "%s\n" "#define ENABLE_GCS 1" >>confdefs.h
 
     enable_gcs="yes"
   fi
+
+  # Check whether --enable-gdrive was given.
+if test ${enable_gdrive+y}
+then :
+  enableval=$enable_gdrive;
+
+else case e in #(
+  e)
+      enable_gdrive="no"
+     ;;
+esac
+fi
+
+  if test "$enable_gdrive" != "no"; then
+
+printf "%s\n" "#define ENABLE_GDRIVE 1" >>confdefs.h
+
+    enable_gdrive="yes"
+  fi
 fi
 
 # Everything translation related
@@ -27352,6 +27375,14 @@ else
   ENABLE_GCS_FALSE=
 fi
 
+ if test "x$enable_gdrive" = "xyes"; then
+  ENABLE_GDRIVE_TRUE=
+  ENABLE_GDRIVE_FALSE='#'
+else
+  ENABLE_GDRIVE_TRUE='#'
+  ENABLE_GDRIVE_FALSE=
+fi
+
  if test "x$enable_ftp" = "xyes"; then
   ENABLE_FTP_TRUE=
   ENABLE_FTP_FALSE='#'
@@ -27602,6 +27633,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_GCS_TRUE}" && test -z "${ENABLE_GCS_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_GCS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ENABLE_GDRIVE_TRUE}" && test -z "${ENABLE_GDRIVE_FALSE}"; then
+  as_fn_error $? "conditional \"ENABLE_GDRIVE\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_FTP_TRUE}" && test -z "${ENABLE_FTP_FALSE}"; then

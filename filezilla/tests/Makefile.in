@@ -92,8 +92,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	$(am__EXEEXT_4) $(am__EXEEXT_5)
-check_PROGRAMS = $(am__EXEEXT_6)
+	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6)
+check_PROGRAMS = $(am__EXEEXT_7)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -128,8 +128,10 @@ CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_B2_TRUE@am__EXEEXT_3 = b2selftest$(EXEEXT)
 @ENABLE_AZURE_BLOB_TRUE@am__EXEEXT_4 = azureselftest$(EXEEXT)
 @ENABLE_GCS_TRUE@am__EXEEXT_5 = gcsselftest$(EXEEXT)
-am__EXEEXT_6 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
-	$(am__EXEEXT_3) $(am__EXEEXT_4) $(am__EXEEXT_5)
+@ENABLE_GDRIVE_TRUE@am__EXEEXT_6 = driveselftest$(EXEEXT)
+am__EXEEXT_7 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
+	$(am__EXEEXT_3) $(am__EXEEXT_4) $(am__EXEEXT_5) \
+	$(am__EXEEXT_6)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_azureselftest_OBJECTS = azureselftest-azureselftest.$(OBJEXT) \
 	../src/engine/azure/azureselftest-azureblob.$(OBJEXT) \
@@ -151,6 +153,14 @@ b2selftest_LDADD = $(LDADD)
 b2selftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(b2selftest_LDFLAGS) $(LDFLAGS) -o $@
+am_driveselftest_OBJECTS = driveselftest-driveselftest.$(OBJEXT) \
+	../src/engine/gdrive/driveselftest-drivejson.$(OBJEXT)
+driveselftest_OBJECTS = $(am_driveselftest_OBJECTS)
+driveselftest_LDADD = $(LDADD)
+driveselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(driveselftest_LDFLAGS) $(LDFLAGS) \
+	-o $@
 am_gcsselftest_OBJECTS = gcsselftest-gcsselftest.$(OBJEXT) \
 	../src/engine/gcs/gcsselftest-gcsjson.$(OBJEXT)
 gcsselftest_OBJECTS = $(am_gcsselftest_OBJECTS)
@@ -201,12 +211,14 @@ am__depfiles_remade =  \
 	../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po \
 	../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po \
 	../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po \
+	../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po \
 	../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po \
 	../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po \
 	./$(DEPDIR)/azureselftest-azureselftest.Po \
 	./$(DEPDIR)/b2selftest-b2selftest.Po \
+	./$(DEPDIR)/driveselftest-driveselftest.Po \
 	./$(DEPDIR)/gcsselftest-gcsselftest.Po \
 	./$(DEPDIR)/gui_test-cmpnatural.Po \
 	./$(DEPDIR)/gui_test-gui_test.Po \
@@ -234,11 +246,12 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
-	$(gcsselftest_SOURCES) $(gui_test_SOURCES) \
-	$(s3selftest_SOURCES) $(test_SOURCES)
+	$(driveselftest_SOURCES) $(gcsselftest_SOURCES) \
+	$(gui_test_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
 DIST_SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
-	$(gcsselftest_SOURCES) $(am__gui_test_SOURCES_DIST) \
-	$(s3selftest_SOURCES) $(test_SOURCES)
+	$(driveselftest_SOURCES) $(gcsselftest_SOURCES) \
+	$(am__gui_test_SOURCES_DIST) $(s3selftest_SOURCES) \
+	$(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -670,6 +683,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_B2_TRUE@MAYBE_B2_SELFTEST = b2selftest
 @ENABLE_AZURE_BLOB_TRUE@MAYBE_AZURE_SELFTEST = azureselftest
 @ENABLE_GCS_TRUE@MAYBE_GCS_SELFTEST = gcsselftest
+@ENABLE_GDRIVE_TRUE@MAYBE_DRIVE_SELFTEST = driveselftest
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.
@@ -706,6 +720,14 @@ gcsselftest_SOURCES = \
 
 gcsselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 gcsselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Google Drive logic layer.
+driveselftest_SOURCES = \
+	driveselftest.cpp \
+	../src/engine/gdrive/drivejson.cpp
+
+driveselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+driveselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 test_SOURCES = \
 	test.cpp \
 	dirparsertest.cpp \
@@ -807,6 +829,19 @@ azureselftest$(EXEEXT): $(azureselftest_OBJECTS) $(azureselftest_DEPENDENCIES) $
 b2selftest$(EXEEXT): $(b2selftest_OBJECTS) $(b2selftest_DEPENDENCIES) $(EXTRA_b2selftest_DEPENDENCIES) 
 	@rm -f b2selftest$(EXEEXT)
 	$(AM_V_CXXLD)$(b2selftest_LINK) $(b2selftest_OBJECTS) $(b2selftest_LDADD) $(LIBS)
+../src/engine/gdrive/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/gdrive
+	@: >>../src/engine/gdrive/$(am__dirstamp)
+../src/engine/gdrive/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/gdrive/$(DEPDIR)
+	@: >>../src/engine/gdrive/$(DEPDIR)/$(am__dirstamp)
+../src/engine/gdrive/driveselftest-drivejson.$(OBJEXT):  \
+	../src/engine/gdrive/$(am__dirstamp) \
+	../src/engine/gdrive/$(DEPDIR)/$(am__dirstamp)
+
+driveselftest$(EXEEXT): $(driveselftest_OBJECTS) $(driveselftest_DEPENDENCIES) $(EXTRA_driveselftest_DEPENDENCIES) 
+	@rm -f driveselftest$(EXEEXT)
+	$(AM_V_CXXLD)$(driveselftest_LINK) $(driveselftest_OBJECTS) $(driveselftest_LDADD) $(LIBS)
 ../src/engine/gcs/$(am__dirstamp):
 	@$(MKDIR_P) ../src/engine/gcs
 	@: >>../src/engine/gcs/$(am__dirstamp)
@@ -853,6 +888,7 @@ mostlyclean-compile:
 	-rm -f ../src/engine/azure/*.$(OBJEXT)
 	-rm -f ../src/engine/b2/*.$(OBJEXT)
 	-rm -f ../src/engine/gcs/*.$(OBJEXT)
+	-rm -f ../src/engine/gdrive/*.$(OBJEXT)
 	-rm -f ../src/engine/s3/*.$(OBJEXT)
 	-rm -f ../src/pugixml/*.$(OBJEXT)
 
@@ -862,12 +898,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/azureselftest-azureselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/b2selftest-b2selftest.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/driveselftest-driveselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcsselftest-gcsselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-cmpnatural.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-gui_test.Po@am__quote@ # am--include-marker
@@ -976,6 +1014,34 @@ b2selftest-b2selftest.obj: b2selftest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/b2/b2json.cpp' object='../src/engine/b2/b2selftest-b2json.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(b2selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/b2/b2selftest-b2json.obj `if test -f '../src/engine/b2/b2json.cpp'; then $(CYGPATH_W) '../src/engine/b2/b2json.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/b2/b2json.cpp'; fi`
+
+driveselftest-driveselftest.o: driveselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT driveselftest-driveselftest.o -MD -MP -MF $(DEPDIR)/driveselftest-driveselftest.Tpo -c -o driveselftest-driveselftest.o `test -f 'driveselftest.cpp' || echo '$(srcdir)/'`driveselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/driveselftest-driveselftest.Tpo $(DEPDIR)/driveselftest-driveselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='driveselftest.cpp' object='driveselftest-driveselftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o driveselftest-driveselftest.o `test -f 'driveselftest.cpp' || echo '$(srcdir)/'`driveselftest.cpp
+
+driveselftest-driveselftest.obj: driveselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT driveselftest-driveselftest.obj -MD -MP -MF $(DEPDIR)/driveselftest-driveselftest.Tpo -c -o driveselftest-driveselftest.obj `if test -f 'driveselftest.cpp'; then $(CYGPATH_W) 'driveselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/driveselftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/driveselftest-driveselftest.Tpo $(DEPDIR)/driveselftest-driveselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='driveselftest.cpp' object='driveselftest-driveselftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o driveselftest-driveselftest.obj `if test -f 'driveselftest.cpp'; then $(CYGPATH_W) 'driveselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/driveselftest.cpp'; fi`
+
+../src/engine/gdrive/driveselftest-drivejson.o: ../src/engine/gdrive/drivejson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/gdrive/driveselftest-drivejson.o -MD -MP -MF ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Tpo -c -o ../src/engine/gdrive/driveselftest-drivejson.o `test -f '../src/engine/gdrive/drivejson.cpp' || echo '$(srcdir)/'`../src/engine/gdrive/drivejson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Tpo ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/gdrive/drivejson.cpp' object='../src/engine/gdrive/driveselftest-drivejson.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/gdrive/driveselftest-drivejson.o `test -f '../src/engine/gdrive/drivejson.cpp' || echo '$(srcdir)/'`../src/engine/gdrive/drivejson.cpp
+
+../src/engine/gdrive/driveselftest-drivejson.obj: ../src/engine/gdrive/drivejson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/gdrive/driveselftest-drivejson.obj -MD -MP -MF ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Tpo -c -o ../src/engine/gdrive/driveselftest-drivejson.obj `if test -f '../src/engine/gdrive/drivejson.cpp'; then $(CYGPATH_W) '../src/engine/gdrive/drivejson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/gdrive/drivejson.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Tpo ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/gdrive/drivejson.cpp' object='../src/engine/gdrive/driveselftest-drivejson.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/gdrive/driveselftest-drivejson.obj `if test -f '../src/engine/gdrive/drivejson.cpp'; then $(CYGPATH_W) '../src/engine/gdrive/drivejson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/gdrive/drivejson.cpp'; fi`
 
 gcsselftest-gcsselftest.o: gcsselftest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gcsselftest-gcsselftest.o -MD -MP -MF $(DEPDIR)/gcsselftest-gcsselftest.Tpo -c -o gcsselftest-gcsselftest.o `test -f 'gcsselftest.cpp' || echo '$(srcdir)/'`gcsselftest.cpp
@@ -1411,6 +1477,13 @@ gcsselftest.log: gcsselftest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+driveselftest.log: driveselftest$(EXEEXT)
+	@p='driveselftest$(EXEEXT)'; \
+	b='driveselftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1499,6 +1572,8 @@ distclean-generic:
 	-$(am__rm_f) ../src/engine/b2/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/gcs/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/gcs/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/gdrive/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/gdrive/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/s3/$(am__dirstamp)
 	-$(am__rm_f) ../src/pugixml/$(DEPDIR)/$(am__dirstamp)
@@ -1516,12 +1591,14 @@ distclean: distclean-am
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
+	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
+	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
@@ -1578,12 +1655,14 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
+	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
+	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
