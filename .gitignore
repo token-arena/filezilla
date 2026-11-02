@@ -1,0 +1,88 @@
+# ==============================================================================
+# FileZilla 3.71.1 — MSYS2 / mingw-w64 打包与改造仓库
+#
+# 入库（手工维护的输入）：
+#   PKGBUILD, *.patch, BUILD-NOTES.md, 以及后续改造用的源码/补丁
+#
+# 忽略（可再生成的东西）：
+#   源码解包树、构建目录、编译中间产物、二进制包、日志、临时脚本
+#
+# 注意：FileZilla 源码树里 config/compile、config/install-sh、config/missing、
+#       config/depcomp、config/ltmain.sh、config.h.in、Makefile.in 都是**上游跟踪的
+#       源文件**，因此这里故意不忽略它们，避免以后把源码树放进仓库时被误伤。
+# ==============================================================================
+
+# ---------- MSYS2 / makepkg 工作目录与输出 ----------
+# 注意：PKGBUILD 就在根目录，直接在根目录跑 makepkg 会生成 /src/ 和 /pkg/，
+#       所以这两条必须保留；但 FileZilla 源码树自身也有 src/ 目录。
+#       → 改造请放在 src/filezilla-3.71.1/ 之外的目录（如 build/ 或 vendor/），
+#         或把源码放在 vendor/ 下并把补丁留在根目录。
+/src/
+/pkg/
+# 本仓库把打包目录放在 build/mingw-w64-filezilla/ 下
+/build/
+# PKGBUILD 的 build() 用的是 build-${MSYSTEM} 目录
+build-*/
+
+# ---------- 二进制包与源码包 （makepkg 产物，可由 source=() 重建） ----------
+/dist/
+*.pkg.tar
+*.pkg.tar.*
+*.src.tar
+*.src.tar.*
+*.pkg.tar.*.sig
+*.pkg.tar.*.sha256
+
+# ---------- 下载的源码压缩包 ----------
+/*.tar.xz
+/*.tar.gz
+/*.tar.zst
+/*.tar.bz2
+/*.zip
+
+# ---------- 编译产物（万一在源码树里就地构建） ----------
+*.o
+*.lo
+*.la
+*.a
+*.dll
+*.dll.a
+*.lib
+*.exe
+*.exp
+*.obj
+*.pdb
+*.ilk
+.deps/
+.libs/
+stamp-h1
+config.log
+config.status
+config.h
+libtool
+autom4te.cache/
+
+# ---------- 日志 ----------
+*.log
+
+# ---------- 补丁残留 ----------
+*.orig
+*.rej
+*.bak
+*.patch.orig
+
+# ---------- 临时脚本 / 中间报告（含本机绝对路径，不入库） ----------
+/_work/
+/.tmp/
+/.cache/
+
+# ---------- 编辑器 / 操作系统杂项 ----------
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
