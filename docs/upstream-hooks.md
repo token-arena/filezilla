@@ -120,3 +120,10 @@ endif
 - `src/engine/Makefile.am`：`if ENABLE_ONEDRIVE` 段（`onedrive/graphjson.cpp`、`onedrive/graphcontrolsocket.cpp`）
 - `src/engine/engineprivate.cpp`：`#include "onedrive/graphcontrolsocket.h"` + `case ONEDRIVE:` → `COneDriveControlSocket`
 - `tests/Makefile.am`：`graphselftest` 程序
+## 12. Dropbox（F7）
+
+- `configure.ac`：新增 `--enable-dropbox`（默认 no）→ `AC_DEFINE([ENABLE_DROPBOX])`，
+  `AM_CONDITIONAL(ENABLE_DROPBOX, ...)`
+- `src/engine/Makefile.am`：`if ENABLE_DROPBOX` 段（`dropbox/dropboxjson.cpp`、`dropbox/dropboxcontrolsocket.cpp`）
+- `src/engine/engineprivate.cpp`：`#include "dropbox/dropboxcontrolsocket.h"` + `case DROPBOX:` → `CDropboxControlSocket`
+- `tests/Makefile.am`：`dropboxselftest` 程序

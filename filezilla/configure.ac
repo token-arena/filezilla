@@ -754,6 +754,17 @@ if test "$buildmain" = "yes"; then
     AC_DEFINE([ENABLE_ONEDRIVE], [1], [Define if building with Microsoft OneDrive support.])
     enable_onedrive="yes"
   fi
+
+  AC_ARG_ENABLE(dropbox, AS_HELP_STRING([--enable-dropbox@<:@=ARG@:>@],[Enable support for Dropbox. Default: no]),
+    [
+    ],
+    [
+      enable_dropbox="no"
+    ])
+  if test "$enable_dropbox" != "no"; then
+    AC_DEFINE([ENABLE_DROPBOX], [1], [Define if building with Dropbox support.])
+    enable_dropbox="yes"
+  fi
 fi
 
 # Everything translation related
@@ -837,6 +848,7 @@ AM_CONDITIONAL(ENABLE_AZURE_BLOB, [test "x$enable_azureblob" = "xyes"])
 AM_CONDITIONAL(ENABLE_GCS, [test "x$enable_gcs" = "xyes"])
 AM_CONDITIONAL(ENABLE_GDRIVE, [test "x$enable_gdrive" = "xyes"])
 AM_CONDITIONAL(ENABLE_ONEDRIVE, [test "x$enable_onedrive" = "xyes"])
+AM_CONDITIONAL(ENABLE_DROPBOX, [test "x$enable_dropbox" = "xyes"])
 AM_CONDITIONAL(ENABLE_FTP, [test "x$enable_ftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_SFTP, [test "x$enable_sftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_GUI, [test "x$enable_gui" = "xyes"])

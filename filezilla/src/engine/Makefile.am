@@ -128,6 +128,16 @@ noinst_HEADERS += \
 		azure/azurecontrolsocket.h
 endif
 
+if ENABLE_DROPBOX
+libfzclient_private_la_SOURCES += \
+		dropbox/dropboxcontrolsocket.cpp \
+		dropbox/dropboxjson.cpp
+
+noinst_HEADERS += \
+		dropbox/dropboxcontrolsocket.h \
+		dropbox/dropboxjson.h
+endif
+
 if ENABLE_ONEDRIVE
 libfzclient_private_la_SOURCES += \
 		onedrive/graphcontrolsocket.cpp \
