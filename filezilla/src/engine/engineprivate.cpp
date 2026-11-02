@@ -8,6 +8,9 @@
 #include "http/httpcontrolsocket.h"
 #include "logging_private.h"
 #include "pathcache.h"
+#if ENABLE_B2
+#include "b2/b2controlsocket.h"
+#endif
 #if ENABLE_S3
 #include "s3/s3controlsocket.h"
 #endif
@@ -537,6 +540,11 @@ int CFileZillaEnginePrivate::ContinueConnect()
 	case STORJ:
 	case STORJ_GRANT:
 		controlSocket_ = std::make_unique<CStorjControlSocket>(*this);
+		break;
+#endif
+#if ENABLE_B2
+	case B2:
+		controlSocket_ = std::make_unique<CB2ControlSocket>(*this);
 		break;
 #endif
 #if ENABLE_S3

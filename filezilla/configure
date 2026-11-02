@@ -662,6 +662,8 @@ ENABLE_SFTP_FALSE
 ENABLE_SFTP_TRUE
 ENABLE_FTP_FALSE
 ENABLE_FTP_TRUE
+ENABLE_B2_FALSE
+ENABLE_B2_TRUE
 ENABLE_S3_FALSE
 ENABLE_S3_TRUE
 ENABLE_STORJ_FALSE
@@ -918,6 +920,7 @@ enable_ftp
 enable_sftp
 enable_storj
 enable_s3
+enable_b2
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1618,6 +1621,7 @@ Optional Features:
                           storage provider. Default: no
   --enable-s3[=ARG]       Enable support for Amazon S3 and S3-compatible
                           object storage. Default: no
+  --enable-b2[=ARG]       Enable support for Backblaze B2. Default: no
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -26896,6 +26900,25 @@ printf "%s\n" "#define ENABLE_S3 1" >>confdefs.h
 
     enable_s3="yes"
   fi
+
+  # Check whether --enable-b2 was given.
+if test ${enable_b2+y}
+then :
+  enableval=$enable_b2;
+
+else case e in #(
+  e)
+      enable_b2="no"
+     ;;
+esac
+fi
+
+  if test "$enable_b2" != "no"; then
+
+printf "%s\n" "#define ENABLE_B2 1" >>confdefs.h
+
+    enable_b2="yes"
+  fi
 fi
 
 # Everything translation related
@@ -27258,6 +27281,14 @@ else
   ENABLE_S3_FALSE=
 fi
 
+ if test "x$enable_b2" = "xyes"; then
+  ENABLE_B2_TRUE=
+  ENABLE_B2_FALSE='#'
+else
+  ENABLE_B2_TRUE='#'
+  ENABLE_B2_FALSE=
+fi
+
  if test "x$enable_ftp" = "xyes"; then
   ENABLE_FTP_TRUE=
   ENABLE_FTP_FALSE='#'
@@ -27496,6 +27527,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_S3_TRUE}" && test -z "${ENABLE_S3_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_S3\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ENABLE_B2_TRUE}" && test -z "${ENABLE_B2_FALSE}"; then
+  as_fn_error $? "conditional \"ENABLE_B2\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_FTP_TRUE}" && test -z "${ENABLE_FTP_FALSE}"; then

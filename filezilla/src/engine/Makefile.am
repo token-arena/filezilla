@@ -118,6 +118,16 @@ noinst_HEADERS += \
 		sftp/sftpcontrolsocket.h
 endif
 
+if ENABLE_B2
+libfzclient_private_la_SOURCES += \
+		b2/b2controlsocket.cpp \
+		b2/b2json.cpp
+
+noinst_HEADERS += \
+		b2/b2controlsocket.h \
+		b2/b2json.h
+endif
+
 if ENABLE_S3
 libfzclient_private_la_SOURCES += \
 		s3/s3controlsocket.cpp \

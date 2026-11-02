@@ -11,7 +11,11 @@ if ENABLE_S3
   MAYBE_S3_SELFTEST = s3selftest
 endif
 
-TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST)
+if ENABLE_B2
+  MAYBE_B2_SELFTEST = b2selftest
+endif
+
+TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST)
 check_PROGRAMS = $(TESTS)
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
@@ -24,6 +28,14 @@ s3selftest_SOURCES = \
 
 s3selftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 s3selftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Backblaze B2 protocol logic (JSON parsing).
+b2selftest_SOURCES = \
+	b2selftest.cpp \
+	../src/engine/b2/b2json.cpp
+
+b2selftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+b2selftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 test_SOURCES = \
 	test.cpp \

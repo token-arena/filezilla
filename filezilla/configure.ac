@@ -699,6 +699,17 @@ if test "$buildmain" = "yes"; then
     AC_DEFINE([ENABLE_S3], [1], [Define if building with Amazon S3 support.])
     enable_s3="yes"
   fi
+
+  AC_ARG_ENABLE(b2, AS_HELP_STRING([--enable-b2@<:@=ARG@:>@],[Enable support for Backblaze B2. Default: no]),
+    [
+    ],
+    [
+      enable_b2="no"
+    ])
+  if test "$enable_b2" != "no"; then
+    AC_DEFINE([ENABLE_B2], [1], [Define if building with Backblaze B2 support.])
+    enable_b2="yes"
+  fi
 fi
 
 # Everything translation related
@@ -777,6 +788,7 @@ AM_CONDITIONAL(HAVE_LIBPUGIXML, [test "x$with_pugixml" = "xsystem"])
 AM_CONDITIONAL(HAVE_DBUS, [test "x$with_dbus" = "xyes"])
 AM_CONDITIONAL(ENABLE_STORJ, [test "x$enable_storj" = "xyes"])
 AM_CONDITIONAL(ENABLE_S3, [test "x$enable_s3" = "xyes"])
+AM_CONDITIONAL(ENABLE_B2, [test "x$enable_b2" = "xyes"])
 AM_CONDITIONAL(ENABLE_FTP, [test "x$enable_ftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_SFTP, [test "x$enable_sftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_GUI, [test "x$enable_gui" = "xyes"])

@@ -82,3 +82,12 @@ endif
 ## 6. GPU/其它
 
 暂无。`src/engine/server.cpp` 的协议元数据表上游已包含所有云协议，无需改动。
+
+## 7. Backblaze B2（F2）
+
+- configure.ac：新增 `--enable-b2`（默认 no）→ `AC_DEFINE([ENABLE_B2])`，以及
+  `AM_CONDITIONAL(ENABLE_B2, [test "x$enable_b2" = "xyes"])`
+- `src/engine/Makefile.am`：`if ENABLE_B2` 段（`b2/b2controlsocket.cpp`、`b2/b2json.cpp`）
+- `src/engine/engineprivate.cpp`：`#include "b2/b2controlsocket.h"`（ENABLE_B2 保护）+
+  `switch` 里 `case B2:` → `CB2ControlSocket`
+- `tests/Makefile.am`：`b2selftest` 程序（纯逻辑，只链 libfilezilla）
