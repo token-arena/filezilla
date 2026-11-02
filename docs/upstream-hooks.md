@@ -99,3 +99,10 @@ endif
 - `src/engine/Makefile.am`：`if ENABLE_AZURE_BLOB` 段（`azure/azureblob.cpp`、`azure/azurecontrolsocket.cpp`）
 - `src/engine/engineprivate.cpp`：`#include "azure/azurecontrolsocket.h"` + `case AZURE_BLOB:` → `CAzureBlobControlSocket`
 - `tests/Makefile.am`：`azureselftest` 程序
+## 9. Google Cloud Storage（F4）
+
+- `configure.ac`：新增 `--enable-gcs`（默认 no）→ `AC_DEFINE([ENABLE_GCS])`，
+  `AM_CONDITIONAL(ENABLE_GCS, ...)`
+- `src/engine/Makefile.am`：`if ENABLE_GCS` 段（`gcs/gcsjson.cpp`、`gcs/gcscontrolsocket.cpp`）
+- `src/engine/engineprivate.cpp`：`#include "gcs/gcscontrolsocket.h"` + `case GOOGLE_CLOUD:` → `CGcsControlSocket`
+- `tests/Makefile.am`：`gcsselftest` 程序

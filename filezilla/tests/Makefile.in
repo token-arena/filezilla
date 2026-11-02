@@ -92,8 +92,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	$(am__EXEEXT_4)
-check_PROGRAMS = $(am__EXEEXT_5)
+	$(am__EXEEXT_4) $(am__EXEEXT_5)
+check_PROGRAMS = $(am__EXEEXT_6)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -127,8 +127,9 @@ CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_S3_TRUE@am__EXEEXT_2 = s3selftest$(EXEEXT)
 @ENABLE_B2_TRUE@am__EXEEXT_3 = b2selftest$(EXEEXT)
 @ENABLE_AZURE_BLOB_TRUE@am__EXEEXT_4 = azureselftest$(EXEEXT)
-am__EXEEXT_5 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
-	$(am__EXEEXT_3) $(am__EXEEXT_4)
+@ENABLE_GCS_TRUE@am__EXEEXT_5 = gcsselftest$(EXEEXT)
+am__EXEEXT_6 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
+	$(am__EXEEXT_3) $(am__EXEEXT_4) $(am__EXEEXT_5)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_azureselftest_OBJECTS = azureselftest-azureselftest.$(OBJEXT) \
 	../src/engine/azure/azureselftest-azureblob.$(OBJEXT) \
@@ -150,6 +151,13 @@ b2selftest_LDADD = $(LDADD)
 b2selftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(b2selftest_LDFLAGS) $(LDFLAGS) -o $@
+am_gcsselftest_OBJECTS = gcsselftest-gcsselftest.$(OBJEXT) \
+	../src/engine/gcs/gcsselftest-gcsjson.$(OBJEXT)
+gcsselftest_OBJECTS = $(am_gcsselftest_OBJECTS)
+gcsselftest_LDADD = $(LDADD)
+gcsselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(gcsselftest_LDFLAGS) $(LDFLAGS) -o $@
 am__gui_test_SOURCES_DIST = cmpnatural.cpp gui_test.cpp
 @ENABLE_GUI_TRUE@am_gui_test_OBJECTS = gui_test-cmpnatural.$(OBJEXT) \
 @ENABLE_GUI_TRUE@	gui_test-gui_test.$(OBJEXT)
@@ -192,12 +200,14 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade =  \
 	../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po \
 	../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po \
+	../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po \
 	../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po \
 	../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po \
 	./$(DEPDIR)/azureselftest-azureselftest.Po \
 	./$(DEPDIR)/b2selftest-b2selftest.Po \
+	./$(DEPDIR)/gcsselftest-gcsselftest.Po \
 	./$(DEPDIR)/gui_test-cmpnatural.Po \
 	./$(DEPDIR)/gui_test-gui_test.Po \
 	./$(DEPDIR)/s3selftest-s3selftest.Po \
@@ -224,10 +234,11 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
-	$(gui_test_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
+	$(gcsselftest_SOURCES) $(gui_test_SOURCES) \
+	$(s3selftest_SOURCES) $(test_SOURCES)
 DIST_SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
-	$(am__gui_test_SOURCES_DIST) $(s3selftest_SOURCES) \
-	$(test_SOURCES)
+	$(gcsselftest_SOURCES) $(am__gui_test_SOURCES_DIST) \
+	$(s3selftest_SOURCES) $(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -658,6 +669,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_S3_TRUE@MAYBE_S3_SELFTEST = s3selftest
 @ENABLE_B2_TRUE@MAYBE_B2_SELFTEST = b2selftest
 @ENABLE_AZURE_BLOB_TRUE@MAYBE_AZURE_SELFTEST = azureselftest
+@ENABLE_GCS_TRUE@MAYBE_GCS_SELFTEST = gcsselftest
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.
@@ -686,6 +698,14 @@ azureselftest_SOURCES = \
 
 azureselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 azureselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Google Cloud Storage logic layer.
+gcsselftest_SOURCES = \
+	gcsselftest.cpp \
+	../src/engine/gcs/gcsjson.cpp
+
+gcsselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+gcsselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 test_SOURCES = \
 	test.cpp \
 	dirparsertest.cpp \
@@ -787,6 +807,19 @@ azureselftest$(EXEEXT): $(azureselftest_OBJECTS) $(azureselftest_DEPENDENCIES) $
 b2selftest$(EXEEXT): $(b2selftest_OBJECTS) $(b2selftest_DEPENDENCIES) $(EXTRA_b2selftest_DEPENDENCIES) 
 	@rm -f b2selftest$(EXEEXT)
 	$(AM_V_CXXLD)$(b2selftest_LINK) $(b2selftest_OBJECTS) $(b2selftest_LDADD) $(LIBS)
+../src/engine/gcs/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/gcs
+	@: >>../src/engine/gcs/$(am__dirstamp)
+../src/engine/gcs/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/gcs/$(DEPDIR)
+	@: >>../src/engine/gcs/$(DEPDIR)/$(am__dirstamp)
+../src/engine/gcs/gcsselftest-gcsjson.$(OBJEXT):  \
+	../src/engine/gcs/$(am__dirstamp) \
+	../src/engine/gcs/$(DEPDIR)/$(am__dirstamp)
+
+gcsselftest$(EXEEXT): $(gcsselftest_OBJECTS) $(gcsselftest_DEPENDENCIES) $(EXTRA_gcsselftest_DEPENDENCIES) 
+	@rm -f gcsselftest$(EXEEXT)
+	$(AM_V_CXXLD)$(gcsselftest_LINK) $(gcsselftest_OBJECTS) $(gcsselftest_LDADD) $(LIBS)
 
 gui_test$(EXEEXT): $(gui_test_OBJECTS) $(gui_test_DEPENDENCIES) $(EXTRA_gui_test_DEPENDENCIES) 
 	@rm -f gui_test$(EXEEXT)
@@ -819,6 +852,7 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f ../src/engine/azure/*.$(OBJEXT)
 	-rm -f ../src/engine/b2/*.$(OBJEXT)
+	-rm -f ../src/engine/gcs/*.$(OBJEXT)
 	-rm -f ../src/engine/s3/*.$(OBJEXT)
 	-rm -f ../src/pugixml/*.$(OBJEXT)
 
@@ -827,12 +861,14 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/azureselftest-azureselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/b2selftest-b2selftest.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcsselftest-gcsselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-cmpnatural.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-gui_test.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s3selftest-s3selftest.Po@am__quote@ # am--include-marker
@@ -940,6 +976,34 @@ b2selftest-b2selftest.obj: b2selftest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/b2/b2json.cpp' object='../src/engine/b2/b2selftest-b2json.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(b2selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/b2/b2selftest-b2json.obj `if test -f '../src/engine/b2/b2json.cpp'; then $(CYGPATH_W) '../src/engine/b2/b2json.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/b2/b2json.cpp'; fi`
+
+gcsselftest-gcsselftest.o: gcsselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gcsselftest-gcsselftest.o -MD -MP -MF $(DEPDIR)/gcsselftest-gcsselftest.Tpo -c -o gcsselftest-gcsselftest.o `test -f 'gcsselftest.cpp' || echo '$(srcdir)/'`gcsselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gcsselftest-gcsselftest.Tpo $(DEPDIR)/gcsselftest-gcsselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gcsselftest.cpp' object='gcsselftest-gcsselftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gcsselftest-gcsselftest.o `test -f 'gcsselftest.cpp' || echo '$(srcdir)/'`gcsselftest.cpp
+
+gcsselftest-gcsselftest.obj: gcsselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gcsselftest-gcsselftest.obj -MD -MP -MF $(DEPDIR)/gcsselftest-gcsselftest.Tpo -c -o gcsselftest-gcsselftest.obj `if test -f 'gcsselftest.cpp'; then $(CYGPATH_W) 'gcsselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/gcsselftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gcsselftest-gcsselftest.Tpo $(DEPDIR)/gcsselftest-gcsselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gcsselftest.cpp' object='gcsselftest-gcsselftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gcsselftest-gcsselftest.obj `if test -f 'gcsselftest.cpp'; then $(CYGPATH_W) 'gcsselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/gcsselftest.cpp'; fi`
+
+../src/engine/gcs/gcsselftest-gcsjson.o: ../src/engine/gcs/gcsjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/gcs/gcsselftest-gcsjson.o -MD -MP -MF ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Tpo -c -o ../src/engine/gcs/gcsselftest-gcsjson.o `test -f '../src/engine/gcs/gcsjson.cpp' || echo '$(srcdir)/'`../src/engine/gcs/gcsjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Tpo ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/gcs/gcsjson.cpp' object='../src/engine/gcs/gcsselftest-gcsjson.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/gcs/gcsselftest-gcsjson.o `test -f '../src/engine/gcs/gcsjson.cpp' || echo '$(srcdir)/'`../src/engine/gcs/gcsjson.cpp
+
+../src/engine/gcs/gcsselftest-gcsjson.obj: ../src/engine/gcs/gcsjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/gcs/gcsselftest-gcsjson.obj -MD -MP -MF ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Tpo -c -o ../src/engine/gcs/gcsselftest-gcsjson.obj `if test -f '../src/engine/gcs/gcsjson.cpp'; then $(CYGPATH_W) '../src/engine/gcs/gcsjson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/gcs/gcsjson.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Tpo ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/gcs/gcsjson.cpp' object='../src/engine/gcs/gcsselftest-gcsjson.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/gcs/gcsselftest-gcsjson.obj `if test -f '../src/engine/gcs/gcsjson.cpp'; then $(CYGPATH_W) '../src/engine/gcs/gcsjson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/gcs/gcsjson.cpp'; fi`
 
 gui_test-cmpnatural.o: cmpnatural.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gui_test_CPPFLAGS) $(CPPFLAGS) $(gui_test_CXXFLAGS) $(CXXFLAGS) -MT gui_test-cmpnatural.o -MD -MP -MF $(DEPDIR)/gui_test-cmpnatural.Tpo -c -o gui_test-cmpnatural.o `test -f 'cmpnatural.cpp' || echo '$(srcdir)/'`cmpnatural.cpp
@@ -1340,6 +1404,13 @@ azureselftest.log: azureselftest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+gcsselftest.log: gcsselftest$(EXEEXT)
+	@p='gcsselftest$(EXEEXT)'; \
+	b='gcsselftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1426,6 +1497,8 @@ distclean-generic:
 	-$(am__rm_f) ../src/engine/azure/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/gcs/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/gcs/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/s3/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/s3/$(am__dirstamp)
 	-$(am__rm_f) ../src/pugixml/$(DEPDIR)/$(am__dirstamp)
@@ -1442,12 +1515,14 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 distclean: distclean-am
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
+	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
+	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
 	-rm -f ./$(DEPDIR)/s3selftest-s3selftest.Po
@@ -1502,12 +1577,14 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
+	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
+	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
 	-rm -f ./$(DEPDIR)/s3selftest-s3selftest.Po

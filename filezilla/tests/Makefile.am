@@ -19,7 +19,11 @@ if ENABLE_AZURE_BLOB
   MAYBE_AZURE_SELFTEST = azureselftest
 endif
 
-TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST)
+if ENABLE_GCS
+  MAYBE_GCS_SELFTEST = gcsselftest
+endif
+
+TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST)
 check_PROGRAMS = $(TESTS)
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
@@ -49,6 +53,14 @@ azureselftest_SOURCES = \
 
 azureselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 azureselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Google Cloud Storage logic layer.
+gcsselftest_SOURCES = \
+	gcsselftest.cpp \
+	../src/engine/gcs/gcsjson.cpp
+
+gcsselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+gcsselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 test_SOURCES = \
 	test.cpp \

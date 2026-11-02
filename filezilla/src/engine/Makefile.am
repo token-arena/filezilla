@@ -128,6 +128,16 @@ noinst_HEADERS += \
 		azure/azurecontrolsocket.h
 endif
 
+if ENABLE_GCS
+libfzclient_private_la_SOURCES += \
+		gcs/gcscontrolsocket.cpp \
+		gcs/gcsjson.cpp
+
+noinst_HEADERS += \
+		gcs/gcscontrolsocket.h \
+		gcs/gcsjson.h
+endif
+
 if ENABLE_B2
 libfzclient_private_la_SOURCES += \
 		b2/b2controlsocket.cpp \

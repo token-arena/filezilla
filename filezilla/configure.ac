@@ -721,6 +721,17 @@ if test "$buildmain" = "yes"; then
     AC_DEFINE([ENABLE_AZURE_BLOB], [1], [Define if building with Azure Blob Storage support.])
     enable_azureblob="yes"
   fi
+
+  AC_ARG_ENABLE(gcs, AS_HELP_STRING([--enable-gcs@<:@=ARG@:>@],[Enable support for Google Cloud Storage. Default: no]),
+    [
+    ],
+    [
+      enable_gcs="no"
+    ])
+  if test "$enable_gcs" != "no"; then
+    AC_DEFINE([ENABLE_GCS], [1], [Define if building with Google Cloud Storage support.])
+    enable_gcs="yes"
+  fi
 fi
 
 # Everything translation related
@@ -801,6 +812,7 @@ AM_CONDITIONAL(ENABLE_STORJ, [test "x$enable_storj" = "xyes"])
 AM_CONDITIONAL(ENABLE_S3, [test "x$enable_s3" = "xyes"])
 AM_CONDITIONAL(ENABLE_B2, [test "x$enable_b2" = "xyes"])
 AM_CONDITIONAL(ENABLE_AZURE_BLOB, [test "x$enable_azureblob" = "xyes"])
+AM_CONDITIONAL(ENABLE_GCS, [test "x$enable_gcs" = "xyes"])
 AM_CONDITIONAL(ENABLE_FTP, [test "x$enable_ftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_SFTP, [test "x$enable_sftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_GUI, [test "x$enable_gui" = "xyes"])
