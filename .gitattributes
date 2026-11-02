@@ -1,0 +1,4 @@
+# 源码树按上游原样保存（LF）。Windows 上默认 core.autocrlf=true 会把 checkout
+# 出来的文本文件转成 CRLF，那样 MSYS2 里的 configure / autotools 脚本会因 \r 报错，
+# .patch 也无法直接 patch -p1。这里统一关闭换行转换，保证字节一致。
+* -text

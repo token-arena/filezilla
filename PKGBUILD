@@ -1,10 +1,22 @@
 # Maintainer: Andrew Sun <adsun701@gmail.com>
+#
+# 本仓库变体（二次开发用）：
+#   * 源码树直接入库在 ./filezilla/（目录名不带版本号，便于长期迭代）
+#   * 上游 MSYS2 的两个补丁已应用在 ./filezilla/ 里，原文件留档在 ./patches/
+#   * PKGBUILD 不再从网上下载 tar.xz，也不再重复打补丁；prepare() 为空
+#   * 构建产物仍由 makepkg 管理（./build-${MSYSTEM}/、./src/、./pkg/）
+#
+# 日常流程：
+#   改 ./filezilla/ 下的代码 -> 在 MSYS2 UCRT64 终端执行
+#     MINGW_ARCH=ucrt64 makepkg-mingw -s --noconfirm --nocheck
+#   生成的包在仓库根目录（.pkg.tar.zst）。
+#   改了 configure.ac / Makefile.am 时先手动 `cd filezilla && autoreconf -fiv`。
 
 _realname=filezilla
 _wx_basever=3.2
 pkgbase="mingw-w64-${_realname}"
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-# update together with libfilezilla and fzssh
+# 与 ./filezilla/configure.ac 中的 FILEZILLA_VERSION 保持一致
 pkgver=3.71.1
 pkgrel=1
 pkgdesc="Fast and reliable FTP, FTPS and SFTP client (mingw-w64)"
@@ -33,36 +45,23 @@ makedepends=(
   "${MINGW_PACKAGE_PREFIX}-autotools"
   "${MINGW_PACKAGE_PREFIX}-wxwidgets${_wx_basever}-msw"
 )
-# Upstream download link became (purposely) unstable
-# See https://trac.filezilla-project.org/ticket/13186
-#source=("https://download.filezilla-project.org/client/${_realname}_${pkgver}_src.tar.xz"
-source=(
-  "https://sources.archlinux.org/other/${_realname}/${_realname}-${pkgver}.tar.xz"
-  "0002-fix-mingw-compiler-detection.patch"
-  "0003-fix-building-po-files.patch"
-)
-sha256sums=('3df9b9b3e5b2c37dc6d9ecb883554aba140a02ec47c3d6b52333bf1733af4da4'
-            'b19da8c59e9010cd08034090a64348d30e2e9d14a8cefa87da994825197f58ba'
-            '5d6a473c76366b70e6f5a6581ba86ebf0c6c777d0e0e5385fc0a35ce393b2538')
 
-_apply_patch_with_msg() {
-  for _patch in "$@"; do
-    msg2 "Applying ${_patch}"
-    patch -Np1 -i "${srcdir}/${_patch}"
-  done
-}
+# 源码树来自仓库本身，无需下载
+source=()
+sha256sums=()
+
+# 仓库内的源码树（makepkg 把 build()/package() 的 cwd 设为 $srcdir，故用绝对路径）
+_srctree="${startdir}/${_realname}"
 
 prepare() {
-  cd "${_realname}-${pkgver}"
-
-  _apply_patch_with_msg \
-    0002-fix-mingw-compiler-detection.patch \
-    0003-fix-building-po-files.patch
-
-  autoreconf -fiv
+  # 两个 MSYS2 补丁与 autoreconf 生成物（configure、Makefile.in 等）均已入库，
+  # 这里无需任何操作。若修改了 configure.ac / Makefile.am，请自行重新生成：
+  #   ( cd "${_srctree}" && autoreconf -fiv )
+  :
 }
 
 build() {
+  cd "${startdir}"
   mkdir -p "build-${MSYSTEM}" && cd "build-${MSYSTEM}"
 
   if [[ ${MINGW_PACKAGE_PREFIX} != *-clang-* ]]; then
@@ -70,7 +69,7 @@ build() {
     CXXFLAGS+=" -Wno-incompatible-pointer-types"
   fi
 
-  "../${_realname}-${pkgver}/configure" \
+  "${_srctree}/configure" \
     --prefix="${MINGW_PREFIX}" \
     --build="${MINGW_CHOST}" \
     --host="${MINGW_CHOST}" \
@@ -84,17 +83,16 @@ build() {
 }
 
 check() {
-  cd "build-${MSYSTEM}"
+  cd "${startdir}/build-${MSYSTEM}"
 
   # LANG needed to fix string_test::test_conversion2
   LANG=en_US.UTF-8 make check || true
 }
 
 package() {
-  cd "build-${MSYSTEM}"
+  cd "${startdir}/build-${MSYSTEM}"
 
   make install DESTDIR="${pkgdir}"
 
-  cd "${srcdir}/${_realname}-${pkgver}"
-  install -Dm644 COPYING -t "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}"
+  install -Dm644 "${_srctree}/COPYING" -t "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}"
 }
