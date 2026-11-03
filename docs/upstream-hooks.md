@@ -156,3 +156,13 @@ endif
 - `src/engine/engineprivate.cpp`：`#include "oss/osscontrolsocket.h"` + `case ALIBABA_OSS:` → `COssControlSocket`
 - `tests/Makefile.am`：`ossselftest` 程序
 - `configure.ac`：`--enable-oss` → `ENABLE_OSS` + `AM_CONDITIONAL`
+## 15. 腾讯云 COS
+
+- `src/include/server.h`：`ServerProtocol` 新增 `TENCENT_COS`（`ALIBABA_OSS` 之后、`MAX_VALUE` 之前，
+  `MAX_VALUE` 改为 `TENCENT_COS`）
+- `src/engine/server.cpp`：描述表新增一行（前缀 `cos`、443、显示名
+  `Tencent Cloud COS - Cloud Object Storage`）、`defaultProtocols` 的 `#if ENABLE_COS` 块、
+  登录方式（normal/ask）、参数表并入 OSS 的 case（复用 `sts_token`）
+- `src/engine/engineprivate.cpp`：`#include "cos/coscontrolsocket.h"` + `case TENCENT_COS:` → `CCosControlSocket`
+- `tests/Makefile.am`：`cosselftest` 程序
+- `configure.ac`：`--enable-cos` → `ENABLE_COS` + `AM_CONDITIONAL`

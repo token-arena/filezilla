@@ -662,6 +662,8 @@ ENABLE_SFTP_FALSE
 ENABLE_SFTP_TRUE
 ENABLE_FTP_FALSE
 ENABLE_FTP_TRUE
+ENABLE_COS_FALSE
+ENABLE_COS_TRUE
 ENABLE_OSS_FALSE
 ENABLE_OSS_TRUE
 ENABLE_DROPBOX_FALSE
@@ -939,6 +941,7 @@ enable_gdrive
 enable_onedrive
 enable_dropbox
 enable_oss
+enable_cos
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1647,6 +1650,7 @@ Optional Features:
   --enable-onedrive[=ARG] Enable support for Microsoft OneDrive. Default: no
   --enable-dropbox[=ARG]  Enable support for Dropbox. Default: no
   --enable-oss[=ARG]      Enable support for Alibaba Cloud OSS. Default: no
+  --enable-cos[=ARG]      Enable support for Tencent Cloud COS. Default: no
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -27058,6 +27062,25 @@ printf "%s\n" "#define ENABLE_OSS 1" >>confdefs.h
 
     enable_oss="yes"
   fi
+
+  # Check whether --enable-cos was given.
+if test ${enable_cos+y}
+then :
+  enableval=$enable_cos;
+
+else case e in #(
+  e)
+      enable_cos="no"
+     ;;
+esac
+fi
+
+  if test "$enable_cos" != "no"; then
+
+printf "%s\n" "#define ENABLE_COS 1" >>confdefs.h
+
+    enable_cos="yes"
+  fi
 fi
 
 # Everything translation related
@@ -27476,6 +27499,14 @@ else
   ENABLE_OSS_FALSE=
 fi
 
+ if test "x$enable_cos" = "xyes"; then
+  ENABLE_COS_TRUE=
+  ENABLE_COS_FALSE='#'
+else
+  ENABLE_COS_TRUE='#'
+  ENABLE_COS_FALSE=
+fi
+
  if test "x$enable_ftp" = "xyes"; then
   ENABLE_FTP_TRUE=
   ENABLE_FTP_FALSE='#'
@@ -27742,6 +27773,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_OSS_TRUE}" && test -z "${ENABLE_OSS_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_OSS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ENABLE_COS_TRUE}" && test -z "${ENABLE_COS_FALSE}"; then
+  as_fn_error $? "conditional \"ENABLE_COS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_FTP_TRUE}" && test -z "${ENABLE_FTP_FALSE}"; then

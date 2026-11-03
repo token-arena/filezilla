@@ -61,7 +61,9 @@ enum ServerProtocol
 
 	ALIBABA_OSS,
 
-	MAX_VALUE = ALIBABA_OSS
+	TENCENT_COS,
+
+	MAX_VALUE = TENCENT_COS
 };
 
 enum ServerType : unsigned

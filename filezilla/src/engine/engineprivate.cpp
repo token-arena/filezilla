@@ -26,6 +26,9 @@
 #if ENABLE_B2
 #include "b2/b2controlsocket.h"
 #endif
+#if ENABLE_COS
+#include "cos/coscontrolsocket.h"
+#endif
 #if ENABLE_OSS
 #include "oss/osscontrolsocket.h"
 #endif
@@ -588,6 +591,11 @@ int CFileZillaEnginePrivate::ContinueConnect()
 #if ENABLE_B2
 	case B2:
 		controlSocket_ = std::make_unique<CB2ControlSocket>(*this);
+		break;
+#endif
+#if ENABLE_COS
+	case TENCENT_COS:
+		controlSocket_ = std::make_unique<CCosControlSocket>(*this);
 		break;
 #endif
 #if ENABLE_OSS

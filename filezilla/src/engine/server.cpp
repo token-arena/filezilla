@@ -46,6 +46,7 @@ static const t_protocolInfo protocolInfos[] = {
 	{ MINIO,           L"minio",     true,  true,  9000, false, "MinIO - S3 compatible object storage",                                    L"" },
 	{ S3_CN,           L"s3-cn",     true,  true,   443, false, "S3 - Amazon S3 China (Beijing and Ningxia)",                              L"" },
 	{ ALIBABA_OSS,     L"oss",       true,  true,   443, false, "Alibaba Cloud OSS - Object Storage Service",                               L"" },
+	{ TENCENT_COS,     L"cos",       true,  true,   443, false, "Tencent Cloud COS - Cloud Object Storage",                                L"" },
 	{ UNKNOWN,         L"",          false, false,   21, false, "",                                                                        L"" }
 };
 
@@ -72,6 +73,9 @@ static std::vector<ServerProtocol> const defaultProtocols = {
 #endif
 #if ENABLE_OSS
 	ALIBABA_OSS,
+#endif
+#if ENABLE_COS
+	TENCENT_COS,
 #endif
 };
 
@@ -910,6 +914,7 @@ std::vector<LogonType> GetSupportedLogonTypes(ServerProtocol protocol)
 	case S3_CN:
 		return {LogonType::anonymous, LogonType::normal, LogonType::ask, LogonType::profile};
 	case ALIBABA_OSS:
+	case TENCENT_COS:
 		return {LogonType::normal, LogonType::ask};
 	case S3_SSO:
 		return {LogonType::interactive, LogonType::profile};
@@ -1021,6 +1026,7 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 			return ret;
 		}
 	case ALIBABA_OSS:
+	case TENCENT_COS:
 		{
 			static std::vector<ParameterTraits> const ret = []() {
 				std::vector<ParameterTraits> ret;

@@ -93,8 +93,9 @@ build_triplet = @build@
 host_triplet = @host@
 TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
-	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9)
-check_PROGRAMS = $(am__EXEEXT_10)
+	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9) \
+	$(am__EXEEXT_10)
+check_PROGRAMS = $(am__EXEEXT_11)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -133,10 +134,11 @@ CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_ONEDRIVE_TRUE@am__EXEEXT_7 = graphselftest$(EXEEXT)
 @ENABLE_DROPBOX_TRUE@am__EXEEXT_8 = dropboxselftest$(EXEEXT)
 @ENABLE_OSS_TRUE@am__EXEEXT_9 = ossselftest$(EXEEXT)
-am__EXEEXT_10 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
+@ENABLE_COS_TRUE@am__EXEEXT_10 = cosselftest$(EXEEXT)
+am__EXEEXT_11 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
 	$(am__EXEEXT_3) $(am__EXEEXT_4) $(am__EXEEXT_5) \
 	$(am__EXEEXT_6) $(am__EXEEXT_7) $(am__EXEEXT_8) \
-	$(am__EXEEXT_9)
+	$(am__EXEEXT_9) $(am__EXEEXT_10)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_azureselftest_OBJECTS = azureselftest-azureselftest.$(OBJEXT) \
 	../src/engine/azure/azureselftest-azureblob.$(OBJEXT) \
@@ -158,6 +160,14 @@ b2selftest_LDADD = $(LDADD)
 b2selftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(b2selftest_LDFLAGS) $(LDFLAGS) -o $@
+am_cosselftest_OBJECTS = cosselftest-cosselftest.$(OBJEXT) \
+	../src/engine/cos/cosselftest-cossign.$(OBJEXT) \
+	../src/pugixml/cosselftest-pugixml.$(OBJEXT)
+cosselftest_OBJECTS = $(am_cosselftest_OBJECTS)
+cosselftest_LDADD = $(LDADD)
+cosselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(cosselftest_LDFLAGS) $(LDFLAGS) -o $@
 am_driveselftest_OBJECTS = driveselftest-driveselftest.$(OBJEXT) \
 	../src/engine/gdrive/driveselftest-drivejson.$(OBJEXT)
 driveselftest_OBJECTS = $(am_driveselftest_OBJECTS)
@@ -240,6 +250,7 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade =  \
 	../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po \
 	../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po \
+	../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po \
 	../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po \
 	../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po \
 	../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po \
@@ -248,10 +259,12 @@ am__depfiles_remade =  \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po \
 	../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po \
+	../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po \
 	../src/pugixml/$(DEPDIR)/ossselftest-pugixml.Po \
 	../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po \
 	./$(DEPDIR)/azureselftest-azureselftest.Po \
 	./$(DEPDIR)/b2selftest-b2selftest.Po \
+	./$(DEPDIR)/cosselftest-cosselftest.Po \
 	./$(DEPDIR)/driveselftest-driveselftest.Po \
 	./$(DEPDIR)/dropboxselftest-dropboxselftest.Po \
 	./$(DEPDIR)/gcsselftest-gcsselftest.Po \
@@ -283,15 +296,15 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
-	$(driveselftest_SOURCES) $(dropboxselftest_SOURCES) \
-	$(gcsselftest_SOURCES) $(graphselftest_SOURCES) \
-	$(gui_test_SOURCES) $(ossselftest_SOURCES) \
-	$(s3selftest_SOURCES) $(test_SOURCES)
+	$(cosselftest_SOURCES) $(driveselftest_SOURCES) \
+	$(dropboxselftest_SOURCES) $(gcsselftest_SOURCES) \
+	$(graphselftest_SOURCES) $(gui_test_SOURCES) \
+	$(ossselftest_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
 DIST_SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
-	$(driveselftest_SOURCES) $(dropboxselftest_SOURCES) \
-	$(gcsselftest_SOURCES) $(graphselftest_SOURCES) \
-	$(am__gui_test_SOURCES_DIST) $(ossselftest_SOURCES) \
-	$(s3selftest_SOURCES) $(test_SOURCES)
+	$(cosselftest_SOURCES) $(driveselftest_SOURCES) \
+	$(dropboxselftest_SOURCES) $(gcsselftest_SOURCES) \
+	$(graphselftest_SOURCES) $(am__gui_test_SOURCES_DIST) \
+	$(ossselftest_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -727,6 +740,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_ONEDRIVE_TRUE@MAYBE_GRAPH_SELFTEST = graphselftest
 @ENABLE_DROPBOX_TRUE@MAYBE_DROPBOX_SELFTEST = dropboxselftest
 @ENABLE_OSS_TRUE@MAYBE_OSS_SELFTEST = ossselftest
+@ENABLE_COS_TRUE@MAYBE_COS_SELFTEST = cosselftest
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.
@@ -796,6 +810,15 @@ ossselftest_SOURCES = \
 
 ossselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 ossselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Tencent Cloud COS logic layer.
+cosselftest_SOURCES = \
+	cosselftest.cpp \
+	../src/engine/cos/cossign.cpp \
+	../src/pugixml/pugixml.cpp
+
+cosselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+cosselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 test_SOURCES = \
 	test.cpp \
 	dirparsertest.cpp \
@@ -897,6 +920,22 @@ azureselftest$(EXEEXT): $(azureselftest_OBJECTS) $(azureselftest_DEPENDENCIES) $
 b2selftest$(EXEEXT): $(b2selftest_OBJECTS) $(b2selftest_DEPENDENCIES) $(EXTRA_b2selftest_DEPENDENCIES) 
 	@rm -f b2selftest$(EXEEXT)
 	$(AM_V_CXXLD)$(b2selftest_LINK) $(b2selftest_OBJECTS) $(b2selftest_LDADD) $(LIBS)
+../src/engine/cos/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/cos
+	@: >>../src/engine/cos/$(am__dirstamp)
+../src/engine/cos/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/cos/$(DEPDIR)
+	@: >>../src/engine/cos/$(DEPDIR)/$(am__dirstamp)
+../src/engine/cos/cosselftest-cossign.$(OBJEXT):  \
+	../src/engine/cos/$(am__dirstamp) \
+	../src/engine/cos/$(DEPDIR)/$(am__dirstamp)
+../src/pugixml/cosselftest-pugixml.$(OBJEXT):  \
+	../src/pugixml/$(am__dirstamp) \
+	../src/pugixml/$(DEPDIR)/$(am__dirstamp)
+
+cosselftest$(EXEEXT): $(cosselftest_OBJECTS) $(cosselftest_DEPENDENCIES) $(EXTRA_cosselftest_DEPENDENCIES) 
+	@rm -f cosselftest$(EXEEXT)
+	$(AM_V_CXXLD)$(cosselftest_LINK) $(cosselftest_OBJECTS) $(cosselftest_LDADD) $(LIBS)
 ../src/engine/gdrive/$(am__dirstamp):
 	@$(MKDIR_P) ../src/engine/gdrive
 	@: >>../src/engine/gdrive/$(am__dirstamp)
@@ -997,6 +1036,7 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f ../src/engine/azure/*.$(OBJEXT)
 	-rm -f ../src/engine/b2/*.$(OBJEXT)
+	-rm -f ../src/engine/cos/*.$(OBJEXT)
 	-rm -f ../src/engine/dropbox/*.$(OBJEXT)
 	-rm -f ../src/engine/gcs/*.$(OBJEXT)
 	-rm -f ../src/engine/gdrive/*.$(OBJEXT)
@@ -1010,6 +1050,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po@am__quote@ # am--include-marker
@@ -1018,10 +1059,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/ossselftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/azureselftest-azureselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/b2selftest-b2selftest.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cosselftest-cosselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/driveselftest-driveselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dropboxselftest-dropboxselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcsselftest-gcsselftest.Po@am__quote@ # am--include-marker
@@ -1134,6 +1177,48 @@ b2selftest-b2selftest.obj: b2selftest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/b2/b2json.cpp' object='../src/engine/b2/b2selftest-b2json.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(b2selftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/b2/b2selftest-b2json.obj `if test -f '../src/engine/b2/b2json.cpp'; then $(CYGPATH_W) '../src/engine/b2/b2json.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/b2/b2json.cpp'; fi`
+
+cosselftest-cosselftest.o: cosselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT cosselftest-cosselftest.o -MD -MP -MF $(DEPDIR)/cosselftest-cosselftest.Tpo -c -o cosselftest-cosselftest.o `test -f 'cosselftest.cpp' || echo '$(srcdir)/'`cosselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cosselftest-cosselftest.Tpo $(DEPDIR)/cosselftest-cosselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='cosselftest.cpp' object='cosselftest-cosselftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o cosselftest-cosselftest.o `test -f 'cosselftest.cpp' || echo '$(srcdir)/'`cosselftest.cpp
+
+cosselftest-cosselftest.obj: cosselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT cosselftest-cosselftest.obj -MD -MP -MF $(DEPDIR)/cosselftest-cosselftest.Tpo -c -o cosselftest-cosselftest.obj `if test -f 'cosselftest.cpp'; then $(CYGPATH_W) 'cosselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/cosselftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cosselftest-cosselftest.Tpo $(DEPDIR)/cosselftest-cosselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='cosselftest.cpp' object='cosselftest-cosselftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o cosselftest-cosselftest.obj `if test -f 'cosselftest.cpp'; then $(CYGPATH_W) 'cosselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/cosselftest.cpp'; fi`
+
+../src/engine/cos/cosselftest-cossign.o: ../src/engine/cos/cossign.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/cos/cosselftest-cossign.o -MD -MP -MF ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Tpo -c -o ../src/engine/cos/cosselftest-cossign.o `test -f '../src/engine/cos/cossign.cpp' || echo '$(srcdir)/'`../src/engine/cos/cossign.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Tpo ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/cos/cossign.cpp' object='../src/engine/cos/cosselftest-cossign.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/cos/cosselftest-cossign.o `test -f '../src/engine/cos/cossign.cpp' || echo '$(srcdir)/'`../src/engine/cos/cossign.cpp
+
+../src/engine/cos/cosselftest-cossign.obj: ../src/engine/cos/cossign.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/cos/cosselftest-cossign.obj -MD -MP -MF ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Tpo -c -o ../src/engine/cos/cosselftest-cossign.obj `if test -f '../src/engine/cos/cossign.cpp'; then $(CYGPATH_W) '../src/engine/cos/cossign.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/cos/cossign.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Tpo ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/cos/cossign.cpp' object='../src/engine/cos/cosselftest-cossign.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/cos/cosselftest-cossign.obj `if test -f '../src/engine/cos/cossign.cpp'; then $(CYGPATH_W) '../src/engine/cos/cossign.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/cos/cossign.cpp'; fi`
+
+../src/pugixml/cosselftest-pugixml.o: ../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/pugixml/cosselftest-pugixml.o -MD -MP -MF ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Tpo -c -o ../src/pugixml/cosselftest-pugixml.o `test -f '../src/pugixml/pugixml.cpp' || echo '$(srcdir)/'`../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Tpo ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/pugixml/pugixml.cpp' object='../src/pugixml/cosselftest-pugixml.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/pugixml/cosselftest-pugixml.o `test -f '../src/pugixml/pugixml.cpp' || echo '$(srcdir)/'`../src/pugixml/pugixml.cpp
+
+../src/pugixml/cosselftest-pugixml.obj: ../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/pugixml/cosselftest-pugixml.obj -MD -MP -MF ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Tpo -c -o ../src/pugixml/cosselftest-pugixml.obj `if test -f '../src/pugixml/pugixml.cpp'; then $(CYGPATH_W) '../src/pugixml/pugixml.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/pugixml/pugixml.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Tpo ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/pugixml/pugixml.cpp' object='../src/pugixml/cosselftest-pugixml.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cosselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/pugixml/cosselftest-pugixml.obj `if test -f '../src/pugixml/pugixml.cpp'; then $(CYGPATH_W) '../src/pugixml/pugixml.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/pugixml/pugixml.cpp'; fi`
 
 driveselftest-driveselftest.o: driveselftest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(driveselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT driveselftest-driveselftest.o -MD -MP -MF $(DEPDIR)/driveselftest-driveselftest.Tpo -c -o driveselftest-driveselftest.o `test -f 'driveselftest.cpp' || echo '$(srcdir)/'`driveselftest.cpp
@@ -1723,6 +1808,13 @@ ossselftest.log: ossselftest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+cosselftest.log: cosselftest$(EXEEXT)
+	@p='cosselftest$(EXEEXT)'; \
+	b='cosselftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1809,6 +1901,8 @@ distclean-generic:
 	-$(am__rm_f) ../src/engine/azure/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/cos/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/cos/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/dropbox/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/dropbox/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/gcs/$(DEPDIR)/$(am__dirstamp)
@@ -1835,6 +1929,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 distclean: distclean-am
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
+	-rm -f ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po
 	-rm -f ../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
@@ -1843,10 +1938,12 @@ distclean: distclean-am
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
+	-rm -f ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/ossselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
+	-rm -f ./$(DEPDIR)/cosselftest-cosselftest.Po
 	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/dropboxselftest-dropboxselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
@@ -1906,6 +2003,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
+	-rm -f ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po
 	-rm -f ../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
@@ -1914,10 +2012,12 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
+	-rm -f ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/ossselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
 	-rm -f ./$(DEPDIR)/b2selftest-b2selftest.Po
+	-rm -f ./$(DEPDIR)/cosselftest-cosselftest.Po
 	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/dropboxselftest-dropboxselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po

@@ -128,6 +128,16 @@ noinst_HEADERS += \
 		azure/azurecontrolsocket.h
 endif
 
+if ENABLE_COS
+libfzclient_private_la_SOURCES += \
+		cos/coscontrolsocket.cpp \
+		cos/cossign.cpp
+
+noinst_HEADERS += \
+		cos/coscontrolsocket.h \
+		cos/cossign.h
+endif
+
 if ENABLE_OSS
 libfzclient_private_la_SOURCES += \
 		oss/osscontrolsocket.cpp \

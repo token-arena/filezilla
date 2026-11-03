@@ -39,7 +39,11 @@ if ENABLE_OSS
   MAYBE_OSS_SELFTEST = ossselftest
 endif
 
-TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST) $(MAYBE_GRAPH_SELFTEST) $(MAYBE_DROPBOX_SELFTEST) $(MAYBE_OSS_SELFTEST)
+if ENABLE_COS
+  MAYBE_COS_SELFTEST = cosselftest
+endif
+
+TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST) $(MAYBE_GRAPH_SELFTEST) $(MAYBE_DROPBOX_SELFTEST) $(MAYBE_OSS_SELFTEST) $(MAYBE_COS_SELFTEST)
 check_PROGRAMS = $(TESTS)
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
@@ -110,6 +114,15 @@ ossselftest_SOURCES = \
 
 ossselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 ossselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Tencent Cloud COS logic layer.
+cosselftest_SOURCES = \
+	cosselftest.cpp \
+	../src/engine/cos/cossign.cpp \
+	../src/pugixml/pugixml.cpp
+
+cosselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+cosselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 test_SOURCES = \
 	test.cpp \

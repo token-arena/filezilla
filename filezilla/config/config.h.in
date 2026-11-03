@@ -14,6 +14,9 @@
 /* Define if building with Backblaze B2 support. */
 #undef ENABLE_B2
 
+/* Define if building with Tencent Cloud COS support. */
+#undef ENABLE_COS
+
 /* Define if building with Dropbox support. */
 #undef ENABLE_DROPBOX
 
