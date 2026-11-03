@@ -762,6 +762,15 @@ void COssControlSocket::Connect(CServer const& server, Credentials const& creden
 	effective_version_ = version_;
 	fallback_done_ = false;
 
+	// V4 needs a region for the credential scope. When it cannot be derived (for
+	// example with a CNAME endpoint and no "region" parameter) fall back to V1,
+	// which does not need one.
+	if (version_ != oss::signature_version::v1 && region_.empty()) {
+		log(logmsg::status, L"Could not determine the OSS region from the endpoint, using signature version 1");
+		effective_version_ = oss::signature_version::v1;
+		version_ = oss::signature_version::v1;
+	}
+
 	Push(std::make_unique<COssConnectOpData>(*this));
 }
 
