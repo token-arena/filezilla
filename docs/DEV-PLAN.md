@@ -37,7 +37,7 @@
 | F5 | **Google Drive** | `GOOGLE_DRIVE` | REST+JSON | OAuth2 + PKCE | 文件/文件夹 ID 语义（无真实路径） |
 | F6 | **Microsoft OneDrive** | `ONEDRIVE` | REST+JSON | OAuth2 + PKCE | Graph API、分片上传会话 |
 | F7 | **Dropbox** | `DROPBOX` | REST+JSON | OAuth2 + PKCE | 游标分页、批量接口 |
-| F8 | **Box** | `BOX` | REST+JSON | OAuth2 + PKCE | 文件夹 ID 语义、分片上传 |
+| F8 | ~~Box~~ | `BOX` | — | — | **已按要求移除**（源码与钩子已删除） |
 
 > 每完成一个就提交一次；测试不过最多修 3 次，仍不过则按「搁置」记录
 > （写入 `docs/PARKED.md`）并推进下一个。

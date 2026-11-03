@@ -662,8 +662,6 @@ ENABLE_SFTP_FALSE
 ENABLE_SFTP_TRUE
 ENABLE_FTP_FALSE
 ENABLE_FTP_TRUE
-ENABLE_BOX_FALSE
-ENABLE_BOX_TRUE
 ENABLE_DROPBOX_FALSE
 ENABLE_DROPBOX_TRUE
 ENABLE_ONEDRIVE_FALSE
@@ -938,7 +936,6 @@ enable_gcs
 enable_gdrive
 enable_onedrive
 enable_dropbox
-enable_box
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1646,7 +1643,6 @@ Optional Features:
   --enable-gdrive[=ARG]   Enable support for Google Drive. Default: no
   --enable-onedrive[=ARG] Enable support for Microsoft OneDrive. Default: no
   --enable-dropbox[=ARG]  Enable support for Dropbox. Default: no
-  --enable-box[=ARG]      Enable support for Box. Default: no
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -27039,25 +27035,6 @@ printf "%s\n" "#define ENABLE_DROPBOX 1" >>confdefs.h
 
     enable_dropbox="yes"
   fi
-
-  # Check whether --enable-box was given.
-if test ${enable_box+y}
-then :
-  enableval=$enable_box;
-
-else case e in #(
-  e)
-      enable_box="no"
-     ;;
-esac
-fi
-
-  if test "$enable_box" != "no"; then
-
-printf "%s\n" "#define ENABLE_BOX 1" >>confdefs.h
-
-    enable_box="yes"
-  fi
 fi
 
 # Everything translation related
@@ -27468,14 +27445,6 @@ else
   ENABLE_DROPBOX_FALSE=
 fi
 
- if test "x$enable_box" = "xyes"; then
-  ENABLE_BOX_TRUE=
-  ENABLE_BOX_FALSE='#'
-else
-  ENABLE_BOX_TRUE='#'
-  ENABLE_BOX_FALSE=
-fi
-
  if test "x$enable_ftp" = "xyes"; then
   ENABLE_FTP_TRUE=
   ENABLE_FTP_FALSE='#'
@@ -27738,10 +27707,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_DROPBOX_TRUE}" && test -z "${ENABLE_DROPBOX_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_DROPBOX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${ENABLE_BOX_TRUE}" && test -z "${ENABLE_BOX_FALSE}"; then
-  as_fn_error $? "conditional \"ENABLE_BOX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_FTP_TRUE}" && test -z "${ENABLE_FTP_FALSE}"; then

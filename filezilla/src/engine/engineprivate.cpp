@@ -11,9 +11,6 @@
 #if ENABLE_AZURE_BLOB
 #include "azure/azurecontrolsocket.h"
 #endif
-#if ENABLE_BOX
-#include "box/boxcontrolsocket.h"
-#endif
 #if ENABLE_DROPBOX
 #include "dropbox/dropboxcontrolsocket.h"
 #endif
@@ -563,11 +560,6 @@ int CFileZillaEnginePrivate::ContinueConnect()
 #if ENABLE_AZURE_BLOB
 	case AZURE_BLOB:
 		controlSocket_ = std::make_unique<CAzureBlobControlSocket>(*this);
-		break;
-#endif
-#if ENABLE_BOX
-	case BOX:
-		controlSocket_ = std::make_unique<CBoxControlSocket>(*this);
 		break;
 #endif
 #if ENABLE_DROPBOX

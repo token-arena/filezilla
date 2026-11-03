@@ -14,9 +14,6 @@
 /* Define if building with Backblaze B2 support. */
 #undef ENABLE_B2
 
-/* Define if building with Box support. */
-#undef ENABLE_BOX
-
 /* Define if building with Dropbox support. */
 #undef ENABLE_DROPBOX
 

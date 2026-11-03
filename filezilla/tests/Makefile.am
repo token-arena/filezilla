@@ -35,11 +35,7 @@ if ENABLE_DROPBOX
   MAYBE_DROPBOX_SELFTEST = dropboxselftest
 endif
 
-if ENABLE_BOX
-  MAYBE_BOX_SELFTEST = boxselftest
-endif
-
-TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST) $(MAYBE_GRAPH_SELFTEST) $(MAYBE_DROPBOX_SELFTEST) $(MAYBE_BOX_SELFTEST)
+TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST) $(MAYBE_GRAPH_SELFTEST) $(MAYBE_DROPBOX_SELFTEST)
 check_PROGRAMS = $(TESTS)
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
@@ -101,14 +97,6 @@ dropboxselftest_SOURCES = \
 
 dropboxselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 dropboxselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
-
-# Standalone self-test for the Box logic layer.
-boxselftest_SOURCES = \
-	boxselftest.cpp \
-	../src/engine/box/boxjson.cpp
-
-boxselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
-boxselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 test_SOURCES = \
 	test.cpp \
