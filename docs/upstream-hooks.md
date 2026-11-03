@@ -127,3 +127,19 @@ endif
 - `src/engine/Makefile.am`：`if ENABLE_DROPBOX` 段（`dropbox/dropboxjson.cpp`、`dropbox/dropboxcontrolsocket.cpp`）
 - `src/engine/engineprivate.cpp`：`#include "dropbox/dropboxcontrolsocket.h"` + `case DROPBOX:` → `CDropboxControlSocket`
 - `tests/Makefile.am`：`dropboxselftest` 程序
+## 13. S3 家族扩展：Cloudflare R2 / MinIO / AWS 中国区
+
+- `src/include/server.h`：`ServerProtocol` 新增 `MINIO`、`S3_CN`（插在 `CLOUDFLARE_R2` 之后、
+  `MAX_VALUE` 之前，并把 `MAX_VALUE` 改为 `S3_CN`；**不改动任何已有值**）
+- `src/engine/server.cpp`：
+  - `protocolInfos[]` 新增两行：`MINIO`（前缀 `minio`、默认端口 9000）、
+    `S3_CN`（前缀 `s3-cn`、默认端口 443）
+  - `defaultProtocols` 增加 `#if ENABLE_S3` 块，把 `S3`、`CLOUDFLARE_R2`、`MINIO`、`S3_CN`
+    放进站点管理器的协议下拉框（上游原本没有把这些列进去）
+  - `GetSupportedLogonTypes` 把 `MINIO`、`S3_CN` 并入 `case S3:`
+  - 参数表把 `MINIO`、`S3_CN` 并入 `case S3: case S3_SSO:` 组（复用 region/sse 等参数）
+- `src/engine/engineprivate.cpp`：`case MINIO:`、`case S3_CN:` 一并派发到 `CS3ControlSocket`
+- `src/engine/s3/s3controlsocket.cpp` 的 `Connect()`：按协议给默认值
+  - `CLOUDFLARE_R2` → region `auto`
+  - `S3_CN` → region `cn-north-1`
+  - `MINIO` → 仅 443 用 TLS（9000 默认明文），可用额外参数 `tls`（1/0、true/false、yes/no）覆盖

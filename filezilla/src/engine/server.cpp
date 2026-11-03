@@ -43,6 +43,8 @@ static const t_protocolInfo protocolInfos[] = {
 	{ S3_SSO,          L"s3sso",     true,  true,   443, false, "S3 via IAM Identity Center (formerly SSO)",                               L"" },
 	{ GOOGLE_CLOUD_SVC_ACC,  L"googleacc", true,  true,   443, false, fztranslate_mark("Google Cloud Storage with Service Account"),       L"https" },
 	{ CLOUDFLARE_R2,   L"r2",        true,  true,   443, false, "Cloudflare R2",                                                           L"https" },
+	{ MINIO,           L"minio",     true,  true,  9000, false, "MinIO - S3 compatible object storage",                                    L"" },
+	{ S3_CN,           L"s3-cn",     true,  true,   443, false, "S3 - Amazon S3 China (Beijing and Ningxia)",                              L"" },
 	{ UNKNOWN,         L"",          false, false,   21, false, "",                                                                        L"" }
 };
 
@@ -60,6 +62,12 @@ static std::vector<ServerProtocol> const defaultProtocols = {
 #endif
 #if ENABLE_STORJ
 	STORJ_GRANT,
+#endif
+#if ENABLE_S3
+	S3,
+	CLOUDFLARE_R2,
+	MINIO,
+	S3_CN,
 #endif
 };
 
@@ -894,6 +902,8 @@ std::vector<LogonType> GetSupportedLogonTypes(ServerProtocol protocol)
 	case SFTP:
 		return {LogonType::anonymous, LogonType::normal, LogonType::ask, LogonType::interactive, LogonType::key};
 	case S3:
+	case MINIO:
+	case S3_CN:
 		return {LogonType::anonymous, LogonType::normal, LogonType::ask, LogonType::profile};
 	case S3_SSO:
 		return {LogonType::interactive, LogonType::profile};
@@ -1006,6 +1016,8 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 		}
 	case S3:
 	case S3_SSO:
+	case MINIO:
+	case S3_CN:
 		{
 			static std::vector<ParameterTraits> const ret = []() {
 				std::vector<ParameterTraits> ret;

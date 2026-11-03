@@ -776,11 +776,33 @@ void CS3ControlSocket::Connect(CServer const& server, Credentials const& credent
 
 	host_ = fz::to_utf8(server.GetHost());
 	port_ = server.GetPort() ? server.GetPort() : 443;
+
+	// MinIO is commonly served over plain HTTP on its default port, so for that
+	// protocol TLS is only used on the HTTPS port. The optional "tls" extra
+	// parameter (1/0, true/false, yes/no) overrides the heuristic for any S3
+	// family site (S3, Cloudflare R2, MinIO, AWS China).
 	tls_ = port_ != 80;
+	if (auto const tls_param = fz::to_utf8(server.GetExtraParameter("tls")); !tls_param.empty()) {
+		tls_ = tls_param == "1" || tls_param == "true" || tls_param == "yes";
+	}
+	else if (server.GetProtocol() == MINIO) {
+		tls_ = port_ == 443;
+	}
 
 	region_ = fz::to_utf8(server.GetExtraParameter("region"));
 	if (region_.empty()) {
-		region_ = "us-east-1";
+		switch (server.GetProtocol()) {
+		case CLOUDFLARE_R2:
+			// R2 expects the literal region name "auto"
+			region_ = "auto";
+			break;
+		case S3_CN:
+			region_ = "cn-north-1";
+			break;
+		default:
+			region_ = "us-east-1";
+			break;
+		}
 	}
 
 	cred_.access_key = fz::to_utf8(server.GetUser());

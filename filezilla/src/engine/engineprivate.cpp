@@ -590,6 +590,8 @@ int CFileZillaEnginePrivate::ContinueConnect()
 #if ENABLE_S3
 	case S3:
 	case CLOUDFLARE_R2:
+	case MINIO:
+	case S3_CN:
 		controlSocket_ = std::make_unique<CS3ControlSocket>(*this);
 		break;
 #endif

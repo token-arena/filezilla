@@ -55,7 +55,11 @@ enum ServerProtocol
 
 	CLOUDFLARE_R2,
 
-	MAX_VALUE = CLOUDFLARE_R2
+	MINIO,
+
+	S3_CN,
+
+	MAX_VALUE = S3_CN
 };
 
 enum ServerType : unsigned

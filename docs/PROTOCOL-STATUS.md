@@ -7,15 +7,18 @@
 
 | # | 协议 | 引擎目录 | 开关 | 自测 | 状态 |
 |---|---|---|---|---|---|
-| F1 | Amazon S3 / S3 兼容（R2、MinIO、B2-S3、OSS/COS…） | `src/engine/s3/` | `--enable-s3` | `s3selftest` 44 项 | ✅ 完成 |
+| F1 | Amazon S3 / S3 兼容 | `src/engine/s3/` | `--enable-s3` | `s3selftest` 50 项（含分片上传） | ✅ 完成 |
 | F2 | Backblaze B2（native API） | `src/engine/b2/` | `--enable-b2` | `b2selftest` 47 项 | ✅ 完成 |
 | F3 | Azure Blob Storage | `src/engine/azure/` | `--enable-azureblob` | `azureselftest` 35 项 | ✅ 完成 |
 | F4 | Google Cloud Storage（JSON API） | `src/engine/gcs/` | `--enable-gcs` | `gcsselftest` 32 项 | ✅ 完成 |
 | F5 | Google Drive（API v3） | `src/engine/gdrive/` | `--enable-gdrive` | `driveselftest` 35 项 | ✅ 完成 |
 | F6 | Microsoft OneDrive（Graph） | `src/engine/onedrive/` | `--enable-onedrive` | `graphselftest` 36 项 | ✅ 完成 |
 | F7 | Dropbox（API v2） | `src/engine/dropbox/` | `--enable-dropbox` | `dropboxselftest` 41 项 | ✅ 完成 |
+| F8 | Cloudflare R2 | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（region=auto） |
+| F9 | MinIO | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（默认 9000、`tls` 可覆盖） |
+| F10 | AWS 中国区（S3） | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（region 默认 cn-north-1） |
 
-合计 **270 项自测断言**，全部通过；每个协议一个独立提交。
+合计 **276 项自测断言**，全部通过；每个协议一个独立提交。
 
 ## 每个协议都实现了什么
 

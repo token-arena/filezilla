@@ -106,3 +106,21 @@ abort  → 用户取消时 AbortMultipartUpload，避免残留碎片
 - 自测：签名向量全绿 + 解析样本全绿 + mock 服务的"列举/下载/上传/分片上传/删除/建目录/改名"全部走通
 - 构建：`makepkg-mingw` 全量通过，引擎 DLL 中能查到该协议端点与签名相关字符串
 - 兜底：不支持的能力（`chmod`、递归删目录）显式返回 `FZ_REPLY_NOTSUPPORTED`，不假装成功
+---
+
+## 8. 澄清结果（已确认，2026-11）
+
+| 问题 | 结论 |
+|---|---|
+| 测试账号 | **没有**，全部按各家官方文档实现 + 本地 mock 对拍验证，提交信息注明"未做真机验证" |
+| 协议范围 | 追加 **MinIO** 与 **AWS 中国区**（都在 S3 家族，复用现有 S3 实现） |
+| 显示名 | **全英文**：`Cloudflare R2`、`MinIO - S3 compatible object storage`、`S3 - Amazon S3 China (Beijing and Ningxia)`、`Alibaba Cloud OSS`、`Tencent Cloud COS`、`Huawei Cloud OBS` |
+| 跨会话续传 | **不需要**，只做会话内续传（分片级重试 + 取消后从已完成分片继续） |
+
+调整后的功能清单与顺序：
+
+1. **S3 分片上传**（R2 / MinIO / AWS 中国区都依赖它）— ✅ 已完成
+2. **Cloudflare R2**（region=`auto`）+ **MinIO**（默认 9000 明文、`tls` 参数可覆盖）+ **AWS 中国区**（region 默认 `cn-north-1`）— ✅ 已完成（协议条目 + 派发 + 默认值）
+3. 阿里云 OSS（原生签名 + 分片）
+4. 腾讯云 COS（原生签名 + 分块）
+5. 华为云 OBS（原生签名 + 分段）
