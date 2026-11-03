@@ -10,6 +10,9 @@
 #include <libfilezilla/hash.hpp>
 #include <libfilezilla/time.hpp>
 
+#include <cstdio>
+#include <vector>
+
 #include <algorithm>
 #include <cstdlib>
 #include <cstdio>
@@ -358,4 +361,211 @@ std::string build_complete_multipart(std::vector<part_entry> const& parts)
 	return xml;
 }
 
+// ---------------------------------------------------------------------------
+// Signature version 4 (OSS4-HMAC-SHA256)
+// ---------------------------------------------------------------------------
+
+namespace {
+
+std::string encode_component(std::string const& value)
+{
+	static char const hex[] = "0123456789ABCDEF";
+	std::string out;
+	out.reserve(value.size());
+	for (unsigned char const c : value) {
+		if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
+			c == '-' || c == '.' || c == '_' || c == '~')
+		{
+			out.push_back(static_cast<char>(c));
+		}
+		else {
+			out.push_back('%');
+			out.push_back(hex[c >> 4]);
+			out.push_back(hex[c & 0x0f]);
+		}
+	}
+	return out;
+}
+
+std::string sha256_hex_of(std::string_view const& data)
+{
+	auto const digest = fz::sha256(data);
+	return fz::hex_encode<std::string>(digest);
+}
+
+bool is_default_sign_header(std::string const& lowercase_name)
+{
+	if (lowercase_name.size() >= 6 && lowercase_name.compare(0, 6, "x-oss-") == 0) {
+		return true;
+	}
+	return lowercase_name == "content-type" || lowercase_name == "content-md5";
+}
+
+}
+
+signature_version parse_signature_version(std::string const& value)
+{
+	std::string lower = to_lower(value);
+	if (lower == "v1" || lower == "1" || lower == "oss" || lower == "hmac-sha1") {
+		return signature_version::v1;
+	}
+	if (lower == "auto" || lower == "fallback") {
+		return signature_version::auto_fallback;
+	}
+	return signature_version::v4;
+}
+
+std::string iso8601_date(int64_t unix_time)
+{
+	uint64_t const t = unix_time < 0 ? 0 : static_cast<uint64_t>(unix_time);
+	uint64_t const days_total = t / 86400;
+	uint64_t const secs_of_day = t % 86400;
+
+	int64_t z = static_cast<int64_t>(days_total) + 719468;
+	int64_t const era = (z >= 0 ? z : z - 146096) / 146097;
+	uint64_t const doe = static_cast<uint64_t>(z - era * 146097);
+	uint64_t const yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+	int64_t const y = static_cast<int64_t>(yoe) + era * 400;
+	uint64_t const doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+	uint64_t const mp = (5 * doy + 2) / 153;
+	uint64_t const d = doy - (153 * mp + 2) / 5 + 1;
+	uint64_t const m = mp < 10 ? mp + 3 : mp - 9;
+	int64_t const year = y + (m <= 2 ? 1 : 0);
+
+	char buf[32];
+	snprintf(buf, sizeof(buf), "%04d%02d%02dT%02d%02d%02dZ",
+		static_cast<int>(year), static_cast<int>(m), static_cast<int>(d),
+		static_cast<int>(secs_of_day / 3600),
+		static_cast<int>((secs_of_day / 60) % 60),
+		static_cast<int>(secs_of_day % 60));
+	return buf;
+}
+
+std::string iso8601_now()
+{
+	return iso8601_date(fz::datetime::now().get_time_t());
+}
+
+std::string region_from_endpoint(std::string const& host)
+{
+	// Accept "oss-cn-hangzhou.aliyuncs.com" as well as
+	// "bucket.oss-cn-hangzhou.aliyuncs.com".
+	auto const pos = host.find("oss-");
+	if (pos == std::string::npos) {
+		return {};
+	}
+
+	std::string rest = host.substr(pos + 4);
+	auto const end = rest.find('.');
+	if (end != std::string::npos) {
+		rest = rest.substr(0, end);
+	}
+	rest = to_lower(rest);
+	if (rest.empty()) {
+		return {};
+	}
+	return "oss-" + rest == "oss-" ? std::string() : rest;
+}
+
+v4_result sign_v4(credentials const& cred, std::string const& verb, std::string const& path,
+	std::vector<std::pair<std::string, std::string>> const& query,
+	std::map<std::string, std::string> const& headers,
+	std::string const& region, std::string const& timestamp,
+	std::vector<std::string> const& additional_headers)
+{
+	v4_result ret;
+	ret.timestamp = timestamp;
+
+	std::string const date = timestamp.substr(0, 8);
+	ret.scope = date + "/" + region + "/oss/aliyun_v4_request";
+
+	// Canonical URI: percent-encoded resource path, '/' kept as is.
+	std::string uri = path.empty() ? std::string("/") : path;
+	ret.canonical_request = verb;
+	ret.canonical_request += '\n';
+	ret.canonical_request += encode_key(uri);
+	ret.canonical_request += '\n';
+
+	// Canonical query string: encode, then sort by the encoded key.
+	std::vector<std::pair<std::string, std::string>> encoded;
+	encoded.reserve(query.size());
+	for (auto const& q : query) {
+		encoded.emplace_back(encode_component(q.first), encode_component(q.second));
+	}
+	std::sort(encoded.begin(), encoded.end());
+
+	std::string canonical_query;
+	for (auto const& q : encoded) {
+		if (!canonical_query.empty()) {
+			canonical_query += '&';
+		}
+		canonical_query += q.first;
+		if (!q.second.empty()) {
+			canonical_query += '=';
+			canonical_query += q.second;
+		}
+	}
+	ret.canonical_request += canonical_query;
+	ret.canonical_request += '\n';
+
+	// Which headers take part in the signature?
+	std::map<std::string, std::string> lower;
+	for (auto const& h : headers) {
+		lower[to_lower(h.first)] = trimmed(h.second);
+	}
+
+	std::vector<std::string> additional;
+	for (auto const& a : additional_headers) {
+		auto const name = to_lower(a);
+		if (!is_default_sign_header(name) && lower.count(name) && !lower.at(name).empty()) {
+			additional.push_back(name);
+		}
+	}
+	std::sort(additional.begin(), additional.end());
+	additional.erase(std::unique(additional.begin(), additional.end()), additional.end());
+
+	std::string canonical_headers;
+	for (auto const& h : lower) {
+		if (is_default_sign_header(h.first) || std::binary_search(additional.begin(), additional.end(), h.first)) {
+			canonical_headers += h.first;
+			canonical_headers += ':';
+			canonical_headers += h.second;
+			canonical_headers += '\n';
+		}
+	}
+	ret.canonical_request += canonical_headers;
+	ret.canonical_request += '\n';
+
+	std::string canonical_additional;
+	for (auto const& a : additional) {
+		if (!canonical_additional.empty()) {
+			canonical_additional += ';';
+		}
+		canonical_additional += a;
+	}
+	ret.canonical_request += canonical_additional;
+	ret.canonical_request += '\n';
+	ret.canonical_request += "UNSIGNED-PAYLOAD";
+
+	ret.string_to_sign = "OSS4-HMAC-SHA256\n";
+	ret.string_to_sign += timestamp;
+	ret.string_to_sign += '\n';
+	ret.string_to_sign += ret.scope;
+	ret.string_to_sign += '\n';
+	ret.string_to_sign += sha256_hex_of(ret.canonical_request);
+
+	auto key = fz::hmac_sha256("aliyun_v4" + cred.secret_key, date);
+	key = fz::hmac_sha256(key, region);
+	key = fz::hmac_sha256(key, std::string_view("oss"));
+	key = fz::hmac_sha256(key, std::string_view("aliyun_v4_request"));
+	ret.signature = fz::hex_encode<std::string>(fz::hmac_sha256(key, ret.string_to_sign));
+
+	ret.authorization = "OSS4-HMAC-SHA256 Credential=" + cred.access_key + "/" + ret.scope;
+	if (!canonical_additional.empty()) {
+		ret.authorization += ",AdditionalHeaders=" + canonical_additional;
+	}
+	ret.authorization += ",Signature=" + ret.signature;
+
+	return ret;
+}
 }

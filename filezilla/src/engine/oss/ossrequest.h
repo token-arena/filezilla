@@ -72,6 +72,46 @@ namespace oss {
 		std::map<std::string, std::string> const& headers, std::string const& bucket,
 		std::string const& key, std::vector<std::pair<std::string, std::string>> const& subresources);
 
+	// --- signature version 4 (OSS4-HMAC-SHA256, recommended by Alibaba) ---
+
+	enum class signature_version {
+		v1,   // "OSS <ak>:<base64(HMAC-SHA1)>"
+		v4,   // "OSS4-HMAC-SHA256 Credential=...,Signature=..."
+		auto_fallback // v4 first, retry v1 when the service rejects the signature
+	};
+
+	/// Parses "v1", "v4" or "auto" (anything else yields v4).
+	signature_version parse_signature_version(std::string const& value);
+
+	/// ISO8601 basic timestamp as used by x-oss-date, e.g. "20250411T064124Z".
+	std::string iso8601_date(int64_t unix_time);
+	std::string iso8601_now();
+
+	/// Derives the signing region from an OSS endpoint such as
+	/// "oss-cn-hangzhou.aliyuncs.com" or "bucket.oss-cn-hangzhou.aliyuncs.com".
+	/// Returns an empty string when it cannot be determined.
+	std::string region_from_endpoint(std::string const& host);
+
+	struct v4_result {
+		std::string timestamp;        // x-oss-date value
+		std::string scope;
+		std::string canonical_request;
+		std::string string_to_sign;
+		std::string signature;
+		std::string authorization;
+	};
+
+	/// Builds a V4 signature. \p path is the decoded resource path (no query),
+	/// \p query holds the decoded query parameters (empty values are allowed),
+	/// \p headers are the headers to sign (x-oss-*, content-type, content-md5 are
+	/// signed automatically, everything else must also be listed in
+	/// \p additional_headers).
+	v4_result sign_v4(credentials const& cred, std::string const& verb, std::string const& path,
+		std::vector<std::pair<std::string, std::string>> const& query,
+		std::map<std::string, std::string> const& headers,
+		std::string const& region, std::string const& timestamp,
+		std::vector<std::string> const& additional_headers);
+
 	/// Percent-encodes an object key for the request path, keeping '/'.
 	std::string encode_key(std::string const& key);
 

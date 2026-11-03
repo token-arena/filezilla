@@ -17,11 +17,11 @@
 | F8 | Cloudflare R2 | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（region=auto） |
 | F9 | MinIO | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（默认 9000、`tls` 可覆盖） |
 | F10 | AWS 中国区（S3） | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（region 默认 cn-north-1） |
-| F11 | 阿里云 OSS（原生） | `src/engine/oss/` | `--enable-oss` | `ossselftest` 41 项 | ✅ 完成（签名 V1 + 分片） |
-| F12 | 腾讯云 COS（原生） | `src/engine/cos/` | `--enable-cos` | `cosselftest` 37 项 | ✅ 完成（q-sign + 分片） |
-| F13 | 华为云 OBS（原生） | `src/engine/obs/` | `--enable-obs` | `obsselftest` 36 项 | ✅ 完成（OBS 头签名 + 分片） |
+| F11 | 阿里云 OSS（原生） | `src/engine/oss/` | `--enable-oss` | `ossselftest` 56 项 | ✅ 完成（V4 默认 + V1 自动回退 + 分片） |
+| F12 | 腾讯云 COS（原生） | `src/engine/cos/` | `--enable-cos` | `cosselftest` 46 项 | ✅ 完成（q-sign + 官方 SDK 头白名单 + 分片） |
+| F13 | 华为云 OBS（原生） | `src/engine/obs/` | `--enable-obs` | `obsselftest` 41 项 | ✅ 完成（OBS 头签名 + 分片，5 组官方 golden 向量） |
 
-合计 **390 项自测断言**，全部通过；每个协议一个独立提交。
+合计 **429 项自测断言**，全部通过；每个协议一个独立提交。
 
 ## 每个协议都实现了什么
 
@@ -40,3 +40,7 @@
 ## 尚未覆盖
 
 见 `docs/PARKED.md`：交互式 OAuth2 授权、分片上传、以及对象存储的权限/目录语义降级。
+## 签名依据与验证范围
+
+各协议签名对照的官方文档/官方 SDK、用到的 golden 向量，以及**无账号下仍无法验证的部分**，
+统一记录在 [`SIGNATURE-NOTES.md`](SIGNATURE-NOTES.md)。

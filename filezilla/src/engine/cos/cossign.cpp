@@ -58,6 +58,21 @@ std::string hmac_sha1_hex(std::string_view const& key, std::string_view const& d
 	return fz::hex_encode<std::string>(fz::hmac_sha1(key, data));
 }
 
+bool should_sign_header(std::string const& name)
+{
+	auto const lower = to_lower(name);
+
+	if (lower == "cache-control" || lower == "content-disposition" || lower == "content-encoding" ||
+		lower == "content-length" || lower == "content-md5" || lower == "content-type" ||
+		lower == "expect" || lower == "expires" || lower == "host" || lower == "if-match" ||
+		lower == "if-modified-since" || lower == "if-none-match" || lower == "if-unmodified-since" ||
+		lower == "origin" || lower == "range" || lower == "transfer-encoding" || lower == "pic-operations")
+	{
+		return true;
+	}
+
+	return lower.compare(0, 5, "x-cos") == 0 || lower.compare(0, 4, "x-ci") == 0;
+}
 std::string encode_value(std::string const& value)
 {
 	static char const hex[] = "0123456789ABCDEF";
@@ -107,7 +122,9 @@ signature sign(credentials const& cred, std::string const& method, std::string c
 	std::vector<std::pair<std::string, std::string>> lower_headers;
 	lower_headers.reserve(headers.size());
 	for (auto const& h : headers) {
-		lower_headers.emplace_back(to_lower(h.first), h.second);
+		if (should_sign_header(h.first)) {
+			lower_headers.emplace_back(to_lower(h.first), h.second);
+		}
 	}
 	std::sort(lower_headers.begin(), lower_headers.end());
 

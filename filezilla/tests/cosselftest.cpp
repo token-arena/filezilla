@@ -183,6 +183,26 @@ void test_multipart_xml()
 
 }
 
+
+void test_header_filtering()
+{
+	// Mirrors the COS SDK: only whitelisted headers and x-cos*/x-ci* are signed
+	check_true("host signed", tcos::should_sign_header("Host"));
+	check_true("content-type signed", tcos::should_sign_header("Content-Type"));
+	check_true("range signed", tcos::should_sign_header("range"));
+	check_true("x-cos signed", tcos::should_sign_header("x-cos-copy-source"));
+	check_true("x-ci signed", tcos::should_sign_header("x-ci-upload"));
+	check_true("user-agent not signed", !tcos::should_sign_header("User-Agent"));
+	check_true("authorization not signed", !tcos::should_sign_header("Authorization"));
+
+	// A header outside the whitelist must not change the signature
+	std::vector<std::pair<std::string, std::string>> with_ua = {
+		{"Host", host}, {"User-Agent", "FileZilla/3.71.1"}};
+	auto const a = tcos::sign(test_credentials(), "GET", "/a.txt", {}, with_ua, key_time);
+	auto const b = tcos::sign(test_credentials(), "GET", "/a.txt", {}, host_header(), key_time);
+	check_eq("user-agent is ignored", a.signature, b.signature);
+	check_eq("user-agent not in header list", a.header_list, "host");
+}
 int main()
 {
 	test_put_object_signature();
@@ -191,6 +211,7 @@ int main()
 	test_multipart_signatures();
 	test_copy_signature();
 	test_helpers();
+	test_header_filtering();
 	test_parse_list_objects();
 	test_multipart_xml();
 

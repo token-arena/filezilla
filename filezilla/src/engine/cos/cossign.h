@@ -25,6 +25,10 @@ namespace tcos {
 	/// Lowercase hex HMAC-SHA1 of the input.
 	std::string hmac_sha1_hex(std::string_view const& key, std::string_view const& data);
 
+	/// Only headers in the documented COS whitelist (plus x-cos*, x-ci*) take part
+	/// in the signature; the official SDK filters the request headers the same way.
+	bool should_sign_header(std::string const& name);
+
 	/// URL-encodes a value for the header/parameter lists of the signature.
 	std::string encode_value(std::string const& value);
 

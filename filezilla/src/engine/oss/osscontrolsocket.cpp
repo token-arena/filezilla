@@ -748,6 +748,20 @@ void COssControlSocket::Connect(CServer const& server, Credentials const& creden
 	cred_.secret_key = fz::to_utf8(credentials.GetPass());
 	cred_.security_token = fz::to_utf8(server.GetExtraParameter("sts_token"));
 
+	// V4 signatures are scoped to a region: take it from the "region" extra
+	// parameter, or derive it from the endpoint host name.
+	region_ = fz::to_utf8(server.GetExtraParameter("region"));
+	if (region_.empty()) {
+		region_ = oss::region_from_endpoint(host_);
+	}
+	if (region_.size() > 4 && region_.compare(0, 4, "oss-") == 0) {
+		region_ = region_.substr(4);
+	}
+
+	version_ = oss::parse_signature_version(fz::to_utf8(server.GetExtraParameter("signature_version")));
+	effective_version_ = version_;
+	fallback_done_ = false;
+
 	Push(std::make_unique<COssConnectOpData>(*this));
 }
 
@@ -781,26 +795,51 @@ bool COssControlSocket::Submit(std::shared_ptr<OssRequestResponse> const& rr, st
 	std::vector<std::pair<std::string, std::string>> subresources,
 	std::map<std::string, std::string> extra_headers, COssRequestHandler * handler)
 {
+	request_recipe recipe;
+	recipe.verb = verb;
+	recipe.bucket = bucket;
+	recipe.key = key;
+	recipe.query = std::move(query);
+	recipe.subresources = std::move(subresources);
+	recipe.headers = std::move(extra_headers);
+	recipe.has_body = rr && rr->request_.body_ != nullptr;
+
+	pending_recipe_ = recipe;
+	pending_rr_ = rr;
+
+	if (version_ == oss::signature_version::auto_fallback) {
+		// Always start with V4, which is what Alibaba recommends.
+		effective_version_ = oss::signature_version::v4;
+		fallback_done_ = false;
+	}
+
+	return FillRequest(rr, recipe, effective_version_, handler);
+}
+
+bool COssControlSocket::FillRequest(std::shared_ptr<OssRequestResponse> const& rr, request_recipe const& recipe,
+	oss::signature_version version, COssRequestHandler * handler)
+{
 	if (!client_ || !rr) {
 		return false;
 	}
 
 	auto & req = rr->request_;
-	req.verb_ = verb;
+	req.verb_ = recipe.verb;
 	req.uri_.scheme_ = "https";
 	req.uri_.host_ = host_;
 
 	std::string path = "/";
-	if (!bucket.empty()) {
-		path += bucket + "/";
-		path += oss::encode_key(key);
+	if (!recipe.bucket.empty()) {
+		path += recipe.bucket + "/";
+		path += oss::encode_key(recipe.key);
 	}
 	req.uri_.path_ = path;
 
-	// Sub-resources go into the URL as well as into the signature, ordinary
-	// query parameters are only passed through.
-	auto all_query = query;
-	for (auto const& s : subresources) {
+	// Sub-resources belong into the URL as well as into the signature; ordinary
+	// query parameters are signed by V4 but not by V1. An empty value is sent as
+	// a bare key in both cases.
+	auto all_query = recipe.query;
+	for (auto const& s : recipe.subresources) {
 		all_query.push_back(s);
 	}
 
@@ -817,13 +856,34 @@ bool COssControlSocket::Submit(std::shared_ptr<OssRequestResponse> const& rr, st
 	}
 	req.uri_.query_ = query_string;
 
-	std::map<std::string, std::string> headers = extra_headers;
-	headers["Date"] = oss::rfc1123_now();
+	std::map<std::string, std::string> headers = recipe.headers;
 	if (!cred_.security_token.empty()) {
 		headers["x-oss-security-token"] = cred_.security_token;
 	}
 
-	auto const authorization = oss::sign(cred_, verb, headers, bucket, key, subresources);
+	std::string authorization;
+	if (version == oss::signature_version::v1) {
+		headers["Date"] = oss::rfc1123_now();
+		authorization = oss::sign(cred_, recipe.verb, headers, recipe.bucket, recipe.key, recipe.subresources);
+	}
+	else {
+		auto const timestamp = oss::iso8601_now();
+		headers["x-oss-date"] = timestamp;
+		headers["x-oss-content-sha256"] = "UNSIGNED-PAYLOAD";
+		headers["Date"] = oss::rfc1123_now();
+
+		// Content-Length is not among the mandatory signed headers, but uploads
+		// carry it, so list it as an additional signed header to make sure the
+		// server sees exactly what we signed.
+		std::vector<std::string> additional;
+		if (headers.count("Content-Length") || headers.count("content-length")) {
+			additional.push_back("content-length");
+		}
+
+		auto const signed_req = oss::sign_v4(cred_, recipe.verb, path, all_query, headers,
+			region_, timestamp, additional);
+		authorization = signed_req.authorization;
+	}
 
 	for (auto const& h : headers) {
 		req.headers_[h.first] = h.second;
@@ -838,10 +898,46 @@ bool COssControlSocket::Submit(std::shared_ptr<OssRequestResponse> const& rr, st
 	return true;
 }
 
+
 void COssControlSocket::OnRequestDone(uint64_t, bool success)
 {
 	auto * handler = pending_handler_;
+
+	// With signature_version=auto: when the service rejects the V4 signature,
+	// re-send the same request with V1 once. Requests carrying a body cannot be
+	// replayed (the reader is consumed), so those simply report the error.
+	if (!success && version_ == oss::signature_version::auto_fallback && !fallback_done_ &&
+		pending_recipe_ && pending_rr_ && !pending_recipe_->has_body)
+	{
+		auto & res = pending_rr_->response_;
+		std::string code, message;
+		oss::parse_error(std::string(res.body_.to_view()), code, message);
+
+		bool const auth_failure = (res.code_ == 400 || res.code_ == 403) &&
+			(code == "SignatureDoesNotMatch" || code == "InvalidAccessKeyId" || code == "AccessDenied" ||
+			 code == "InvalidArgument" || code == "InvalidRequest" || code == "OperationNotSupported");
+
+		if (auth_failure) {
+			fallback_done_ = true;
+			effective_version_ = oss::signature_version::v1;
+			log(logmsg::status, _("The server rejected the OSS V4 signature (%s), retrying with signature version 1"),
+				to_wstring(code.empty() ? message : code));
+
+			auto rr = pending_rr_;
+			rr->request_.headers_.clear();
+			rr->request_.uri_.clear();
+			rr->request_.body_.reset();
+			rr->response_.reset();
+
+			auto const recipe = *pending_recipe_;
+			if (FillRequest(rr, recipe, effective_version_, handler)) {
+				return;
+			}
+		}
+	}
+
 	pending_handler_ = nullptr;
+	pending_rr_.reset();
 	if (handler) {
 		handler->OnOssResponse(success);
 	}

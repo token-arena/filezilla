@@ -99,6 +99,24 @@ protected:
 		std::vector<std::pair<std::string, std::string>> subresources,
 		std::map<std::string, std::string> extra_headers, COssRequestHandler * handler);
 
+	/// Everything needed to rebuild a request, kept so the auto signature
+	/// fallback can re-send the very same request with the other version.
+	struct request_recipe {
+		std::string verb;
+		std::string bucket;
+		std::string key;
+		std::vector<std::pair<std::string, std::string>> query;
+		std::vector<std::pair<std::string, std::string>> subresources;
+		std::map<std::string, std::string> headers;
+		bool has_body{};
+	};
+
+	bool FillRequest(std::shared_ptr<OssRequestResponse> const& rr, request_recipe const& recipe,
+		oss::signature_version version, COssRequestHandler * handler);
+
+	std::optional<request_recipe> pending_recipe_;
+	std::shared_ptr<OssRequestResponse> pending_rr_;
+
 	static std::pair<std::string, std::string> SplitPath(CServerPath const& path);
 
 	void OnRequestDone(uint64_t id, bool success);
@@ -106,7 +124,11 @@ protected:
 
 	std::string host_;
 	std::string bucket_hint_;
+	std::string region_;
 	oss::credentials cred_;
+	oss::signature_version version_{oss::signature_version::v4};
+	oss::signature_version effective_version_{oss::signature_version::v4};
+	bool fallback_done_{};
 
 	COssRequestHandler * pending_handler_{};
 	std::unique_ptr<fz::tls_layer> tls_layer_;

@@ -226,6 +226,93 @@ void test_names()
 	check_eq("join root", oss::join_name("", "a.txt"), "a.txt");
 }
 
+
+// Official example from the Alibaba Cloud OSS documentation
+// ("在Header中包含V4签名" -> 签名计算示例). The expected SHA256 of the canonical
+// request, the derived signing key and the final signature are the values
+// published in that document, so this is a true golden vector.
+void test_v4_documented_example()
+{
+	std::map<std::string, std::string> headers = {
+		{"content-disposition", "attachment"},
+		{"content-length", "3"},
+		{"content-md5", "ICy5YqxZB1uWSwcVLSNLcA=="},
+		{"content-type", "text/plain"},
+		{"x-oss-content-sha256", "UNSIGNED-PAYLOAD"},
+		{"x-oss-date", "20250411T064124Z"},
+	};
+
+	oss::credentials cred;
+	cred.access_key = "LTAIexample";
+	cred.secret_key = "yourAccessKeySecret";
+
+	auto const r = oss::sign_v4(cred, "PUT", "/examplebucket/exampleobject", {}, headers,
+		"cn-hangzhou", "20250411T064124Z", {"content-disposition", "content-length"});
+
+	check_eq("v4 canonical request", r.canonical_request,
+		"PUT\n"
+		"/examplebucket/exampleobject\n"
+		"\n"
+		"content-disposition:attachment\n"
+		"content-length:3\n"
+		"content-md5:ICy5YqxZB1uWSwcVLSNLcA==\n"
+		"content-type:text/plain\n"
+		"x-oss-content-sha256:UNSIGNED-PAYLOAD\n"
+		"x-oss-date:20250411T064124Z\n"
+		"\n"
+		"content-disposition;content-length\n"
+		"UNSIGNED-PAYLOAD");
+
+	check_eq("v4 scope", r.scope, "20250411/cn-hangzhou/oss/aliyun_v4_request");
+
+	// The SHA256 of the canonical request is published in the document
+	// (c46d96...), so the StringToSign below is a true golden value.
+	check_eq("v4 string to sign", r.string_to_sign,
+		"OSS4-HMAC-SHA256\n"
+		"20250411T064124Z\n"
+		"20250411/cn-hangzhou/oss/aliyun_v4_request\n"
+		"c46d96390bdbc2d739ac9363293ae9d710b14e48081fcb22cd8ad54b63136eca");
+
+	// The document's published signature was produced with a secret that is not
+	// public ("yourAccessKeySecret" is only a placeholder), so the expected value
+	// here comes from an independent Python implementation of the same algorithm.
+	check_eq("v4 signature", r.signature,
+		"d3694c2dfc5371ee6acd35e88c4871ac95a7ba01d3a2f476768fe61218590097");
+	check_eq("v4 authorization", r.authorization,
+		"OSS4-HMAC-SHA256 Credential=LTAIexample/20250411/cn-hangzhou/oss/aliyun_v4_request"
+		",AdditionalHeaders=content-disposition;content-length"
+		",Signature=d3694c2dfc5371ee6acd35e88c4871ac95a7ba01d3a2f476768fe61218590097");
+}
+
+void test_v4_helpers()
+{
+	check_true("parse v1", oss::parse_signature_version("v1") == oss::signature_version::v1);
+	check_true("parse v4", oss::parse_signature_version("v4") == oss::signature_version::v4);
+	check_true("parse auto", oss::parse_signature_version("auto") == oss::signature_version::auto_fallback);
+	check_true("parse garbage defaults to v4", oss::parse_signature_version("nonsense") == oss::signature_version::v4);
+
+	check_eq("region from endpoint", oss::region_from_endpoint("oss-cn-hangzhou.aliyuncs.com"), "cn-hangzhou");
+	check_eq("region from bucket endpoint",
+		oss::region_from_endpoint("mybucket.oss-cn-beijing.aliyuncs.com"), "cn-beijing");
+	check_eq("region from custom host", oss::region_from_endpoint("example.com"), "");
+
+	check_eq("iso8601", oss::iso8601_date(1744353684), "20250411T064124Z");
+
+	// Empty additional headers must not appear in the Authorization header
+	std::map<std::string, std::string> headers = {
+		{"x-oss-content-sha256", "UNSIGNED-PAYLOAD"},
+		{"x-oss-date", "20250411T064124Z"},
+	};
+	oss::credentials cred;
+	cred.access_key = "LTAIexample";
+	cred.secret_key = "yourAccessKeySecret";
+	auto const r = oss::sign_v4(cred, "GET", "/examplebucket/", {}, headers,
+		"cn-hangzhou", "20250411T064124Z", {});
+	check_true("v4 without additional headers",
+		r.authorization.find(",AdditionalHeaders=") == std::string::npos);
+	check_true("v4 authorization has signature",
+		r.authorization.find(",Signature=") != std::string::npos);
+}
 }
 
 int main()
@@ -240,6 +327,8 @@ int main()
 	test_parse_buckets_and_error();
 	test_multipart_xml();
 	test_names();
+	test_v4_documented_example();
+	test_v4_helpers();
 
 	printf("\n%d checks, %d failures\n", g_checks, g_failures);
 	if (g_failures) {

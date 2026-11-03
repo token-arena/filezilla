@@ -208,6 +208,45 @@ void test_names()
 
 }
 
+
+// Golden StringToSign values published in the Huawei Cloud OBS API reference
+// ("Using an Authorization Header", tables 4 to 8).
+void test_documented_string_to_sign()
+{
+	// Table 4: GetObject with a Date header only
+	check_eq("doc table 4", obs::string_to_sign("GET", {{"Date", "Sat, 12 Oct 2015 08:12:38 GMT"}},
+		"bucket", "object.txt", {}),
+		"GET\n\n\nSat, 12 Oct 2015 08:12:38 GMT\n/bucket/object.txt");
+
+	// Table 5: temporary AK/SK with a security token and x-obs-date
+	check_eq("doc table 5", obs::string_to_sign("PUT",
+		{{"x-obs-date", "Tue, 15 Oct 2015 07:20:09 GMT"},
+		 {"x-obs-security-token", "YwkaRTbdY8g7q...."},
+		 {"content-type", "text/plain"}},
+		"bucket", "object.txt", {}),
+		"PUT\n\ntext/plain\n\nx-obs-date:Tue, 15 Oct 2015 07:20:09 GMT\n"
+		"x-obs-security-token:YwkaRTbdY8g7q....\n/bucket/object.txt");
+
+	// Table 6: additional x-obs-* header
+	check_eq("doc table 6", obs::string_to_sign("PUT",
+		{{"Date", "Mon, 14 Oct 2015 12:08:34 GMT"},
+		 {"x-obs-acl", "public-read"},
+		 {"content-type", "text/plain"}},
+		"bucket", "object.txt", {}),
+		"PUT\n\ntext/plain\nMon, 14 Oct 2015 12:08:34 GMT\nx-obs-acl:public-read\n/bucket/object.txt");
+
+	// Table 7: sub-resource
+	check_eq("doc table 7", obs::string_to_sign("GET", {{"Date", "Sat, 12 Oct 2015 08:12:38 GMT"}},
+		"bucket", "object.txt", {{"acl", ""}}),
+		"GET\n\n\nSat, 12 Oct 2015 08:12:38 GMT\n/bucket/object.txt?acl");
+
+	// Table 8: Content-MD5
+	check_eq("doc table 8", obs::string_to_sign("PUT",
+		{{"Content-MD5", "I5pU0r4+sgO9Emgl1KMQUg=="},
+		 {"x-obs-date", "Tue, 15 Oct 2015 07:20:09 GMT"}},
+		"bucket", "object.txt", {}),
+		"PUT\nI5pU0r4+sgO9Emgl1KMQUg==\n\n\nx-obs-date:Tue, 15 Oct 2015 07:20:09 GMT\n/bucket/object.txt");
+}
 int main()
 {
 	test_service_and_bucket_signatures();
@@ -218,6 +257,7 @@ int main()
 	test_parse_list_objects();
 	test_parse_buckets_errors_multipart();
 	test_names();
+	test_documented_string_to_sign();
 
 	printf("\n%d checks, %d failures\n", g_checks, g_failures);
 	if (g_failures) {

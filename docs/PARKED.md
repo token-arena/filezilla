@@ -16,7 +16,15 @@
   而 UI 侧（`src/interface`）的授权弹窗不在"只做协议兼容"的范围内。
 - **注意**：开源客户端不能内置 client_secret，必须用 public client + PKCE。
 
-### 2. 分片/断点续传上传
+### 2. 阿里云 OSS：`auto` 回退对带请求体的请求无效
+
+- 现象：`signature_version=auto` 时，如果 V4 被拒，只有**不带请求体**的请求会自动用 V1 重发
+  （列举、删除、建目录、复制等）；上传（含分片）无法重放，失败后需用户显式把
+  `signature_version` 设为 `v1`。
+- 原因：上传的 body 是流式 reader，一次请求后就消费完了，无法在不重新打开本地文件的情况下重放。
+- 后续方案：把上传的 reader factory 也存进 recipe，重试时重新 `open()`。
+
+### 3. 分片/断点续传上传
 
 - 目前上传都是"单请求流式上传"。S3 >5GB 的 multipart、Azure block blob 分块、
   Graph 上传会话尚未实现；下载侧已支持 `Range` 续传。
