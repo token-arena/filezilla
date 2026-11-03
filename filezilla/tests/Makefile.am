@@ -43,7 +43,11 @@ if ENABLE_COS
   MAYBE_COS_SELFTEST = cosselftest
 endif
 
-TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST) $(MAYBE_GRAPH_SELFTEST) $(MAYBE_DROPBOX_SELFTEST) $(MAYBE_OSS_SELFTEST) $(MAYBE_COS_SELFTEST)
+if ENABLE_OBS
+  MAYBE_OBS_SELFTEST = obsselftest
+endif
+
+TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST) $(MAYBE_GRAPH_SELFTEST) $(MAYBE_DROPBOX_SELFTEST) $(MAYBE_OSS_SELFTEST) $(MAYBE_COS_SELFTEST) $(MAYBE_OBS_SELFTEST)
 check_PROGRAMS = $(TESTS)
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
@@ -123,6 +127,15 @@ cosselftest_SOURCES = \
 
 cosselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 cosselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Huawei Cloud OBS logic layer.
+obsselftest_SOURCES = \
+	obsselftest.cpp \
+	../src/engine/obs/obsrequest.cpp \
+	../src/pugixml/pugixml.cpp
+
+obsselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+obsselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 test_SOURCES = \
 	test.cpp \

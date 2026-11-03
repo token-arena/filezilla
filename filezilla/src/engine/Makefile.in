@@ -151,73 +151,81 @@ host_triplet = @host@
 @ENABLE_AZURE_BLOB_TRUE@		azure/azureblob.h \
 @ENABLE_AZURE_BLOB_TRUE@		azure/azurecontrolsocket.h
 
-@ENABLE_COS_TRUE@am__append_7 = \
+@ENABLE_OBS_TRUE@am__append_7 = \
+@ENABLE_OBS_TRUE@		obs/obscontrolsocket.cpp \
+@ENABLE_OBS_TRUE@		obs/obsrequest.cpp
+
+@ENABLE_OBS_TRUE@am__append_8 = \
+@ENABLE_OBS_TRUE@		obs/obscontrolsocket.h \
+@ENABLE_OBS_TRUE@		obs/obsrequest.h
+
+@ENABLE_COS_TRUE@am__append_9 = \
 @ENABLE_COS_TRUE@		cos/coscontrolsocket.cpp \
 @ENABLE_COS_TRUE@		cos/cossign.cpp
 
-@ENABLE_COS_TRUE@am__append_8 = \
+@ENABLE_COS_TRUE@am__append_10 = \
 @ENABLE_COS_TRUE@		cos/coscontrolsocket.h \
 @ENABLE_COS_TRUE@		cos/cossign.h
 
-@ENABLE_OSS_TRUE@am__append_9 = \
+@ENABLE_OSS_TRUE@am__append_11 = \
 @ENABLE_OSS_TRUE@		oss/osscontrolsocket.cpp \
 @ENABLE_OSS_TRUE@		oss/ossrequest.cpp
 
-@ENABLE_OSS_TRUE@am__append_10 = \
+@ENABLE_OSS_TRUE@am__append_12 = \
 @ENABLE_OSS_TRUE@		oss/osscontrolsocket.h \
 @ENABLE_OSS_TRUE@		oss/ossrequest.h
 
-@ENABLE_DROPBOX_TRUE@am__append_11 = \
+@ENABLE_DROPBOX_TRUE@am__append_13 = \
 @ENABLE_DROPBOX_TRUE@		dropbox/dropboxcontrolsocket.cpp \
 @ENABLE_DROPBOX_TRUE@		dropbox/dropboxjson.cpp
 
-@ENABLE_DROPBOX_TRUE@am__append_12 = \
+@ENABLE_DROPBOX_TRUE@am__append_14 = \
 @ENABLE_DROPBOX_TRUE@		dropbox/dropboxcontrolsocket.h \
 @ENABLE_DROPBOX_TRUE@		dropbox/dropboxjson.h
 
-@ENABLE_ONEDRIVE_TRUE@am__append_13 = \
+@ENABLE_ONEDRIVE_TRUE@am__append_15 = \
 @ENABLE_ONEDRIVE_TRUE@		onedrive/graphcontrolsocket.cpp \
 @ENABLE_ONEDRIVE_TRUE@		onedrive/graphjson.cpp
 
-@ENABLE_ONEDRIVE_TRUE@am__append_14 = \
+@ENABLE_ONEDRIVE_TRUE@am__append_16 = \
 @ENABLE_ONEDRIVE_TRUE@		onedrive/graphcontrolsocket.h \
 @ENABLE_ONEDRIVE_TRUE@		onedrive/graphjson.h
 
-@ENABLE_GDRIVE_TRUE@am__append_15 = \
+@ENABLE_GDRIVE_TRUE@am__append_17 = \
 @ENABLE_GDRIVE_TRUE@		gdrive/drivecontrolsocket.cpp \
 @ENABLE_GDRIVE_TRUE@		gdrive/drivejson.cpp
 
-@ENABLE_GDRIVE_TRUE@am__append_16 = \
+@ENABLE_GDRIVE_TRUE@am__append_18 = \
 @ENABLE_GDRIVE_TRUE@		gdrive/drivecontrolsocket.h \
 @ENABLE_GDRIVE_TRUE@		gdrive/drivejson.h
 
-@ENABLE_GCS_TRUE@am__append_17 = \
+@ENABLE_GCS_TRUE@am__append_19 = \
 @ENABLE_GCS_TRUE@		gcs/gcscontrolsocket.cpp \
 @ENABLE_GCS_TRUE@		gcs/gcsjson.cpp
 
-@ENABLE_GCS_TRUE@am__append_18 = \
+@ENABLE_GCS_TRUE@am__append_20 = \
 @ENABLE_GCS_TRUE@		gcs/gcscontrolsocket.h \
 @ENABLE_GCS_TRUE@		gcs/gcsjson.h
 
-@ENABLE_B2_TRUE@am__append_19 = \
+@ENABLE_B2_TRUE@am__append_21 = \
 @ENABLE_B2_TRUE@		b2/b2controlsocket.cpp \
 @ENABLE_B2_TRUE@		b2/b2json.cpp
 
-@ENABLE_B2_TRUE@am__append_20 = \
+@ENABLE_B2_TRUE@am__append_22 = \
 @ENABLE_B2_TRUE@		b2/b2controlsocket.h \
 @ENABLE_B2_TRUE@		b2/b2json.h
 
-@ENABLE_S3_TRUE@am__append_21 = \
+@ENABLE_S3_TRUE@am__append_23 = \
 @ENABLE_S3_TRUE@		s3/s3controlsocket.cpp \
 @ENABLE_S3_TRUE@		s3/s3response.cpp \
 @ENABLE_S3_TRUE@		s3/s3signer.cpp
 
-@ENABLE_S3_TRUE@am__append_22 = \
+@ENABLE_S3_TRUE@am__append_24 = \
 @ENABLE_S3_TRUE@		s3/s3controlsocket.h \
 @ENABLE_S3_TRUE@		s3/s3response.h \
 @ENABLE_S3_TRUE@		s3/s3signer.h
 
-@ENABLE_STORJ_TRUE@am__append_23 = \
+@ENABLE_STORJ_TRUE@am__append_25 = \
 @ENABLE_STORJ_TRUE@		storj/connect.cpp \
 @ENABLE_STORJ_TRUE@		storj/delete.cpp \
 @ENABLE_STORJ_TRUE@		storj/file_transfer.cpp \
@@ -227,7 +235,7 @@ host_triplet = @host@
 @ENABLE_STORJ_TRUE@		storj/rmd.cpp \
 @ENABLE_STORJ_TRUE@		storj/storjcontrolsocket.cpp
 
-@ENABLE_STORJ_TRUE@am__append_24 = \
+@ENABLE_STORJ_TRUE@am__append_26 = \
 @ENABLE_STORJ_TRUE@		storj/connect.h \
 @ENABLE_STORJ_TRUE@		storj/delete.h \
 @ENABLE_STORJ_TRUE@		storj/event.h \
@@ -238,8 +246,8 @@ host_triplet = @host@
 @ENABLE_STORJ_TRUE@		storj/rmd.h \
 @ENABLE_STORJ_TRUE@		storj/storjcontrolsocket.h
 
-@HAVE_LIBPUGIXML_FALSE@am__append_25 = ../pugixml/pugixml.cpp
-@FZ_MAC_TRUE@am__append_26 = -framework CoreServices
+@HAVE_LIBPUGIXML_FALSE@am__append_27 = ../pugixml/pugixml.cpp
+@FZ_MAC_TRUE@am__append_28 = -framework CoreServices
 subdir = src/engine
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -318,8 +326,9 @@ am__libfzclient_private_la_SOURCES_DIST = activity_logger.cpp \
 	sftp/delete.cpp sftp/filetransfer.cpp sftp/list.cpp \
 	sftp/mkd.cpp sftp/rename.cpp sftp/rmd.cpp \
 	sftp/sftpcontrolsocket.cpp azure/azureblob.cpp \
-	azure/azurecontrolsocket.cpp cos/coscontrolsocket.cpp \
-	cos/cossign.cpp oss/osscontrolsocket.cpp oss/ossrequest.cpp \
+	azure/azurecontrolsocket.cpp obs/obscontrolsocket.cpp \
+	obs/obsrequest.cpp cos/coscontrolsocket.cpp cos/cossign.cpp \
+	oss/osscontrolsocket.cpp oss/ossrequest.cpp \
 	dropbox/dropboxcontrolsocket.cpp dropbox/dropboxjson.cpp \
 	onedrive/graphcontrolsocket.cpp onedrive/graphjson.cpp \
 	gdrive/drivecontrolsocket.cpp gdrive/drivejson.cpp \
@@ -356,26 +365,28 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @ENABLE_SFTP_TRUE@	sftp/libfzclient_private_la-sftpcontrolsocket.lo
 @ENABLE_AZURE_BLOB_TRUE@am__objects_3 = azure/libfzclient_private_la-azureblob.lo \
 @ENABLE_AZURE_BLOB_TRUE@	azure/libfzclient_private_la-azurecontrolsocket.lo
-@ENABLE_COS_TRUE@am__objects_4 = cos/libfzclient_private_la-coscontrolsocket.lo \
+@ENABLE_OBS_TRUE@am__objects_4 = obs/libfzclient_private_la-obscontrolsocket.lo \
+@ENABLE_OBS_TRUE@	obs/libfzclient_private_la-obsrequest.lo
+@ENABLE_COS_TRUE@am__objects_5 = cos/libfzclient_private_la-coscontrolsocket.lo \
 @ENABLE_COS_TRUE@	cos/libfzclient_private_la-cossign.lo
-@ENABLE_OSS_TRUE@am__objects_5 = oss/libfzclient_private_la-osscontrolsocket.lo \
+@ENABLE_OSS_TRUE@am__objects_6 = oss/libfzclient_private_la-osscontrolsocket.lo \
 @ENABLE_OSS_TRUE@	oss/libfzclient_private_la-ossrequest.lo
-@ENABLE_DROPBOX_TRUE@am__objects_6 = dropbox/libfzclient_private_la-dropboxcontrolsocket.lo \
+@ENABLE_DROPBOX_TRUE@am__objects_7 = dropbox/libfzclient_private_la-dropboxcontrolsocket.lo \
 @ENABLE_DROPBOX_TRUE@	dropbox/libfzclient_private_la-dropboxjson.lo
-@ENABLE_ONEDRIVE_TRUE@am__objects_7 = onedrive/libfzclient_private_la-graphcontrolsocket.lo \
+@ENABLE_ONEDRIVE_TRUE@am__objects_8 = onedrive/libfzclient_private_la-graphcontrolsocket.lo \
 @ENABLE_ONEDRIVE_TRUE@	onedrive/libfzclient_private_la-graphjson.lo
-@ENABLE_GDRIVE_TRUE@am__objects_8 = gdrive/libfzclient_private_la-drivecontrolsocket.lo \
+@ENABLE_GDRIVE_TRUE@am__objects_9 = gdrive/libfzclient_private_la-drivecontrolsocket.lo \
 @ENABLE_GDRIVE_TRUE@	gdrive/libfzclient_private_la-drivejson.lo
-@ENABLE_GCS_TRUE@am__objects_9 = gcs/libfzclient_private_la-gcscontrolsocket.lo \
+@ENABLE_GCS_TRUE@am__objects_10 = gcs/libfzclient_private_la-gcscontrolsocket.lo \
 @ENABLE_GCS_TRUE@	gcs/libfzclient_private_la-gcsjson.lo
-@ENABLE_B2_TRUE@am__objects_10 =  \
+@ENABLE_B2_TRUE@am__objects_11 =  \
 @ENABLE_B2_TRUE@	b2/libfzclient_private_la-b2controlsocket.lo \
 @ENABLE_B2_TRUE@	b2/libfzclient_private_la-b2json.lo
-@ENABLE_S3_TRUE@am__objects_11 =  \
+@ENABLE_S3_TRUE@am__objects_12 =  \
 @ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3controlsocket.lo \
 @ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3response.lo \
 @ENABLE_S3_TRUE@	s3/libfzclient_private_la-s3signer.lo
-@ENABLE_STORJ_TRUE@am__objects_12 =  \
+@ENABLE_STORJ_TRUE@am__objects_13 =  \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-connect.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-delete.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-file_transfer.lo \
@@ -384,7 +395,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-mkd.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-rmd.lo \
 @ENABLE_STORJ_TRUE@	storj/libfzclient_private_la-storjcontrolsocket.lo
-@HAVE_LIBPUGIXML_FALSE@am__objects_13 = ../pugixml/libfzclient_private_la-pugixml.lo
+@HAVE_LIBPUGIXML_FALSE@am__objects_14 = ../pugixml/libfzclient_private_la-pugixml.lo
 am_libfzclient_private_la_OBJECTS =  \
 	libfzclient_private_la-activity_logger.lo \
 	libfzclient_private_la-activity_logger_layer.lo \
@@ -422,7 +433,8 @@ am_libfzclient_private_la_OBJECTS =  \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
 	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
 	$(am__objects_8) $(am__objects_9) $(am__objects_10) \
-	$(am__objects_11) $(am__objects_12) $(am__objects_13)
+	$(am__objects_11) $(am__objects_12) $(am__objects_13) \
+	$(am__objects_14)
 libfzclient_private_la_OBJECTS = $(am_libfzclient_private_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -508,6 +520,8 @@ am__depfiles_remade =  \
 	http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo \
 	http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo \
 	http/$(DEPDIR)/libfzclient_private_la-request.Plo \
+	obs/$(DEPDIR)/libfzclient_private_la-obscontrolsocket.Plo \
+	obs/$(DEPDIR)/libfzclient_private_la-obsrequest.Plo \
 	onedrive/$(DEPDIR)/libfzclient_private_la-graphcontrolsocket.Plo \
 	onedrive/$(DEPDIR)/libfzclient_private_la-graphjson.Plo \
 	oss/$(DEPDIR)/libfzclient_private_la-osscontrolsocket.Plo \
@@ -569,8 +583,9 @@ am__noinst_HEADERS_DIST = activity_logger_layer.h controlsocket.h \
 	ftp/transfersocket.h sftp/chmod.h sftp/connect.h sftp/delete.h \
 	sftp/filetransfer.h sftp/list.h sftp/mkd.h sftp/rename.h \
 	sftp/rmd.h sftp/sftpcontrolsocket.h azure/azureblob.h \
-	azure/azurecontrolsocket.h cos/coscontrolsocket.h \
-	cos/cossign.h oss/osscontrolsocket.h oss/ossrequest.h \
+	azure/azurecontrolsocket.h obs/obscontrolsocket.h \
+	obs/obsrequest.h cos/coscontrolsocket.h cos/cossign.h \
+	oss/osscontrolsocket.h oss/ossrequest.h \
 	dropbox/dropboxcontrolsocket.h dropbox/dropboxjson.h \
 	onedrive/graphcontrolsocket.h onedrive/graphjson.h \
 	gdrive/drivecontrolsocket.h gdrive/drivejson.h \
@@ -806,7 +821,8 @@ libfzclient_private_la_SOURCES = activity_logger.cpp \
 	$(am__append_3) $(am__append_5) $(am__append_7) \
 	$(am__append_9) $(am__append_11) $(am__append_13) \
 	$(am__append_15) $(am__append_17) $(am__append_19) \
-	$(am__append_21) $(am__append_23) $(am__append_25)
+	$(am__append_21) $(am__append_23) $(am__append_25) \
+	$(am__append_27)
 noinst_HEADERS = activity_logger_layer.h controlsocket.h \
 	directorycache.h directorylistingparser.h engineprivate.h \
 	filezilla.h http/filetransfer.h http/httpcontrolsocket.h \
@@ -815,12 +831,13 @@ noinst_HEADERS = activity_logger_layer.h controlsocket.h \
 	$(am__append_2) $(am__append_4) $(am__append_6) \
 	$(am__append_8) $(am__append_10) $(am__append_12) \
 	$(am__append_14) $(am__append_16) $(am__append_18) \
-	$(am__append_20) $(am__append_22) $(am__append_24)
+	$(am__append_20) $(am__append_22) $(am__append_24) \
+	$(am__append_26)
 libfzclient_private_la_CXXFLAGS = -fvisibility=hidden
 libfzclient_private_la_LDFLAGS = -no-undefined -release \
 	$(ENGINE_VERSION_MAJOR).$(ENGINE_VERSION_MINOR).$(ENGINE_VERSION_MICRO) \
 	$(LIBFZSSH_LIBS) $(LIBFILEZILLA_LIBS) $(IDN_LIB) \
-	$(am__append_26)
+	$(am__append_28)
 CLEANFILES = filezilla.h.gch
 DISTCLEANFILES = ./$(DEPDIR)/filezilla.Po
 @ENABLE_PRECOMP_TRUE@BUILT_SOURCES = filezilla.h.gch
@@ -969,6 +986,16 @@ azure/libfzclient_private_la-azureblob.lo: azure/$(am__dirstamp) \
 	azure/$(DEPDIR)/$(am__dirstamp)
 azure/libfzclient_private_la-azurecontrolsocket.lo:  \
 	azure/$(am__dirstamp) azure/$(DEPDIR)/$(am__dirstamp)
+obs/$(am__dirstamp):
+	@$(MKDIR_P) obs
+	@: >>obs/$(am__dirstamp)
+obs/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) obs/$(DEPDIR)
+	@: >>obs/$(DEPDIR)/$(am__dirstamp)
+obs/libfzclient_private_la-obscontrolsocket.lo: obs/$(am__dirstamp) \
+	obs/$(DEPDIR)/$(am__dirstamp)
+obs/libfzclient_private_la-obsrequest.lo: obs/$(am__dirstamp) \
+	obs/$(DEPDIR)/$(am__dirstamp)
 cos/$(am__dirstamp):
 	@$(MKDIR_P) cos
 	@: >>cos/$(am__dirstamp)
@@ -1106,6 +1133,8 @@ mostlyclean-compile:
 	-rm -f gdrive/*.lo
 	-rm -f http/*.$(OBJEXT)
 	-rm -f http/*.lo
+	-rm -f obs/*.$(OBJEXT)
+	-rm -f obs/*.lo
 	-rm -f onedrive/*.$(OBJEXT)
 	-rm -f onedrive/*.lo
 	-rm -f oss/*.$(OBJEXT)
@@ -1180,6 +1209,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@http/$(DEPDIR)/libfzclient_private_la-request.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@obs/$(DEPDIR)/libfzclient_private_la-obscontrolsocket.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@obs/$(DEPDIR)/libfzclient_private_la-obsrequest.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@onedrive/$(DEPDIR)/libfzclient_private_la-graphcontrolsocket.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@onedrive/$(DEPDIR)/libfzclient_private_la-graphjson.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@oss/$(DEPDIR)/libfzclient_private_la-osscontrolsocket.Plo@am__quote@ # am--include-marker
@@ -1641,6 +1672,20 @@ azure/libfzclient_private_la-azurecontrolsocket.lo: azure/azurecontrolsocket.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o azure/libfzclient_private_la-azurecontrolsocket.lo `test -f 'azure/azurecontrolsocket.cpp' || echo '$(srcdir)/'`azure/azurecontrolsocket.cpp
 
+obs/libfzclient_private_la-obscontrolsocket.lo: obs/obscontrolsocket.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT obs/libfzclient_private_la-obscontrolsocket.lo -MD -MP -MF obs/$(DEPDIR)/libfzclient_private_la-obscontrolsocket.Tpo -c -o obs/libfzclient_private_la-obscontrolsocket.lo `test -f 'obs/obscontrolsocket.cpp' || echo '$(srcdir)/'`obs/obscontrolsocket.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) obs/$(DEPDIR)/libfzclient_private_la-obscontrolsocket.Tpo obs/$(DEPDIR)/libfzclient_private_la-obscontrolsocket.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='obs/obscontrolsocket.cpp' object='obs/libfzclient_private_la-obscontrolsocket.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o obs/libfzclient_private_la-obscontrolsocket.lo `test -f 'obs/obscontrolsocket.cpp' || echo '$(srcdir)/'`obs/obscontrolsocket.cpp
+
+obs/libfzclient_private_la-obsrequest.lo: obs/obsrequest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT obs/libfzclient_private_la-obsrequest.lo -MD -MP -MF obs/$(DEPDIR)/libfzclient_private_la-obsrequest.Tpo -c -o obs/libfzclient_private_la-obsrequest.lo `test -f 'obs/obsrequest.cpp' || echo '$(srcdir)/'`obs/obsrequest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) obs/$(DEPDIR)/libfzclient_private_la-obsrequest.Tpo obs/$(DEPDIR)/libfzclient_private_la-obsrequest.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='obs/obsrequest.cpp' object='obs/libfzclient_private_la-obsrequest.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o obs/libfzclient_private_la-obsrequest.lo `test -f 'obs/obsrequest.cpp' || echo '$(srcdir)/'`obs/obsrequest.cpp
+
 cos/libfzclient_private_la-coscontrolsocket.lo: cos/coscontrolsocket.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT cos/libfzclient_private_la-coscontrolsocket.lo -MD -MP -MF cos/$(DEPDIR)/libfzclient_private_la-coscontrolsocket.Tpo -c -o cos/libfzclient_private_la-coscontrolsocket.lo `test -f 'cos/coscontrolsocket.cpp' || echo '$(srcdir)/'`cos/coscontrolsocket.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) cos/$(DEPDIR)/libfzclient_private_la-coscontrolsocket.Tpo cos/$(DEPDIR)/libfzclient_private_la-coscontrolsocket.Plo
@@ -1837,6 +1882,7 @@ clean-libtool:
 	-rm -rf gcs/.libs gcs/_libs
 	-rm -rf gdrive/.libs gdrive/_libs
 	-rm -rf http/.libs http/_libs
+	-rm -rf obs/.libs obs/_libs
 	-rm -rf onedrive/.libs onedrive/_libs
 	-rm -rf oss/.libs oss/_libs
 	-rm -rf s3/.libs s3/_libs
@@ -1983,6 +2029,8 @@ distclean-generic:
 	-$(am__rm_f) gdrive/$(am__dirstamp)
 	-$(am__rm_f) http/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) http/$(am__dirstamp)
+	-$(am__rm_f) obs/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) obs/$(am__dirstamp)
 	-$(am__rm_f) onedrive/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) onedrive/$(am__dirstamp)
 	-$(am__rm_f) oss/$(DEPDIR)/$(am__dirstamp)
@@ -2064,6 +2112,8 @@ distclean: distclean-am
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-request.Plo
+	-rm -f obs/$(DEPDIR)/libfzclient_private_la-obscontrolsocket.Plo
+	-rm -f obs/$(DEPDIR)/libfzclient_private_la-obsrequest.Plo
 	-rm -f onedrive/$(DEPDIR)/libfzclient_private_la-graphcontrolsocket.Plo
 	-rm -f onedrive/$(DEPDIR)/libfzclient_private_la-graphjson.Plo
 	-rm -f oss/$(DEPDIR)/libfzclient_private_la-osscontrolsocket.Plo
@@ -2193,6 +2243,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-filetransfer.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-httpcontrolsocket.Plo
 	-rm -f http/$(DEPDIR)/libfzclient_private_la-request.Plo
+	-rm -f obs/$(DEPDIR)/libfzclient_private_la-obscontrolsocket.Plo
+	-rm -f obs/$(DEPDIR)/libfzclient_private_la-obsrequest.Plo
 	-rm -f onedrive/$(DEPDIR)/libfzclient_private_la-graphcontrolsocket.Plo
 	-rm -f onedrive/$(DEPDIR)/libfzclient_private_la-graphjson.Plo
 	-rm -f oss/$(DEPDIR)/libfzclient_private_la-osscontrolsocket.Plo

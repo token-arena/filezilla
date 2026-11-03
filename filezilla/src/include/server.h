@@ -63,7 +63,9 @@ enum ServerProtocol
 
 	TENCENT_COS,
 
-	MAX_VALUE = TENCENT_COS
+	HUAWEI_OBS,
+
+	MAX_VALUE = HUAWEI_OBS
 };
 
 enum ServerType : unsigned

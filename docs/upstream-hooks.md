@@ -166,3 +166,13 @@ endif
 - `src/engine/engineprivate.cpp`：`#include "cos/coscontrolsocket.h"` + `case TENCENT_COS:` → `CCosControlSocket`
 - `tests/Makefile.am`：`cosselftest` 程序
 - `configure.ac`：`--enable-cos` → `ENABLE_COS` + `AM_CONDITIONAL`
+## 16. 华为云 OBS
+
+- `src/include/server.h`：`ServerProtocol` 新增 `HUAWEI_OBS`（`TENCENT_COS` 之后、`MAX_VALUE` 之前，
+  `MAX_VALUE` 改为 `HUAWEI_OBS`）
+- `src/engine/server.cpp`：描述表新增一行（前缀 `obs`、443、显示名
+  `Huawei Cloud OBS - Object Storage Service`）、`defaultProtocols` 的 `#if ENABLE_OBS` 块、
+  登录方式（normal/ask）、参数表并入 OSS/COS 的 case（复用 `sts_token`）
+- `src/engine/engineprivate.cpp`：`#include "obs/obscontrolsocket.h"` + `case HUAWEI_OBS:` → `CObsControlSocket`
+- `tests/Makefile.am`：`obsselftest` 程序
+- `configure.ac`：`--enable-obs` → `ENABLE_OBS` + `AM_CONDITIONAL`

@@ -29,6 +29,9 @@
 /* Define if building with Google Drive support. */
 #undef ENABLE_GDRIVE
 
+/* Define if building with Huawei Cloud OBS support. */
+#undef ENABLE_OBS
+
 /* Define if building with Microsoft OneDrive support. */
 #undef ENABLE_ONEDRIVE
 

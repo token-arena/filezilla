@@ -94,8 +94,8 @@ host_triplet = @host@
 TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
 	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9) \
-	$(am__EXEEXT_10)
-check_PROGRAMS = $(am__EXEEXT_11)
+	$(am__EXEEXT_10) $(am__EXEEXT_11)
+check_PROGRAMS = $(am__EXEEXT_12)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_flag.m4 \
@@ -135,10 +135,11 @@ CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_DROPBOX_TRUE@am__EXEEXT_8 = dropboxselftest$(EXEEXT)
 @ENABLE_OSS_TRUE@am__EXEEXT_9 = ossselftest$(EXEEXT)
 @ENABLE_COS_TRUE@am__EXEEXT_10 = cosselftest$(EXEEXT)
-am__EXEEXT_11 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
+@ENABLE_OBS_TRUE@am__EXEEXT_11 = obsselftest$(EXEEXT)
+am__EXEEXT_12 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
 	$(am__EXEEXT_3) $(am__EXEEXT_4) $(am__EXEEXT_5) \
 	$(am__EXEEXT_6) $(am__EXEEXT_7) $(am__EXEEXT_8) \
-	$(am__EXEEXT_9) $(am__EXEEXT_10)
+	$(am__EXEEXT_9) $(am__EXEEXT_10) $(am__EXEEXT_11)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_azureselftest_OBJECTS = azureselftest-azureselftest.$(OBJEXT) \
 	../src/engine/azure/azureselftest-azureblob.$(OBJEXT) \
@@ -208,6 +209,14 @@ gui_test_LDADD = $(LDADD)
 gui_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(gui_test_CXXFLAGS) \
 	$(CXXFLAGS) $(gui_test_LDFLAGS) $(LDFLAGS) -o $@
+am_obsselftest_OBJECTS = obsselftest-obsselftest.$(OBJEXT) \
+	../src/engine/obs/obsselftest-obsrequest.$(OBJEXT) \
+	../src/pugixml/obsselftest-pugixml.$(OBJEXT)
+obsselftest_OBJECTS = $(am_obsselftest_OBJECTS)
+obsselftest_LDADD = $(LDADD)
+obsselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(obsselftest_LDFLAGS) $(LDFLAGS) -o $@
 am_ossselftest_OBJECTS = ossselftest-ossselftest.$(OBJEXT) \
 	../src/engine/oss/ossselftest-ossrequest.$(OBJEXT) \
 	../src/pugixml/ossselftest-pugixml.$(OBJEXT)
@@ -254,12 +263,14 @@ am__depfiles_remade =  \
 	../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po \
 	../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po \
 	../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po \
+	../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Po \
 	../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po \
 	../src/engine/oss/$(DEPDIR)/ossselftest-ossrequest.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po \
 	../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po \
 	../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po \
 	../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po \
+	../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Po \
 	../src/pugixml/$(DEPDIR)/ossselftest-pugixml.Po \
 	../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po \
 	./$(DEPDIR)/azureselftest-azureselftest.Po \
@@ -271,6 +282,7 @@ am__depfiles_remade =  \
 	./$(DEPDIR)/graphselftest-graphselftest.Po \
 	./$(DEPDIR)/gui_test-cmpnatural.Po \
 	./$(DEPDIR)/gui_test-gui_test.Po \
+	./$(DEPDIR)/obsselftest-obsselftest.Po \
 	./$(DEPDIR)/ossselftest-ossselftest.Po \
 	./$(DEPDIR)/s3selftest-s3selftest.Po \
 	./$(DEPDIR)/test-dirparsertest.Po \
@@ -299,12 +311,14 @@ SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
 	$(cosselftest_SOURCES) $(driveselftest_SOURCES) \
 	$(dropboxselftest_SOURCES) $(gcsselftest_SOURCES) \
 	$(graphselftest_SOURCES) $(gui_test_SOURCES) \
-	$(ossselftest_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
+	$(obsselftest_SOURCES) $(ossselftest_SOURCES) \
+	$(s3selftest_SOURCES) $(test_SOURCES)
 DIST_SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
 	$(cosselftest_SOURCES) $(driveselftest_SOURCES) \
 	$(dropboxselftest_SOURCES) $(gcsselftest_SOURCES) \
 	$(graphselftest_SOURCES) $(am__gui_test_SOURCES_DIST) \
-	$(ossselftest_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
+	$(obsselftest_SOURCES) $(ossselftest_SOURCES) \
+	$(s3selftest_SOURCES) $(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -741,6 +755,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_DROPBOX_TRUE@MAYBE_DROPBOX_SELFTEST = dropboxselftest
 @ENABLE_OSS_TRUE@MAYBE_OSS_SELFTEST = ossselftest
 @ENABLE_COS_TRUE@MAYBE_COS_SELFTEST = cosselftest
+@ENABLE_OBS_TRUE@MAYBE_OBS_SELFTEST = obsselftest
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.
@@ -819,6 +834,15 @@ cosselftest_SOURCES = \
 
 cosselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
 cosselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
+# Standalone self-test for the Huawei Cloud OBS logic layer.
+obsselftest_SOURCES = \
+	obsselftest.cpp \
+	../src/engine/obs/obsrequest.cpp \
+	../src/pugixml/pugixml.cpp
+
+obsselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+obsselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 test_SOURCES = \
 	test.cpp \
 	dirparsertest.cpp \
@@ -992,6 +1016,22 @@ graphselftest$(EXEEXT): $(graphselftest_OBJECTS) $(graphselftest_DEPENDENCIES) $
 gui_test$(EXEEXT): $(gui_test_OBJECTS) $(gui_test_DEPENDENCIES) $(EXTRA_gui_test_DEPENDENCIES) 
 	@rm -f gui_test$(EXEEXT)
 	$(AM_V_CXXLD)$(gui_test_LINK) $(gui_test_OBJECTS) $(gui_test_LDADD) $(LIBS)
+../src/engine/obs/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/obs
+	@: >>../src/engine/obs/$(am__dirstamp)
+../src/engine/obs/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/obs/$(DEPDIR)
+	@: >>../src/engine/obs/$(DEPDIR)/$(am__dirstamp)
+../src/engine/obs/obsselftest-obsrequest.$(OBJEXT):  \
+	../src/engine/obs/$(am__dirstamp) \
+	../src/engine/obs/$(DEPDIR)/$(am__dirstamp)
+../src/pugixml/obsselftest-pugixml.$(OBJEXT):  \
+	../src/pugixml/$(am__dirstamp) \
+	../src/pugixml/$(DEPDIR)/$(am__dirstamp)
+
+obsselftest$(EXEEXT): $(obsselftest_OBJECTS) $(obsselftest_DEPENDENCIES) $(EXTRA_obsselftest_DEPENDENCIES) 
+	@rm -f obsselftest$(EXEEXT)
+	$(AM_V_CXXLD)$(obsselftest_LINK) $(obsselftest_OBJECTS) $(obsselftest_LDADD) $(LIBS)
 ../src/engine/oss/$(am__dirstamp):
 	@$(MKDIR_P) ../src/engine/oss
 	@: >>../src/engine/oss/$(am__dirstamp)
@@ -1040,6 +1080,7 @@ mostlyclean-compile:
 	-rm -f ../src/engine/dropbox/*.$(OBJEXT)
 	-rm -f ../src/engine/gcs/*.$(OBJEXT)
 	-rm -f ../src/engine/gdrive/*.$(OBJEXT)
+	-rm -f ../src/engine/obs/*.$(OBJEXT)
 	-rm -f ../src/engine/onedrive/*.$(OBJEXT)
 	-rm -f ../src/engine/oss/*.$(OBJEXT)
 	-rm -f ../src/engine/s3/*.$(OBJEXT)
@@ -1054,12 +1095,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/oss/$(DEPDIR)/ossselftest-ossrequest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/ossselftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/azureselftest-azureselftest.Po@am__quote@ # am--include-marker
@@ -1071,6 +1114,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/graphselftest-graphselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-cmpnatural.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-gui_test.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obsselftest-obsselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ossselftest-ossselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s3selftest-s3selftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-dirparsertest.Po@am__quote@ # am--include-marker
@@ -1359,6 +1403,48 @@ gui_test-gui_test.obj: gui_test.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gui_test.cpp' object='gui_test-gui_test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gui_test_CPPFLAGS) $(CPPFLAGS) $(gui_test_CXXFLAGS) $(CXXFLAGS) -c -o gui_test-gui_test.obj `if test -f 'gui_test.cpp'; then $(CYGPATH_W) 'gui_test.cpp'; else $(CYGPATH_W) '$(srcdir)/gui_test.cpp'; fi`
+
+obsselftest-obsselftest.o: obsselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT obsselftest-obsselftest.o -MD -MP -MF $(DEPDIR)/obsselftest-obsselftest.Tpo -c -o obsselftest-obsselftest.o `test -f 'obsselftest.cpp' || echo '$(srcdir)/'`obsselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/obsselftest-obsselftest.Tpo $(DEPDIR)/obsselftest-obsselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='obsselftest.cpp' object='obsselftest-obsselftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o obsselftest-obsselftest.o `test -f 'obsselftest.cpp' || echo '$(srcdir)/'`obsselftest.cpp
+
+obsselftest-obsselftest.obj: obsselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT obsselftest-obsselftest.obj -MD -MP -MF $(DEPDIR)/obsselftest-obsselftest.Tpo -c -o obsselftest-obsselftest.obj `if test -f 'obsselftest.cpp'; then $(CYGPATH_W) 'obsselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/obsselftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/obsselftest-obsselftest.Tpo $(DEPDIR)/obsselftest-obsselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='obsselftest.cpp' object='obsselftest-obsselftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o obsselftest-obsselftest.obj `if test -f 'obsselftest.cpp'; then $(CYGPATH_W) 'obsselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/obsselftest.cpp'; fi`
+
+../src/engine/obs/obsselftest-obsrequest.o: ../src/engine/obs/obsrequest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/obs/obsselftest-obsrequest.o -MD -MP -MF ../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Tpo -c -o ../src/engine/obs/obsselftest-obsrequest.o `test -f '../src/engine/obs/obsrequest.cpp' || echo '$(srcdir)/'`../src/engine/obs/obsrequest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Tpo ../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/obs/obsrequest.cpp' object='../src/engine/obs/obsselftest-obsrequest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/obs/obsselftest-obsrequest.o `test -f '../src/engine/obs/obsrequest.cpp' || echo '$(srcdir)/'`../src/engine/obs/obsrequest.cpp
+
+../src/engine/obs/obsselftest-obsrequest.obj: ../src/engine/obs/obsrequest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/obs/obsselftest-obsrequest.obj -MD -MP -MF ../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Tpo -c -o ../src/engine/obs/obsselftest-obsrequest.obj `if test -f '../src/engine/obs/obsrequest.cpp'; then $(CYGPATH_W) '../src/engine/obs/obsrequest.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/obs/obsrequest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Tpo ../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/obs/obsrequest.cpp' object='../src/engine/obs/obsselftest-obsrequest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/obs/obsselftest-obsrequest.obj `if test -f '../src/engine/obs/obsrequest.cpp'; then $(CYGPATH_W) '../src/engine/obs/obsrequest.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/obs/obsrequest.cpp'; fi`
+
+../src/pugixml/obsselftest-pugixml.o: ../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/pugixml/obsselftest-pugixml.o -MD -MP -MF ../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Tpo -c -o ../src/pugixml/obsselftest-pugixml.o `test -f '../src/pugixml/pugixml.cpp' || echo '$(srcdir)/'`../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Tpo ../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/pugixml/pugixml.cpp' object='../src/pugixml/obsselftest-pugixml.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/pugixml/obsselftest-pugixml.o `test -f '../src/pugixml/pugixml.cpp' || echo '$(srcdir)/'`../src/pugixml/pugixml.cpp
+
+../src/pugixml/obsselftest-pugixml.obj: ../src/pugixml/pugixml.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/pugixml/obsselftest-pugixml.obj -MD -MP -MF ../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Tpo -c -o ../src/pugixml/obsselftest-pugixml.obj `if test -f '../src/pugixml/pugixml.cpp'; then $(CYGPATH_W) '../src/pugixml/pugixml.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/pugixml/pugixml.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Tpo ../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/pugixml/pugixml.cpp' object='../src/pugixml/obsselftest-pugixml.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(obsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/pugixml/obsselftest-pugixml.obj `if test -f '../src/pugixml/pugixml.cpp'; then $(CYGPATH_W) '../src/pugixml/pugixml.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/pugixml/pugixml.cpp'; fi`
 
 ossselftest-ossselftest.o: ossselftest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ossselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ossselftest-ossselftest.o -MD -MP -MF $(DEPDIR)/ossselftest-ossselftest.Tpo -c -o ossselftest-ossselftest.o `test -f 'ossselftest.cpp' || echo '$(srcdir)/'`ossselftest.cpp
@@ -1815,6 +1901,13 @@ cosselftest.log: cosselftest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+obsselftest.log: obsselftest$(EXEEXT)
+	@p='obsselftest$(EXEEXT)'; \
+	b='obsselftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1909,6 +2002,8 @@ distclean-generic:
 	-$(am__rm_f) ../src/engine/gcs/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/gdrive/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/gdrive/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/obs/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/obs/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/onedrive/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/onedrive/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/oss/$(DEPDIR)/$(am__dirstamp)
@@ -1933,12 +2028,14 @@ distclean: distclean-am
 	-rm -f ../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
+	-rm -f ../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Po
 	-rm -f ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po
 	-rm -f ../src/engine/oss/$(DEPDIR)/ossselftest-ossrequest.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po
+	-rm -f ../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/ossselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
@@ -1950,6 +2047,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/graphselftest-graphselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
+	-rm -f ./$(DEPDIR)/obsselftest-obsselftest.Po
 	-rm -f ./$(DEPDIR)/ossselftest-ossselftest.Po
 	-rm -f ./$(DEPDIR)/s3selftest-s3selftest.Po
 	-rm -f ./$(DEPDIR)/test-dirparsertest.Po
@@ -2007,12 +2105,14 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ../src/engine/dropbox/$(DEPDIR)/dropboxselftest-dropboxjson.Po
 	-rm -f ../src/engine/gcs/$(DEPDIR)/gcsselftest-gcsjson.Po
 	-rm -f ../src/engine/gdrive/$(DEPDIR)/driveselftest-drivejson.Po
+	-rm -f ../src/engine/obs/$(DEPDIR)/obsselftest-obsrequest.Po
 	-rm -f ../src/engine/onedrive/$(DEPDIR)/graphselftest-graphjson.Po
 	-rm -f ../src/engine/oss/$(DEPDIR)/ossselftest-ossrequest.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3response.Po
 	-rm -f ../src/engine/s3/$(DEPDIR)/s3selftest-s3signer.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/azureselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/cosselftest-pugixml.Po
+	-rm -f ../src/pugixml/$(DEPDIR)/obsselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/ossselftest-pugixml.Po
 	-rm -f ../src/pugixml/$(DEPDIR)/s3selftest-pugixml.Po
 	-rm -f ./$(DEPDIR)/azureselftest-azureselftest.Po
@@ -2024,6 +2124,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/graphselftest-graphselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
 	-rm -f ./$(DEPDIR)/gui_test-gui_test.Po
+	-rm -f ./$(DEPDIR)/obsselftest-obsselftest.Po
 	-rm -f ./$(DEPDIR)/ossselftest-ossselftest.Po
 	-rm -f ./$(DEPDIR)/s3selftest-s3selftest.Po
 	-rm -f ./$(DEPDIR)/test-dirparsertest.Po

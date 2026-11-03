@@ -787,6 +787,17 @@ if test "$buildmain" = "yes"; then
     AC_DEFINE([ENABLE_COS], [1], [Define if building with Tencent Cloud COS support.])
     enable_cos="yes"
   fi
+
+  AC_ARG_ENABLE(obs, AS_HELP_STRING([--enable-obs@<:@=ARG@:>@],[Enable support for Huawei Cloud OBS. Default: no]),
+    [
+    ],
+    [
+      enable_obs="no"
+    ])
+  if test "$enable_obs" != "no"; then
+    AC_DEFINE([ENABLE_OBS], [1], [Define if building with Huawei Cloud OBS support.])
+    enable_obs="yes"
+  fi
 fi
 
 # Everything translation related
@@ -873,6 +884,7 @@ AM_CONDITIONAL(ENABLE_ONEDRIVE, [test "x$enable_onedrive" = "xyes"])
 AM_CONDITIONAL(ENABLE_DROPBOX, [test "x$enable_dropbox" = "xyes"])
 AM_CONDITIONAL(ENABLE_OSS, [test "x$enable_oss" = "xyes"])
 AM_CONDITIONAL(ENABLE_COS, [test "x$enable_cos" = "xyes"])
+AM_CONDITIONAL(ENABLE_OBS, [test "x$enable_obs" = "xyes"])
 AM_CONDITIONAL(ENABLE_FTP, [test "x$enable_ftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_SFTP, [test "x$enable_sftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_GUI, [test "x$enable_gui" = "xyes"])

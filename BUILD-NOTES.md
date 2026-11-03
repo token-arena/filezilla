@@ -97,14 +97,14 @@ pacman -U mingw-w64-ucrt-x86_64-filezilla-3.71.1-1-any.pkg.tar.zst
 `PKGBUILD` 的 configure 现在带这些开关（默认全开）：
 
 `--enable-s3`、`--enable-b2`、`--enable-azureblob`、`--enable-gcs`、
-`--enable-gdrive`、`--enable-onedrive`、`--enable-dropbox`
+`--enable-gdrive`、`--enable-onedrive`、`--enable-dropbox`、`--enable-oss`、`--enable-cos`、`--enable-obs`
 
 对应的自测程序随 `make check` 构建（各自只链 libfilezilla，秒级）：
 
 ```bash
 MINGW_ARCH=ucrt64 makepkg-mingw -s --noconfirm --nocheck   # 打包
 # 或在 build 目录里单独跑协议自测：
-cd build-UCRT64/tests && for t in s3 b2 azure gcs drive graph dropbox; do make ${t}selftest.exe && ./${t}selftest.exe; done
+cd build-UCRT64/tests && for t in s3 b2 azure gcs drive graph dropbox oss cos obs; do make ${t}selftest.exe && ./${t}selftest.exe; done
 ```
 
 各协议状态、已知限制见 `docs/PROTOCOL-STATUS.md` 与 `docs/PARKED.md`，

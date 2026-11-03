@@ -662,6 +662,8 @@ ENABLE_SFTP_FALSE
 ENABLE_SFTP_TRUE
 ENABLE_FTP_FALSE
 ENABLE_FTP_TRUE
+ENABLE_OBS_FALSE
+ENABLE_OBS_TRUE
 ENABLE_COS_FALSE
 ENABLE_COS_TRUE
 ENABLE_OSS_FALSE
@@ -942,6 +944,7 @@ enable_onedrive
 enable_dropbox
 enable_oss
 enable_cos
+enable_obs
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1651,6 +1654,7 @@ Optional Features:
   --enable-dropbox[=ARG]  Enable support for Dropbox. Default: no
   --enable-oss[=ARG]      Enable support for Alibaba Cloud OSS. Default: no
   --enable-cos[=ARG]      Enable support for Tencent Cloud COS. Default: no
+  --enable-obs[=ARG]      Enable support for Huawei Cloud OBS. Default: no
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -27081,6 +27085,25 @@ printf "%s\n" "#define ENABLE_COS 1" >>confdefs.h
 
     enable_cos="yes"
   fi
+
+  # Check whether --enable-obs was given.
+if test ${enable_obs+y}
+then :
+  enableval=$enable_obs;
+
+else case e in #(
+  e)
+      enable_obs="no"
+     ;;
+esac
+fi
+
+  if test "$enable_obs" != "no"; then
+
+printf "%s\n" "#define ENABLE_OBS 1" >>confdefs.h
+
+    enable_obs="yes"
+  fi
 fi
 
 # Everything translation related
@@ -27507,6 +27530,14 @@ else
   ENABLE_COS_FALSE=
 fi
 
+ if test "x$enable_obs" = "xyes"; then
+  ENABLE_OBS_TRUE=
+  ENABLE_OBS_FALSE='#'
+else
+  ENABLE_OBS_TRUE='#'
+  ENABLE_OBS_FALSE=
+fi
+
  if test "x$enable_ftp" = "xyes"; then
   ENABLE_FTP_TRUE=
   ENABLE_FTP_FALSE='#'
@@ -27777,6 +27808,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_COS_TRUE}" && test -z "${ENABLE_COS_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_COS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ENABLE_OBS_TRUE}" && test -z "${ENABLE_OBS_FALSE}"; then
+  as_fn_error $? "conditional \"ENABLE_OBS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_FTP_TRUE}" && test -z "${ENABLE_FTP_FALSE}"; then

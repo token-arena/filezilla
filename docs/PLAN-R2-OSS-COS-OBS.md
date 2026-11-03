@@ -123,4 +123,4 @@ abort  → 用户取消时 AbortMultipartUpload，避免残留碎片
 2. **Cloudflare R2**（region=`auto`）+ **MinIO**（默认 9000 明文、`tls` 参数可覆盖）+ **AWS 中国区**（region 默认 `cn-north-1`）— ✅ 已完成（协议条目 + 派发 + 默认值）
 3. 阿里云 OSS（原生签名 + 分片）— ✅ 已完成（签名 V1）
 4. 腾讯云 COS（原生签名 + 分块）— ✅ 已完成（q-sign-algorithm=sha1）
-5. 华为云 OBS（原生签名 + 分段）
+5. 华为云 OBS（原生签名 + 分段）— ✅ 已完成（OBS 头签名）
