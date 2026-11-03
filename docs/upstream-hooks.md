@@ -143,3 +143,16 @@ endif
   - `CLOUDFLARE_R2` → region `auto`
   - `S3_CN` → region `cn-north-1`
   - `MINIO` → 仅 443 用 TLS（9000 默认明文），可用额外参数 `tls`（1/0、true/false、yes/no）覆盖
+## 14. 阿里云 OSS
+
+- `src/include/server.h`：`ServerProtocol` 新增 `ALIBABA_OSS`（插在 `S3_CN` 之后、`MAX_VALUE` 之前，
+  `MAX_VALUE` 改为 `ALIBABA_OSS`；不改已有值）
+- `src/engine/server.cpp`：
+  - `protocolInfos[]` 新增一行：前缀 `oss`、默认端口 443、显示名
+    `Alibaba Cloud OSS - Object Storage Service`
+  - `defaultProtocols` 增加 `#if ENABLE_OSS` 块放入 `ALIBABA_OSS`
+  - `GetSupportedLogonTypes` 新增 `case ALIBABA_OSS: return {normal, ask};`
+  - 参数表新增独立 case（目前只有 `sts_token`，用于 STS 临时凭据）
+- `src/engine/engineprivate.cpp`：`#include "oss/osscontrolsocket.h"` + `case ALIBABA_OSS:` → `COssControlSocket`
+- `tests/Makefile.am`：`ossselftest` 程序
+- `configure.ac`：`--enable-oss` → `ENABLE_OSS` + `AM_CONDITIONAL`

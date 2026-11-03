@@ -59,7 +59,9 @@ enum ServerProtocol
 
 	S3_CN,
 
-	MAX_VALUE = S3_CN
+	ALIBABA_OSS,
+
+	MAX_VALUE = ALIBABA_OSS
 };
 
 enum ServerType : unsigned

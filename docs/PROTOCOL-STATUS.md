@@ -17,8 +17,9 @@
 | F8 | Cloudflare R2 | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（region=auto） |
 | F9 | MinIO | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（默认 9000、`tls` 可覆盖） |
 | F10 | AWS 中国区（S3） | `src/engine/s3/`（复用） | `--enable-s3` | 并入 `s3selftest` | ✅ 完成（region 默认 cn-north-1） |
+| F11 | 阿里云 OSS（原生） | `src/engine/oss/` | `--enable-oss` | `ossselftest` 41 项 | ✅ 完成（签名 V1 + 分片） |
 
-合计 **276 项自测断言**，全部通过；每个协议一个独立提交。
+合计 **317 项自测断言**，全部通过；每个协议一个独立提交。
 
 ## 每个协议都实现了什么
 

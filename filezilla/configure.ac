@@ -765,6 +765,17 @@ if test "$buildmain" = "yes"; then
     AC_DEFINE([ENABLE_DROPBOX], [1], [Define if building with Dropbox support.])
     enable_dropbox="yes"
   fi
+
+  AC_ARG_ENABLE(oss, AS_HELP_STRING([--enable-oss@<:@=ARG@:>@],[Enable support for Alibaba Cloud OSS. Default: no]),
+    [
+    ],
+    [
+      enable_oss="no"
+    ])
+  if test "$enable_oss" != "no"; then
+    AC_DEFINE([ENABLE_OSS], [1], [Define if building with Alibaba Cloud OSS support.])
+    enable_oss="yes"
+  fi
 fi
 
 # Everything translation related
@@ -849,6 +860,7 @@ AM_CONDITIONAL(ENABLE_GCS, [test "x$enable_gcs" = "xyes"])
 AM_CONDITIONAL(ENABLE_GDRIVE, [test "x$enable_gdrive" = "xyes"])
 AM_CONDITIONAL(ENABLE_ONEDRIVE, [test "x$enable_onedrive" = "xyes"])
 AM_CONDITIONAL(ENABLE_DROPBOX, [test "x$enable_dropbox" = "xyes"])
+AM_CONDITIONAL(ENABLE_OSS, [test "x$enable_oss" = "xyes"])
 AM_CONDITIONAL(ENABLE_FTP, [test "x$enable_ftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_SFTP, [test "x$enable_sftp" = "xyes"])
 AM_CONDITIONAL(ENABLE_GUI, [test "x$enable_gui" = "xyes"])

@@ -45,6 +45,7 @@ static const t_protocolInfo protocolInfos[] = {
 	{ CLOUDFLARE_R2,   L"r2",        true,  true,   443, false, "Cloudflare R2",                                                           L"https" },
 	{ MINIO,           L"minio",     true,  true,  9000, false, "MinIO - S3 compatible object storage",                                    L"" },
 	{ S3_CN,           L"s3-cn",     true,  true,   443, false, "S3 - Amazon S3 China (Beijing and Ningxia)",                              L"" },
+	{ ALIBABA_OSS,     L"oss",       true,  true,   443, false, "Alibaba Cloud OSS - Object Storage Service",                               L"" },
 	{ UNKNOWN,         L"",          false, false,   21, false, "",                                                                        L"" }
 };
 
@@ -68,6 +69,9 @@ static std::vector<ServerProtocol> const defaultProtocols = {
 	CLOUDFLARE_R2,
 	MINIO,
 	S3_CN,
+#endif
+#if ENABLE_OSS
+	ALIBABA_OSS,
 #endif
 };
 
@@ -905,6 +909,8 @@ std::vector<LogonType> GetSupportedLogonTypes(ServerProtocol protocol)
 	case MINIO:
 	case S3_CN:
 		return {LogonType::anonymous, LogonType::normal, LogonType::ask, LogonType::profile};
+	case ALIBABA_OSS:
+		return {LogonType::normal, LogonType::ask};
 	case S3_SSO:
 		return {LogonType::interactive, LogonType::profile};
 	case STORJ:
@@ -1010,6 +1016,15 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 				std::vector<ParameterTraits> ret;
 				ret.emplace_back(ParameterTraits{"identpath", ParameterSection::host, 0, L"/v2.0/tokens", _("Path of identity service")});
 				ret.emplace_back(ParameterTraits{"identuser", ParameterSection::user, ParameterTraits::optional, std::wstring(), std::wstring()});
+				return ret;
+			}();
+			return ret;
+		}
+	case ALIBABA_OSS:
+		{
+			static std::vector<ParameterTraits> const ret = []() {
+				std::vector<ParameterTraits> ret;
+				ret.emplace_back(ParameterTraits{"sts_token", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				return ret;
 			}();
 			return ret;
