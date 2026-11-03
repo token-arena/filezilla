@@ -297,80 +297,242 @@ public:
 
 	virtual int Send() override
 	{
-		if (opState == 0) {
-			rr_ = std::make_shared<S3RequestResponse>();
-			auto & req = rr_->request_;
-			std::string raw_path = CS3ControlSocket::ObjectPath(remotePath_, remoteFile_);
+		for (;;) {
+			switch (stage_) {
+			case stage_start:
+			{
+				raw_path_ = CS3ControlSocket::ObjectPath(remotePath_, remoteFile_);
 
-			if (download()) {
-				int res = controlSocket_.CheckOverwriteFile();
-				if (res != FZ_REPLY_OK) {
-					return res;
+				if (download()) {
+					int res = controlSocket_.CheckOverwriteFile();
+					if (res != FZ_REPLY_OK) {
+						return res;
+					}
+					stage_ = stage_download;
+					continue;
 				}
 
-				controlSocket_.FillRequest(req, "GET", raw_path, {}, s3::sha256_hex(""));
-			}
-			else {
 				if (!reader_factory_) {
 					log(logmsg::error, _("No local file to send."));
 					return FZ_REPLY_ERROR;
 				}
 
-				req.body_ = reader_factory_->open(*controlSocket_.buffer_pool_, 0, fz::aio_base::nosize, controlSocket_.max_buffer_count());
+				// Multipart uploads need a known size and a seekable reader so each
+				// part can be opened at its own offset.
+				upload_size_ = reader_factory_->size();
+				multipart_ = reader_factory_->seekable() &&
+					upload_size_ != fz::aio_base::nosize &&
+					upload_size_ > part_size_;
+
+				if (multipart_) {
+					part_count_ = static_cast<int>((upload_size_ + part_size_ - 1) / part_size_);
+					log(logmsg::status, _("Uploading %s in %d parts"),
+						to_wstring(fz::to_string(upload_size_)), part_count_);
+				}
+
+				stage_ = multipart_ ? stage_initiate : stage_single_put;
+				continue;
+			}
+			case stage_download:
+			{
+				rr_ = std::make_shared<S3RequestResponse>();
+				controlSocket_.FillRequest(rr_->request_, "GET", raw_path_, {}, s3::sha256_hex(""));
+				rr_->set_on_header([this](std::shared_ptr<S3RequestResponse> const& srr) {
+					return OnHeader(srr);
+				});
+				if (!controlSocket_.Submit(rr_, this)) {
+					log(logmsg::error, _("Could not submit the request."));
+					return FZ_REPLY_ERROR;
+				}
+				return FZ_REPLY_WOULDBLOCK;
+			}
+			case stage_single_put:
+			{
+				rr_ = std::make_shared<S3RequestResponse>();
+				auto & req = rr_->request_;
+				req.body_ = reader_factory_->open(*controlSocket_.buffer_pool_, 0, fz::aio_base::nosize,
+					controlSocket_.max_buffer_count());
 				if (!req.body_) {
 					log(logmsg::error, _("Could not open the local file."));
 					return FZ_REPLY_ERROR;
 				}
 
 				// The body is streamed, so its hash is unknown up front.
-				controlSocket_.FillRequest(req, "PUT", raw_path, {}, "UNSIGNED-PAYLOAD");
+				controlSocket_.FillRequest(req, "PUT", raw_path_, {}, "UNSIGNED-PAYLOAD");
 				req.update_content_length_from_body();
+
+				if (!controlSocket_.Submit(rr_, this)) {
+					log(logmsg::error, _("Could not submit the request."));
+					return FZ_REPLY_ERROR;
+				}
+				return FZ_REPLY_WOULDBLOCK;
 			}
-
-			rr_->set_on_header([this](std::shared_ptr<S3RequestResponse> const& srr) {
-				return OnHeader(srr);
-			});
-
-			if (!controlSocket_.Submit(rr_, this)) {
-				log(logmsg::error, _("Could not submit the request."));
-				return FZ_REPLY_ERROR;
+			case stage_initiate:
+			{
+				rr_ = std::make_shared<S3RequestResponse>();
+				controlSocket_.FillRequest(rr_->request_, "POST", raw_path_,
+					{{"uploads", ""}}, s3::sha256_hex(""));
+				if (!controlSocket_.Submit(rr_, this)) {
+					return FZ_REPLY_ERROR;
+				}
+				return FZ_REPLY_WOULDBLOCK;
 			}
+			case stage_part:
+			{
+				if (current_part_ > part_count_) {
+					stage_ = stage_complete;
+					continue;
+				}
 
-			opState = 1;
-			return FZ_REPLY_WOULDBLOCK;
+				auto const offset = static_cast<uint64_t>(current_part_ - 1) * part_size_;
+				auto const this_size = std::min<uint64_t>(part_size_, upload_size_ - offset);
+
+				rr_ = std::make_shared<S3RequestResponse>();
+				auto & req = rr_->request_;
+				req.body_ = reader_factory_->open(*controlSocket_.buffer_pool_, offset, this_size,
+					controlSocket_.max_buffer_count());
+				if (!req.body_) {
+					log(logmsg::error, _("Could not open the local file."));
+					return FZ_REPLY_ERROR;
+				}
+
+				controlSocket_.FillRequest(req, "PUT", raw_path_,
+					{{"partNumber", std::to_string(current_part_)}, {"uploadId", upload_id_}},
+					"UNSIGNED-PAYLOAD");
+				req.update_content_length_from_body();
+
+				if (!controlSocket_.Submit(rr_, this)) {
+					return FZ_REPLY_ERROR;
+				}
+				return FZ_REPLY_WOULDBLOCK;
+			}
+			case stage_complete:
+			{
+				rr_ = std::make_shared<S3RequestResponse>();
+				std::string const body = s3::build_complete_multipart(parts_);
+				rr_->request_.body_ = fz::string_reader_factory(L"complete", body).open(*controlSocket_.buffer_pool_);
+				if (!rr_->request_.body_) {
+					return FZ_REPLY_ERROR;
+				}
+				controlSocket_.FillRequest(rr_->request_, "POST", raw_path_,
+					{{"uploadId", upload_id_}}, s3::sha256_hex(body));
+				rr_->request_.update_content_length_from_body();
+
+				if (!controlSocket_.Submit(rr_, this)) {
+					return FZ_REPLY_ERROR;
+				}
+				return FZ_REPLY_WOULDBLOCK;
+			}
+			case stage_abort:
+			{
+				rr_ = std::make_shared<S3RequestResponse>();
+				controlSocket_.FillRequest(rr_->request_, "DELETE", raw_path_,
+					{{"uploadId", upload_id_}}, s3::sha256_hex(""));
+				if (!controlSocket_.Submit(rr_, this)) {
+					return FZ_REPLY_ERROR;
+				}
+				return FZ_REPLY_WOULDBLOCK;
+			}
+			default:
+				return FZ_REPLY_INTERNALERROR;
+			}
 		}
-
-		return FZ_REPLY_WOULDBLOCK;
 	}
 
 	virtual int ParseResponse() override { return FZ_REPLY_INTERNALERROR; }
 
 	virtual void OnS3Response(bool success) override
 	{
+		if (stage_ == stage_abort) {
+			// Best effort cleanup, the transfer itself already failed
+			log(logmsg::debug_warning, L"Multipart upload aborted");
+			controlSocket_.ResetOperation(FZ_REPLY_ERROR);
+			return;
+		}
+
 		if (!rr_ || !success || !rr_->response_.success()) {
-			s3::error_info info;
-			if (rr_ && s3::parse_error(std::string(rr_->response_.body_.to_view()), info) && !info.code.empty()) {
-				log(logmsg::error, _("Server error: %s (%s)"), to_wstring(info.code), to_wstring(info.message));
-			}
-			else {
-				log(logmsg::error, _("File transfer failed"));
+			log_error();
+			if (multipart_ && !upload_id_.empty() && stage_ != stage_initiate) {
+				stage_ = stage_abort;
+				rr_.reset();
+				controlSocket_.SendNextCommand();
+				return;
 			}
 			controlSocket_.ResetOperation(FZ_REPLY_ERROR);
 			return;
 		}
 
-		int64_t transferred = 0;
-		if (auto const contentLength = rr_->response_.get_header("content-length"); !contentLength.empty()) {
-			transferred = fz::to_integral<int64_t>(contentLength, 0);
+		switch (stage_) {
+		case stage_initiate:
+		{
+			if (!s3::parse_initiate_multipart(std::string(rr_->response_.body_.to_view()), upload_id_)) {
+				log(logmsg::error, _("Could not parse the server's response."));
+				controlSocket_.ResetOperation(FZ_REPLY_ERROR);
+				return;
+			}
+			current_part_ = 1;
+			stage_ = stage_part;
+			rr_.reset();
+			controlSocket_.SendNextCommand();
+			return;
 		}
-		controlSocket_.RecordActivity(download() ? activity_logger::recv : activity_logger::send, transferred);
+		case stage_part:
+		{
+			auto etag = rr_->response_.get_header("etag");
+			if (etag.empty()) {
+				log(logmsg::error, _("The server did not return an entity tag for part %d"), current_part_);
+				stage_ = stage_abort;
+				rr_.reset();
+				controlSocket_.SendNextCommand();
+				return;
+			}
+			parts_.push_back({current_part_, etag});
+			++current_part_;
+			rr_.reset();
+			controlSocket_.SendNextCommand();
+			return;
+		}
+		case stage_complete:
+			log(logmsg::status, _("File transfer successful"));
+			controlSocket_.ResetOperation(FZ_REPLY_OK);
+			return;
+		default:
+		{
+			int64_t transferred = 0;
+			if (auto const contentLength = rr_->response_.get_header("content-length"); !contentLength.empty()) {
+				transferred = fz::to_integral<int64_t>(contentLength, 0);
+			}
+			controlSocket_.RecordActivity(download() ? activity_logger::recv : activity_logger::send, transferred);
 
-		log(logmsg::status, _("File transfer successful"));
-
-		controlSocket_.ResetOperation(FZ_REPLY_OK);
+			log(logmsg::status, _("File transfer successful"));
+			controlSocket_.ResetOperation(FZ_REPLY_OK);
+			return;
+		}
+		}
 	}
 
 private:
+	enum stages : int {
+		stage_start = 0,
+		stage_download,
+		stage_single_put,
+		stage_initiate,
+		stage_part,
+		stage_complete,
+		stage_abort
+	};
+
+	void log_error()
+	{
+		s3::error_info info;
+		if (rr_ && s3::parse_error(std::string(rr_->response_.body_.to_view()), info) && !info.code.empty()) {
+			log(logmsg::error, _("Server error: %s (%s)"), to_wstring(info.code), to_wstring(info.message));
+		}
+		else {
+			log(logmsg::error, _("File transfer failed"));
+		}
+	}
+
 	fz::http::continuation OnHeader(std::shared_ptr<S3RequestResponse> const& srr)
 	{
 		auto const code = srr->response_.code_;
@@ -404,7 +566,17 @@ private:
 	}
 
 	std::shared_ptr<S3RequestResponse> rr_;
+	std::string raw_path_;
+	std::string upload_id_;
+	std::vector<s3::part_entry> parts_;
+	uint64_t part_size_{8 * 1024 * 1024};
+	uint64_t upload_size_{};
+	int part_count_{};
+	int current_part_{};
+	int stage_{stage_start};
+	bool multipart_{};
 };
+
 
 // ---------------------------------------------------------------------------
 // CS3DeleteOpData

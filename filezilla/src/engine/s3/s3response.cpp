@@ -158,4 +158,36 @@ bool parse_list_buckets(std::string_view const& xml, std::vector<bucket_entry> &
 
 	return true;
 }
+
+bool parse_initiate_multipart(std::string_view const& xml, std::string & upload_id)
+{
+	upload_id.clear();
+
+	pugi::xml_document doc;
+	if (!load(xml, doc)) {
+		return false;
+	}
+
+	auto const root = doc.child("InitiateMultipartUploadResult");
+	if (!root) {
+		return false;
+	}
+
+	upload_id = child_text(root, "UploadId");
+	return !upload_id.empty();
+}
+
+std::string build_complete_multipart(std::vector<part_entry> const& parts)
+{
+	std::string xml = "<CompleteMultipartUpload>";
+	for (auto const& p : parts) {
+		xml += "<Part><PartNumber>";
+		xml += std::to_string(p.number);
+		xml += "</PartNumber><ETag>";
+		xml += p.etag;
+		xml += "</ETag></Part>";
+	}
+	xml += "</CompleteMultipartUpload>";
+	return xml;
+}
 }

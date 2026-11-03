@@ -52,6 +52,18 @@ namespace s3 {
 
 	/// Parses an S3 error document. Returns false if the document is not XML.
 	bool parse_error(std::string_view const& xml, error_info & out);
+
+	/// Parses an InitiateMultipartUploadResult document and returns the upload id.
+	bool parse_initiate_multipart(std::string_view const& xml, std::string & upload_id);
+
+	/// One finished part of a multipart upload.
+	struct part_entry {
+		int number{};
+		std::string etag;
+	};
+
+	/// Builds the CompleteMultipartUpload request body.
+	std::string build_complete_multipart(std::vector<part_entry> const& parts);
 }
 
 #endif

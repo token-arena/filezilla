@@ -250,6 +250,34 @@ void test_parse_error()
 	check_true("parse empty fails", !s3::parse_error("", bad));
 }
 
+void test_multipart()
+{
+	std::string const initiate =
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		"<InitiateMultipartUploadResult><Bucket>mybucket</Bucket><Key>big.bin</Key>"
+		"<UploadId>VXBsb2FkSWQ</UploadId></InitiateMultipartUploadResult>";
+
+	std::string upload_id;
+	check_true("initiate parses", s3::parse_initiate_multipart(initiate, upload_id));
+	check_eq("upload id", upload_id, "VXBsb2FkSWQ");
+
+	std::string missing;
+	check_true("initiate without id fails",
+		!s3::parse_initiate_multipart("<InitiateMultipartUploadResult><Bucket>b</Bucket></InitiateMultipartUploadResult>", missing));
+	check_true("initiate garbage fails", !s3::parse_initiate_multipart("nope", missing));
+
+	std::vector<s3::part_entry> parts = {{1, "\"etag-one\""}, {2, "\"etag-two\""}};
+	check_eq("complete body", s3::build_complete_multipart(parts),
+		"<CompleteMultipartUpload>"
+		"<Part><PartNumber>1</PartNumber><ETag>\"etag-one\"</ETag></Part>"
+		"<Part><PartNumber>2</PartNumber><ETag>\"etag-two\"</ETag></Part>"
+		"</CompleteMultipartUpload>");
+
+	std::vector<s3::part_entry> no_parts;
+	check_eq("complete body empty", s3::build_complete_multipart(no_parts),
+		"<CompleteMultipartUpload></CompleteMultipartUpload>");
+}
+
 }
 
 int main()
@@ -265,6 +293,7 @@ int main()
 	test_session_token_signature();
 	test_parse_list_objects_v2();
 	test_parse_error();
+	test_multipart();
 
 	printf("\n%d checks, %d failures\n", g_checks, g_failures);
 	if (g_failures) {
