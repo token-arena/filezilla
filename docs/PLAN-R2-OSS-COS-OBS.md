@@ -1,99 +1,108 @@
-# 新增 Cloudflare R2 / 阿里云 OSS / 腾讯云 COS / 华为云 OBS —— 开发计划（待澄清，暂不动手）
+# 新增 Cloudflare R2 / 阿里云 OSS / 腾讯云 COS / 华为云 OBS —— 开发计划（已定型，待开工）
 
-> 本文只是计划。等你确认第 5 节的几个问题后，才按既有自动化流程逐个开发
-> （每个功能：实现 → 自测 → 全量构建 → 提交推送；自测 3 次修不好则记入 `docs/PARKED.md` 并推进下一个）。
+> 状态：**计划已按你确认的三项决定定稿，尚未写任何代码。**
+> 开工后按既有自动化流程逐个推进：实现 → 自测 → 全量构建打包 → 提交推送；
+> 单个功能自测 3 次修不好则记入 `docs/PARKED.md` 并推进下一个。
 
-## 1. 现状（代码事实，不是推测）
+## 0. 已确认的决策
+
+| 决策 | 选择 |
+|---|---|
+| 实现路线 | **R2 复用现有 S3 实现**；**OSS / COS / OBS 走原生实现**（各自签名 + REST） |
+| UI 形态 | **做成站点管理器下拉里的独立协议条目**（接受改动 `server.h` / `server.cpp` / `sitemanager_controls.cpp`） |
+| 上传范围 | **包含分片上传与断点续传**（不只是单请求上传） |
+
+## 1. 现状（代码事实）
 
 | 事实 | 位置 |
 |---|---|
-| `CLOUDFLARE_R2` **已在**协议枚举里 | `src/include/server.h:56`（且 `MAX_VALUE = CLOUDFLARE_R2`） |
-| `CLOUDFLARE_R2` **已在**协议描述表里（名字 “Cloudflare R2”、前缀 `r2`、端口 443、TLS） | `src/engine/server.cpp:45` |
-| `CLOUDFLARE_R2` **已经**派发到我们的 S3 实现 | `src/engine/engineprivate.cpp` 的 `case CLOUDFLARE_R2:` |
-| 没有 OSS / COS / OBS 的枚举条目 | `server.h` 里只有 S3、S3_SSO、R2、RACKSPACE 等 |
-| 新协议要“在站点管理器里可选”，需要动 4 处上游文件 | `server.h`(枚举) + `server.cpp`(描述表、`defaultProtocols`、登录方式、参数表) + `src/interface/sitemanager_controls.cpp`(下拉分组) + `engineprivate.cpp`(派发) |
-| 我们的 S3 实现是 **path-style + SigV4**，region 默认 `us-east-1`，上传用 `UNSIGNED-PAYLOAD` | `src/engine/s3/` |
+| `CLOUDFLARE_R2` 已在协议枚举 | `src/include/server.h:56`（`MAX_VALUE = CLOUDFLARE_R2`） |
+| `CLOUDFLARE_R2` 已在协议描述表（名 “Cloudflare R2”、前缀 `r2`、443、TLS） | `src/engine/server.cpp:45` |
+| `CLOUDFLARE_R2` 已派发到我们的 S3 实现 | `src/engine/engineprivate.cpp` `case CLOUDFLARE_R2:` |
+| OSS / COS / OBS 均无枚举条目 | `server.h` 只有 S3 / S3_SSO / R2 / RACKSPACE 等 |
+| 新协议要在 UI 可选，需动 4 处 | 枚举、描述表 + `defaultProtocols` + 登录方式 + 参数表、`sitemanager_controls.cpp` 分组、`engineprivate.cpp` 派发 |
 
-所以：**R2 基本等于“接线 + 验证 + 补测试/文档”**，OSS/COS/OBS 才需要真正的新实现。
+## 2. 四家技术差异
 
-## 2. 四家的技术差异（决定工作量）
-
-| 厂商 | 端点形态 | 原生鉴权 | S3 兼容度 | 需要特别注意 |
+| 厂商 | 端点形态 | 原生鉴权 | S3 兼容度 | 关键差异点 |
 |---|---|---|---|---|
-| **Cloudflare R2** | `https://<account>.r2.cloudflarestorage.com` | SigV4（与 AWS 一致） | 高 | region 必须填 `auto`；不支持部分 ACL/策略类 API |
-| **阿里云 OSS** | `https://<bucket>.oss-<region>.aliyuncs.com` | 原生 OSS 签名（V4 / V1，HMAC-SHA1 变体） | 中等（子集） | 中文/特殊字符键的编码规则、`CRC64` 校验、`x-oss-` 头 |
-| **腾讯云 COS** | `https://<bucket>-<appid>.cos.<region>.myqcloud.com` | 原生 COS 签名（`q-sign-algorithm=sha1&q-ak=...`） | 中等（子集） | **bucket 名必须带 appid**；签名要覆盖 header 列表与 param 列表 |
-| **华为云 OBS** | `https://<bucket>.obs.<region>.myhuaweicloud.com` | 原生 OBS 签名（近似 S3 V2：HMAC-SHA1 + CanonicalizedResource） | 中等（子集） | 有并行文件系统语义；请求头 `x-obs-` |
+| **Cloudflare R2** | `https://<account>.r2.cloudflarestorage.com` | SigV4（同 AWS） | 高 | region 必须 `auto`；部分 ACL/策略 API 不支持 |
+| **阿里云 OSS** | `https://<bucket>.oss-<region>.aliyuncs.com` | OSS V4 / V1（HMAC-SHA1 变体） | 子集 | 中文键编码、`CRC64` 校验、`x-oss-` 头、multipart 上传 |
+| **腾讯云 COS** | `https://<bucket>-<appid>.cos.<region>.myqcloud.com` | COS 签名（`q-sign-algorithm=sha1&q-ak=...`） | 子集 | **bucket 名必须带 appid**、签名要覆盖 header/param 列表、分块上传 |
+| **华为云 OBS** | `https://<bucket>.obs.<region>.myhuaweicloud.com` | OBS 签名（近似 S3 V2，HMAC-SHA1 + CanonicalizedResource） | 子集 | `x-obs-` 头、分段上传、并行文件系统语义 |
 
-## 3. 两条路线（需要你拍板）
+## 3. 每个协议的交付物（统一模板）
 
-### 路线 A：S3 复用（最低成本）
+新目录 `src/engine/<proto>/`：
 
-把四家都当 “S3 兼容服务”用现有实现：加端点预设 + region + path-style 开关，必要时加 4 个枚举条目只为了让下拉框能选。
+- `<proto>signer.{h,cpp}` 或 `<proto>json.{h,cpp}`：**纯逻辑层**（签名/请求构造/响应解析/路径↔键映射），零引擎依赖，可秒级单测
+- `<proto>controlsocket.{h,cpp}`：`C...ControlSocket : public CRealControlSocket`，实现
+  `Connect / List / FileTransfer / Delete / Mkdir / RemoveDir / Rename`
+- `<proto>multipart.{h,cpp}`：分片上传状态机（见第 4 节）
+- `tests/<proto>selftest.cpp`：签名向量（先由**独立 Python 参考实现**算出再对齐）+ XML/JSON 样本解析
 
-- 成本：每家 **0.5–1 天**（端点/签名验证 + 单测 + 文档）
-- 风险：
-  - 各家 S3 兼容层是**子集**，分块上传、ACL、中文键、分页行为容易踩坑；
-  - 部分地域/老账号不支持 S3 兼容接口；
-  - COS 的 `bucket-appid` 命名和 OSS 的编码规则与 AWS 不完全一致，容易出现 “SignatureDoesNotMatch”。
+上游钩子（每处都登记进 `docs/upstream-hooks.md`）：
 
-### 路线 B：原生实现（像 Azure/B2 那样）
+1. `configure.ac`：`--enable-<proto>` + `AC_DEFINE([ENABLE_<PROTO>])` + `AM_CONDITIONAL`
+2. `src/engine/Makefile.am`：`if ENABLE_<PROTO>` 源文件段
+3. `src/engine/engineprivate.cpp`：`#include` + `case <PROTO>:` 派发
+4. `src/include/server.h`：枚举条目（插在 `MAX_VALUE` 之前，**不得改动已有值**）
+5. `src/engine/server.cpp`：描述表一行、`defaultProtocols` 一项、`GetSupportedLogonTypes`、
+   必要时参数表（region / endpoint / appid 等）
+6. `src/interface/sitemanager_controls.cpp`：`ProtocolGroup` 里加一项，使下拉框可见
+7. `tests/Makefile.am`：自测程序
+8. `PKGBUILD`：`--enable-<proto>`
 
-每家写自己的签名 + REST 客户端（列举/下载/上传/删除/建目录/改名）。
+## 4. 分片上传与续传设计（统一抽象）
 
-- 成本：每家 **2–4 天**
-- 优点：错误码准确、能覆盖各家特性、不依赖 S3 兼容层的“运气”
-- 代价：四份独立代码，维护面变大
+引擎的 `FileTransfer` 是"一次命令一次传输"，所以分片全部在控制套接字内部完成，不动引擎：
 
-### 我的建议
+```
+init   → 计算分片大小（默认 8 MiB，可在站点参数覆盖）
+       → 创建上传会话（各家不同，见下）
+loop   → 读 reader 的一个分片 → 计算校验（MD5/SHA1/CRC64）→ PUT 分片 → 记录 {partNumber, etag}
+       → 失败时对同一分片重试 N 次（指数退避）
+commit → 完成上传（CompleteMultipartUpload / commit），带全部分片 etag
+abort  → 用户取消时 AbortMultipartUpload，避免残留碎片
+```
 
-- **R2 → 路线 A**（它本来就是 S3 兼容，且枚举已存在，只需验证 + 补测试）
-- **OSS / COS / OBS → 路线 B**（原生签名与 AWS 有实质差异，走兼容层会留下长期隐患）
+各家实现：
 
-## 4. 每个功能的开发与自测模板（沿用前 8 个协议的做法）
+| 厂商 | 会话创建 | 分片 | 完成 |
+|---|---|---|---|
+| S3 / R2 | `POST /bucket/key?uploads` → UploadId | `PUT ?partNumber=N&uploadId=…` → ETag | `POST ?uploadId=…` + XML 清单 |
+| OSS | `POST /key?uploads` → UploadId | `PUT ?partNumber&uploadId` | `POST ?uploadId` |
+| COS | `POST /key?uploads` | `PUT ?partNumber&uploadId` | `POST ?uploadId` |
+| OBS | `POST /key?uploads` | `PUT ?partNumber&uploadId` | `POST ?uploadId` |
 
-1. **纯逻辑层**（可脱离引擎秒级单测）：签名/请求构造/响应解析/路径↔对象键映射
-   - 签名向量先由**独立的 Python 参考实现**算出再对齐（S3 SigV4、Azure SharedKey 都是这么验的）
-2. **控制套接字**：`C...ControlSocket : public CRealControlSocket`，实现
-   `Connect / List / FileTransfer / Delete / Mkdir / RemoveDir / Rename`，
-   不支持的能力返回 `FZ_REPLY_NOTSUPPORTED`
-3. **钩子**：`configure.ac`、`src/engine/Makefile.am`、`engineprivate.cpp`、
-   （若要在 UI 里可选）`server.h` + `server.cpp` + `sitemanager_controls.cpp`、`tests/Makefile.am`、`PKGBUILD`
-   —— 全部登记进 `docs/upstream-hooks.md`
-4. **自测**：
-   - 协议逻辑单测（签名向量、XML/JSON 样本、URL 构造）
-   - 本地 **mock 服务**（Python 起最小 HTTP 服务，校验签名头格式、返回固定响应）做“请求↔响应”对拍
-   - 全量 `makepkg-mingw` 构建 + 打包，确认代码进了引擎 DLL
-5. **提交**：一个功能一个提交；3 次修不好 → 记 `docs/PARKED.md` → 推进下一个
+**续传的两种含义**（见第 6 节问题 4）：
 
-## 5. 需要你澄清的问题
+- *会话内续传*：某分片失败后重试、`FileTransfer` 被取消后可从已完成分片继续 —— **本轮实现**
+- *跨会话续传*：进程重启后接着传 —— 需要引擎侧持久化分片状态，**本轮不做**（除非你要求）
 
-**Q1（最关键）路线**：R2 走 A、OSS/COS/OBS 走 B —— 同意吗？
-还是四家全部走 A（快，但兼容性风险高）／全部走 B（慢但干净）？
-
-**Q2（UI 形态）**：OSS/COS/OBS 要不要做成站点管理器下拉里的**独立条目**？
-- 要（推荐）：需改 `server.h` / `server.cpp` / `sitemanager_controls.cpp` 三处上游文件，改动可控但要逐条登记
-- 不要：用户选 “S3” 后手填端点 —— 零上游改动，但体验差（显示名仍叫 Amazon S3）
-
-**Q3（测试账号）**：能否提供四家各一个**最小权限**测试账号（只读写一个测试 bucket）？
-- 能：可以真机验证签名与分页、避免“上线才发现差异”
-- 不能：我按各家官方签名文档 + 本地 mock 对拍实现，会在提交信息里注明“未做真机验证”
-
-**Q4（上传范围）**：先只做**单请求流式上传**，还是同时做**分片/断点续传**？
-（S3 multipart、OSS multipart、COS 分块、OBS 分段；分片会显著增加工作量）
-
-**Q5（还有别家吗）**：除这四家，是否还要排期七牛 Kodo、金山 KS3、MinIO、Backblaze（S3 API）、AWS 中国区？
-
-**Q6（显示名）**：下拉框里用中文名（“阿里云 OSS / 腾讯云 COS / 华为云 OBS”）还是英文名（“Alibaba Cloud OSS / Tencent Cloud COS / Huawei Cloud OBS”）？
-
-## 6. 排期预览（按建议方案，1 人全职）
+## 5. 排期（1 人全职，含分片上传）
 
 | 阶段 | 内容 | 估算 |
 |---|---|---|
-| 0 | R2：验证 S3 复用（region=auto、端点、path-style）+ 单测 + 文档 | 0.5–1 天 |
-| 1 | 阿里云 OSS：原生签名 + 六项操作 + mock 对拍 | 2–3 天 |
-| 2 | 腾讯云 COS：原生签名（q-sign）+ appid 语义 + mock 对拍 | 2–3 天 |
-| 3 | 华为云 OBS：原生签名 + 六项操作 + mock 对拍 | 2–3 天 |
-| 4 | （可选）UI 收尾、参数预设、文档与合规复核 | 1 天 |
+| M0 | R2：验证 S3 复用（region=auto、端点、path-style）+ S3 multipart 接入 + 测试 + 文档 | 1–1.5 天 |
+| M1 | 阿里云 OSS：原生签名 + 六项操作 + multipart + mock 对拍 | 3–4 天 |
+| M2 | 腾讯云 COS：COS 签名 + appid 语义 + 分块上传 + mock 对拍 | 3–4 天 |
+| M3 | 华为云 OBS：OBS 签名 + 六项操作 + 分段上传 + mock 对拍 | 3–4 天 |
+| M4 | 收尾：三处 UI 条目统一整理、参数预设、`PROTOCOL-STATUS.md` 与合规复核 | 1 天 |
 
-每家完成后各写一个提交 + 自测结论；全部完成后更新 `docs/PROTOCOL-STATUS.md`。
+每家完成即提交（一个协议一个 commit），并附自测结论。
+
+## 6. 仍需你确认（不阻塞开工，但影响验收方式）
+
+1. **测试账号**：能否提供四家各一个最小权限账号（单 bucket 读写）？
+   - 能 → 做真机验证（签名/分页/分片都实测）
+   - 不能 → 我按官方签名文档 + 本地 mock 对拍，提交信息里会注明"未做真机验证"
+2. **是否还有别家**要一起排期（七牛 Kodo、金山 KS3、MinIO、AWS 中国区…）？
+3. **下拉框显示名**：建议中文（“阿里云 OSS / 腾讯云 COS / 华为云 OBS”）或中英并列，你定。
+4. **跨会话续传**是否需要（当前只做会话内续传）。
+
+## 7. 验收标准（每个协议）
+
+- 自测：签名向量全绿 + 解析样本全绿 + mock 服务的"列举/下载/上传/分片上传/删除/建目录/改名"全部走通
+- 构建：`makepkg-mingw` 全量通过，引擎 DLL 中能查到该协议端点与签名相关字符串
+- 兜底：不支持的能力（`chmod`、递归删目录）显式返回 `FZ_REPLY_NOTSUPPORTED`，不假装成功
