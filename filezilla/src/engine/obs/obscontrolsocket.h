@@ -3,6 +3,8 @@
 
 #include "../controlsocket.h"
 
+#include "../cloudendpoint.h"
+
 #include "obsrequest.h"
 
 #include <libfilezilla/http/client.hpp>
@@ -108,6 +110,7 @@ protected:
 	std::string bucket_hint_;
 	obs::credentials cred_;
 
+	cloud::endpoint endpoint_;
 	CObsRequestHandler * pending_handler_{};
 	std::unique_ptr<fz::tls_layer> tls_layer_;
 	std::optional<obs_http_client> client_;

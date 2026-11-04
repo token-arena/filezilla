@@ -3,6 +3,8 @@
 
 #include "../controlsocket.h"
 
+#include "../cloudendpoint.h"
+
 #include "ossrequest.h"
 
 #include <libfilezilla/http/client.hpp>
@@ -130,6 +132,7 @@ protected:
 	oss::signature_version effective_version_{oss::signature_version::v4};
 	bool fallback_done_{};
 
+	cloud::endpoint endpoint_;
 	COssRequestHandler * pending_handler_{};
 	std::unique_ptr<fz::tls_layer> tls_layer_;
 	std::optional<oss_http_client> client_;

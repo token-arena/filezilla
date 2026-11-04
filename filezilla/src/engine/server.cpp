@@ -995,6 +995,8 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 				std::vector<ParameterTraits> ret;
 				ret.emplace_back(ParameterTraits{"login_hint", ParameterSection::user, ParameterTraits::optional, std::wstring(), _("Name or email address")});
 				ret.emplace_back(ParameterTraits{"oauth_identity", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"api_endpoint", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"tls", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				return ret;
 			}();
 			return ret;
@@ -1004,6 +1006,8 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 			static std::vector<ParameterTraits> const ret = []() {
 				std::vector<ParameterTraits> ret;
 				ret.emplace_back(ParameterTraits{"oauth_identity", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"api_endpoint", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"tls", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				return ret;
 			}();
 			return ret;
@@ -1039,6 +1043,7 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 				ret.emplace_back(ParameterTraits{"sts_token", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				ret.emplace_back(ParameterTraits{"region", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				ret.emplace_back(ParameterTraits{"signature_version", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"tls", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				return ret;
 			}();
 			return ret;
@@ -1061,6 +1066,19 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 				ret.emplace_back(ParameterTraits{"ssorole", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				ret.emplace_back(ParameterTraits{"ssourl", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				ret.emplace_back(ParameterTraits{"accelerate", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"tls", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				return ret;
+			}();
+			return ret;
+		}
+	case AZURE_FILE:
+	case AZURE_BLOB:
+	case B2:
+		{
+			static std::vector<ParameterTraits> const ret = []() {
+				std::vector<ParameterTraits> ret;
+				ret.emplace_back(ParameterTraits{"api_endpoint", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"tls", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				return ret;
 			}();
 			return ret;
@@ -1072,6 +1090,8 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 				std::vector<ParameterTraits> ret;
 				ret.emplace_back(ParameterTraits{"login_hint", ParameterSection::user, ParameterTraits::optional, std::wstring(), _("Name or email address")});
 				ret.emplace_back(ParameterTraits{"oauth_identity", ParameterSection::extra, ParameterTraits::optional| ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"api_endpoint", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"tls", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				return ret;
 			}();
 			return ret;
@@ -1082,6 +1102,8 @@ std::vector<ParameterTraits> const& ExtraServerParameterTraits(ServerProtocol pr
 				std::vector<ParameterTraits> ret;
 				ret.emplace_back(ParameterTraits{"oauth_identity", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				ret.emplace_back(ParameterTraits{"root_namespace", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"api_endpoint", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
+				ret.emplace_back(ParameterTraits{"tls", ParameterSection::extra, ParameterTraits::optional | ParameterTraits::custom, std::wstring(), std::wstring()});
 				return ret;
 			}();
 			return ret;

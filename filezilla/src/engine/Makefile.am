@@ -10,6 +10,7 @@ libfzclient_private_la_CPPFLAGS += -DBUILDING_FILEZILLA
 libfzclient_private_la_SOURCES = \
 		activity_logger.cpp \
 		activity_logger_layer.cpp \
+		cloudendpoint.cpp \
 		commands.cpp \
 		controlsocket.cpp \
 		directorycache.cpp \
@@ -45,6 +46,7 @@ libfzclient_private_la_SOURCES = \
 
 noinst_HEADERS = \
 		activity_logger_layer.h \
+		cloudendpoint.h \
 		controlsocket.h \
 		directorycache.h \
 		directorylistingparser.h \

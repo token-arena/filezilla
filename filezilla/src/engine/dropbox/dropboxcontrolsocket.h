@@ -3,6 +3,8 @@
 
 #include "../controlsocket.h"
 
+#include "../cloudendpoint.h"
+
 #include "dropboxjson.h"
 
 #include <libfilezilla/http/client.hpp>
@@ -100,6 +102,8 @@ protected:
 
 	std::string token_;
 
+	cloud::endpoint endpoint_;
+	bool has_endpoint_override_{};
 	CDropboxRequestHandler * pending_handler_{};
 	std::unique_ptr<fz::tls_layer> tls_layer_;
 	std::optional<dropbox_http_client> client_;

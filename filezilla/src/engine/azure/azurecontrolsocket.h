@@ -3,6 +3,8 @@
 
 #include "../controlsocket.h"
 
+#include "../cloudendpoint.h"
+
 #include "azureblob.h"
 
 #include <libfilezilla/http/client.hpp>
@@ -104,6 +106,7 @@ protected:
 	std::string account_;
 	azure::credentials cred_;
 
+	cloud::endpoint endpoint_;
 	CAzureRequestHandler * pending_handler_{};
 	std::unique_ptr<fz::tls_layer> tls_layer_;
 	std::optional<azure_http_client> client_;

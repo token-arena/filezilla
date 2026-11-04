@@ -664,6 +664,11 @@ void CAzureBlobControlSocket::Connect(CServer const& server, Credentials const& 
 		}
 	}
 
+	// Endpoints may be plain HTTP (private/on-premise deployments, emulators).
+	endpoint_ = cloud::resolve(host_, fz::to_utf8(server.GetExtraParameter("tls")),
+		server.GetPort() ? server.GetPort() : 443);
+	host_ = endpoint_.host;
+
 	Push(std::make_unique<CAzureConnectOpData>(*this));
 }
 
@@ -707,8 +712,9 @@ bool CAzureBlobControlSocket::Submit(std::shared_ptr<AzureRequestResponse> const
 
 	auto & req = rr->request_;
 	req.verb_ = verb;
-	req.uri_.scheme_ = "https";
-	req.uri_.host_ = host_;
+	req.uri_.scheme_ = endpoint_.scheme;
+	req.uri_.host_ = endpoint_.host;
+	req.uri_.port_ = endpoint_.uri_port();
 	req.uri_.path_ = path;
 	req.uri_.query_ = encode_query(query);
 

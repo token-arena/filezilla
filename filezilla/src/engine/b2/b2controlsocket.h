@@ -3,6 +3,8 @@
 
 #include "../controlsocket.h"
 
+#include "../cloudendpoint.h"
+
 #include "b2json.h"
 
 #include <libfilezilla/http/client.hpp>
@@ -114,6 +116,8 @@ protected:
 	std::string account_id_;
 	std::map<std::string, std::string> bucket_ids_; // bucket name -> id
 
+	cloud::endpoint endpoint_;
+	std::string authorize_url_;
 	CB2RequestHandler * pending_handler_{};
 	std::unique_ptr<fz::tls_layer> tls_layer_;
 	std::optional<b2_http_client> client_;

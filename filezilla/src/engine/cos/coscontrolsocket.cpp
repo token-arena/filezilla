@@ -708,6 +708,11 @@ void CCosControlSocket::Connect(CServer const& server, Credentials const& creden
 	cred_.secret_key = fz::to_utf8(credentials.GetPass());
 	cred_.security_token = fz::to_utf8(server.GetExtraParameter("sts_token"));
 
+	// Endpoints may be plain HTTP (private/on-premise deployments, emulators).
+	endpoint_ = cloud::resolve(host_, fz::to_utf8(server.GetExtraParameter("tls")),
+		server.GetPort() ? server.GetPort() : 443);
+	host_ = endpoint_.host;
+
 	Push(std::make_unique<CCosConnectOpData>(*this));
 }
 
@@ -730,8 +735,9 @@ bool CCosControlSocket::Submit(std::shared_ptr<CosRequestResponse> const& rr, st
 
 	auto & req = rr->request_;
 	req.verb_ = verb;
-	req.uri_.scheme_ = "https";
-	req.uri_.host_ = host_;
+	req.uri_.scheme_ = endpoint_.scheme;
+	req.uri_.host_ = endpoint_.host;
+	req.uri_.port_ = endpoint_.uri_port();
 	req.uri_.path_ = "/" + tcos::encode_key(key_path);
 
 	std::string query_string;
@@ -748,7 +754,7 @@ bool CCosControlSocket::Submit(std::shared_ptr<CosRequestResponse> const& rr, st
 	req.uri_.query_ = query_string;
 
 	std::map<std::string, std::string> headers = extra_headers;
-	headers["Host"] = host_;
+	headers["Host"] = endpoint_.authority();
 	if (!cred_.security_token.empty()) {
 		headers["x-cos-security-token"] = cred_.security_token;
 	}

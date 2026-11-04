@@ -933,6 +933,13 @@ void CGDriveControlSocket::Connect(CServer const& server, Credentials const& cre
 	token_ = fz::to_utf8(credentials.GetPass());
 	id_cache_[""] = "root";
 
+	// The API host is fixed by the vendor; "api_endpoint" (optionally with its own
+	// scheme and port) and "tls" allow reaching a private gateway or an emulator.
+	auto const api = fz::to_utf8(server.GetExtraParameter("api_endpoint"));
+	has_endpoint_override_ = !api.empty();
+	endpoint_ = cloud::resolve(has_endpoint_override_ ? api : std::string("www.googleapis.com"),
+		fz::to_utf8(server.GetExtraParameter("tls")), 443);
+
 	Push(std::make_unique<CDriveConnectOpData>(*this));
 }
 
@@ -985,7 +992,8 @@ bool CGDriveControlSocket::Submit(std::shared_ptr<DriveRequestResponse> const& r
 
 	auto & req = rr->request_;
 	req.verb_ = verb;
-	if (!req.uri_.parse(url)) {
+	std::string const effective_url = has_endpoint_override_ ? cloud::rebase(url, endpoint_) : url;
+	if (!req.uri_.parse(effective_url)) {
 		log(logmsg::error, L"Could not parse URL: %s", to_wstring(url));
 		return false;
 	}

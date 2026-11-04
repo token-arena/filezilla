@@ -774,20 +774,18 @@ void CS3ControlSocket::Connect(CServer const& server, Credentials const& credent
 	currentServer_ = server;
 	credentials_ = credentials;
 
-	host_ = fz::to_utf8(server.GetHost());
-	port_ = server.GetPort() ? server.GetPort() : 443;
+	// The endpoint may also be plain HTTP (MinIO, Ceph, private S3
+	// installations, local emulators). The "tls" extra parameter (1/0,
+	// true/false, http/https) or a URL typed into the host field decides the
+	// scheme, otherwise the port does (443/8443 mean HTTPS).
+	unsigned short const default_port = server.GetProtocol() == MINIO ? 9000 : 443;
+	unsigned short const configured_port = server.GetPort() ? server.GetPort() : default_port;
+	endpoint_ = cloud::resolve(fz::to_utf8(server.GetHost()),
+		fz::to_utf8(server.GetExtraParameter("tls")), configured_port);
 
-	// MinIO is commonly served over plain HTTP on its default port, so for that
-	// protocol TLS is only used on the HTTPS port. The optional "tls" extra
-	// parameter (1/0, true/false, yes/no) overrides the heuristic for any S3
-	// family site (S3, Cloudflare R2, MinIO, AWS China).
-	tls_ = port_ != 80;
-	if (auto const tls_param = fz::to_utf8(server.GetExtraParameter("tls")); !tls_param.empty()) {
-		tls_ = tls_param == "1" || tls_param == "true" || tls_param == "yes";
-	}
-	else if (server.GetProtocol() == MINIO) {
-		tls_ = port_ == 443;
-	}
+	host_ = endpoint_.host;
+	port_ = endpoint_.port;
+	tls_ = endpoint_.tls();
 
 	region_ = fz::to_utf8(server.GetExtraParameter("region"));
 	if (region_.empty()) {
@@ -814,12 +812,7 @@ void CS3ControlSocket::Connect(CServer const& server, Credentials const& credent
 	}
 
 	// Port in the Host header only when it is not the default for the scheme.
-	if ((tls_ && port_ == 443) || (!tls_ && port_ == 80)) {
-		host_hdr_ = host_;
-	}
-	else {
-		host_hdr_ = host_ + ":" + std::to_string(port_);
-	}
+	host_hdr_ = endpoint_.authority();
 
 	Push(std::make_unique<CS3ConnectOpData>(*this));
 }
@@ -886,14 +879,9 @@ void CS3ControlSocket::FillRequest(S3Request & req, std::string const& verb, std
 {
 	req.verb_ = verb;
 
-	req.uri_.scheme_ = tls_ ? "https" : "http";
-	req.uri_.host_ = host_;
-	if ((tls_ && port_ == 443) || (!tls_ && port_ == 80)) {
-		req.uri_.port_ = 0;
-	}
-	else {
-		req.uri_.port_ = port_;
-	}
+	req.uri_.scheme_ = endpoint_.scheme;
+	req.uri_.host_ = endpoint_.host;
+	req.uri_.port_ = endpoint_.uri_port();
 	// fz::uri percent-encodes the path exactly like SigV4 requires, so we keep the
 	// decoded form here and use the encoded form only for signing.
 	req.uri_.path_ = raw_path;

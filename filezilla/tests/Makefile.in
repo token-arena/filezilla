@@ -91,10 +91,11 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
-	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9) \
-	$(am__EXEEXT_10) $(am__EXEEXT_11)
+TESTS = test$(EXEEXT) endpointselftest$(EXEEXT) $(am__EXEEXT_1) \
+	$(am__EXEEXT_2) $(am__EXEEXT_3) $(am__EXEEXT_4) \
+	$(am__EXEEXT_5) $(am__EXEEXT_6) $(am__EXEEXT_7) \
+	$(am__EXEEXT_8) $(am__EXEEXT_9) $(am__EXEEXT_10) \
+	$(am__EXEEXT_11)
 check_PROGRAMS = $(am__EXEEXT_12)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -136,10 +137,11 @@ CONFIG_CLEAN_VPATH_FILES =
 @ENABLE_OSS_TRUE@am__EXEEXT_9 = ossselftest$(EXEEXT)
 @ENABLE_COS_TRUE@am__EXEEXT_10 = cosselftest$(EXEEXT)
 @ENABLE_OBS_TRUE@am__EXEEXT_11 = obsselftest$(EXEEXT)
-am__EXEEXT_12 = test$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
-	$(am__EXEEXT_3) $(am__EXEEXT_4) $(am__EXEEXT_5) \
-	$(am__EXEEXT_6) $(am__EXEEXT_7) $(am__EXEEXT_8) \
-	$(am__EXEEXT_9) $(am__EXEEXT_10) $(am__EXEEXT_11)
+am__EXEEXT_12 = test$(EXEEXT) endpointselftest$(EXEEXT) \
+	$(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
+	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
+	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9) \
+	$(am__EXEEXT_10) $(am__EXEEXT_11)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_azureselftest_OBJECTS = azureselftest-azureselftest.$(OBJEXT) \
 	../src/engine/azure/azureselftest-azureblob.$(OBJEXT) \
@@ -185,6 +187,15 @@ dropboxselftest_LDADD = $(LDADD)
 dropboxselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(dropboxselftest_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am_endpointselftest_OBJECTS =  \
+	endpointselftest-endpointselftest.$(OBJEXT) \
+	../src/engine/endpointselftest-cloudendpoint.$(OBJEXT)
+endpointselftest_OBJECTS = $(am_endpointselftest_OBJECTS)
+endpointselftest_LDADD = $(LDADD)
+endpointselftest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(AM_CXXFLAGS) $(CXXFLAGS) $(endpointselftest_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_gcsselftest_OBJECTS = gcsselftest-gcsselftest.$(OBJEXT) \
 	../src/engine/gcs/gcsselftest-gcsjson.$(OBJEXT)
@@ -257,6 +268,7 @@ DEFAULT_INCLUDES =
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade =  \
+	../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Po \
 	../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po \
 	../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po \
 	../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po \
@@ -278,6 +290,7 @@ am__depfiles_remade =  \
 	./$(DEPDIR)/cosselftest-cosselftest.Po \
 	./$(DEPDIR)/driveselftest-driveselftest.Po \
 	./$(DEPDIR)/dropboxselftest-dropboxselftest.Po \
+	./$(DEPDIR)/endpointselftest-endpointselftest.Po \
 	./$(DEPDIR)/gcsselftest-gcsselftest.Po \
 	./$(DEPDIR)/graphselftest-graphselftest.Po \
 	./$(DEPDIR)/gui_test-cmpnatural.Po \
@@ -309,16 +322,16 @@ am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
 	$(cosselftest_SOURCES) $(driveselftest_SOURCES) \
-	$(dropboxselftest_SOURCES) $(gcsselftest_SOURCES) \
-	$(graphselftest_SOURCES) $(gui_test_SOURCES) \
-	$(obsselftest_SOURCES) $(ossselftest_SOURCES) \
-	$(s3selftest_SOURCES) $(test_SOURCES)
+	$(dropboxselftest_SOURCES) $(endpointselftest_SOURCES) \
+	$(gcsselftest_SOURCES) $(graphselftest_SOURCES) \
+	$(gui_test_SOURCES) $(obsselftest_SOURCES) \
+	$(ossselftest_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
 DIST_SOURCES = $(azureselftest_SOURCES) $(b2selftest_SOURCES) \
 	$(cosselftest_SOURCES) $(driveselftest_SOURCES) \
-	$(dropboxselftest_SOURCES) $(gcsselftest_SOURCES) \
-	$(graphselftest_SOURCES) $(am__gui_test_SOURCES_DIST) \
-	$(obsselftest_SOURCES) $(ossselftest_SOURCES) \
-	$(s3selftest_SOURCES) $(test_SOURCES)
+	$(dropboxselftest_SOURCES) $(endpointselftest_SOURCES) \
+	$(gcsselftest_SOURCES) $(graphselftest_SOURCES) \
+	$(am__gui_test_SOURCES_DIST) $(obsselftest_SOURCES) \
+	$(ossselftest_SOURCES) $(s3selftest_SOURCES) $(test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -757,6 +770,14 @@ AUTOMAKE_OPTIONS = subdir-objects
 @ENABLE_COS_TRUE@MAYBE_COS_SELFTEST = cosselftest
 @ENABLE_OBS_TRUE@MAYBE_OBS_SELFTEST = obsselftest
 
+# Standalone self-test for the shared HTTP/HTTPS endpoint resolution.
+endpointselftest_SOURCES = \
+	endpointselftest.cpp \
+	../src/engine/cloudendpoint.cpp
+
+endpointselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+endpointselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
+
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.
 s3selftest_SOURCES = \
@@ -986,6 +1007,19 @@ driveselftest$(EXEEXT): $(driveselftest_OBJECTS) $(driveselftest_DEPENDENCIES) $
 dropboxselftest$(EXEEXT): $(dropboxselftest_OBJECTS) $(dropboxselftest_DEPENDENCIES) $(EXTRA_dropboxselftest_DEPENDENCIES) 
 	@rm -f dropboxselftest$(EXEEXT)
 	$(AM_V_CXXLD)$(dropboxselftest_LINK) $(dropboxselftest_OBJECTS) $(dropboxselftest_LDADD) $(LIBS)
+../src/engine/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine
+	@: >>../src/engine/$(am__dirstamp)
+../src/engine/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src/engine/$(DEPDIR)
+	@: >>../src/engine/$(DEPDIR)/$(am__dirstamp)
+../src/engine/endpointselftest-cloudendpoint.$(OBJEXT):  \
+	../src/engine/$(am__dirstamp) \
+	../src/engine/$(DEPDIR)/$(am__dirstamp)
+
+endpointselftest$(EXEEXT): $(endpointselftest_OBJECTS) $(endpointselftest_DEPENDENCIES) $(EXTRA_endpointselftest_DEPENDENCIES) 
+	@rm -f endpointselftest$(EXEEXT)
+	$(AM_V_CXXLD)$(endpointselftest_LINK) $(endpointselftest_OBJECTS) $(endpointselftest_LDADD) $(LIBS)
 ../src/engine/gcs/$(am__dirstamp):
 	@$(MKDIR_P) ../src/engine/gcs
 	@: >>../src/engine/gcs/$(am__dirstamp)
@@ -1074,6 +1108,7 @@ test$(EXEEXT): $(test_OBJECTS) $(test_DEPENDENCIES) $(EXTRA_test_DEPENDENCIES)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f ../src/engine/*.$(OBJEXT)
 	-rm -f ../src/engine/azure/*.$(OBJEXT)
 	-rm -f ../src/engine/b2/*.$(OBJEXT)
 	-rm -f ../src/engine/cos/*.$(OBJEXT)
@@ -1089,6 +1124,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po@am__quote@ # am--include-marker
@@ -1110,6 +1146,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cosselftest-cosselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/driveselftest-driveselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dropboxselftest-dropboxselftest.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/endpointselftest-endpointselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcsselftest-gcsselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/graphselftest-graphselftest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gui_test-cmpnatural.Po@am__quote@ # am--include-marker
@@ -1319,6 +1356,34 @@ dropboxselftest-dropboxselftest.obj: dropboxselftest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/dropbox/dropboxjson.cpp' object='../src/engine/dropbox/dropboxselftest-dropboxjson.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dropboxselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/dropbox/dropboxselftest-dropboxjson.obj `if test -f '../src/engine/dropbox/dropboxjson.cpp'; then $(CYGPATH_W) '../src/engine/dropbox/dropboxjson.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/dropbox/dropboxjson.cpp'; fi`
+
+endpointselftest-endpointselftest.o: endpointselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(endpointselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT endpointselftest-endpointselftest.o -MD -MP -MF $(DEPDIR)/endpointselftest-endpointselftest.Tpo -c -o endpointselftest-endpointselftest.o `test -f 'endpointselftest.cpp' || echo '$(srcdir)/'`endpointselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/endpointselftest-endpointselftest.Tpo $(DEPDIR)/endpointselftest-endpointselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='endpointselftest.cpp' object='endpointselftest-endpointselftest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(endpointselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o endpointselftest-endpointselftest.o `test -f 'endpointselftest.cpp' || echo '$(srcdir)/'`endpointselftest.cpp
+
+endpointselftest-endpointselftest.obj: endpointselftest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(endpointselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT endpointselftest-endpointselftest.obj -MD -MP -MF $(DEPDIR)/endpointselftest-endpointselftest.Tpo -c -o endpointselftest-endpointselftest.obj `if test -f 'endpointselftest.cpp'; then $(CYGPATH_W) 'endpointselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/endpointselftest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/endpointselftest-endpointselftest.Tpo $(DEPDIR)/endpointselftest-endpointselftest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='endpointselftest.cpp' object='endpointselftest-endpointselftest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(endpointselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o endpointselftest-endpointselftest.obj `if test -f 'endpointselftest.cpp'; then $(CYGPATH_W) 'endpointselftest.cpp'; else $(CYGPATH_W) '$(srcdir)/endpointselftest.cpp'; fi`
+
+../src/engine/endpointselftest-cloudendpoint.o: ../src/engine/cloudendpoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(endpointselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/endpointselftest-cloudendpoint.o -MD -MP -MF ../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Tpo -c -o ../src/engine/endpointselftest-cloudendpoint.o `test -f '../src/engine/cloudendpoint.cpp' || echo '$(srcdir)/'`../src/engine/cloudendpoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Tpo ../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/cloudendpoint.cpp' object='../src/engine/endpointselftest-cloudendpoint.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(endpointselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/endpointselftest-cloudendpoint.o `test -f '../src/engine/cloudendpoint.cpp' || echo '$(srcdir)/'`../src/engine/cloudendpoint.cpp
+
+../src/engine/endpointselftest-cloudendpoint.obj: ../src/engine/cloudendpoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(endpointselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src/engine/endpointselftest-cloudendpoint.obj -MD -MP -MF ../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Tpo -c -o ../src/engine/endpointselftest-cloudendpoint.obj `if test -f '../src/engine/cloudendpoint.cpp'; then $(CYGPATH_W) '../src/engine/cloudendpoint.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/cloudendpoint.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Tpo ../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='../src/engine/cloudendpoint.cpp' object='../src/engine/endpointselftest-cloudendpoint.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(endpointselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src/engine/endpointselftest-cloudendpoint.obj `if test -f '../src/engine/cloudendpoint.cpp'; then $(CYGPATH_W) '../src/engine/cloudendpoint.cpp'; else $(CYGPATH_W) '$(srcdir)/../src/engine/cloudendpoint.cpp'; fi`
 
 gcsselftest-gcsselftest.o: gcsselftest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gcsselftest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gcsselftest-gcsselftest.o -MD -MP -MF $(DEPDIR)/gcsselftest-gcsselftest.Tpo -c -o gcsselftest-gcsselftest.o `test -f 'gcsselftest.cpp' || echo '$(srcdir)/'`gcsselftest.cpp
@@ -1831,6 +1896,13 @@ test.log: test$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+endpointselftest.log: endpointselftest$(EXEEXT)
+	@p='endpointselftest$(EXEEXT)'; \
+	b='endpointselftest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 gui_test.log: gui_test$(EXEEXT)
 	@p='gui_test$(EXEEXT)'; \
 	b='gui_test'; \
@@ -1990,6 +2062,8 @@ clean-generic:
 distclean-generic:
 	-$(am__rm_f) $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || $(am__rm_f) $(CONFIG_CLEAN_VPATH_FILES)
+	-$(am__rm_f) ../src/engine/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) ../src/engine/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/azure/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/azure/$(am__dirstamp)
 	-$(am__rm_f) ../src/engine/b2/$(DEPDIR)/$(am__dirstamp)
@@ -2022,6 +2096,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
+	-rm -f ../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Po
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
 	-rm -f ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po
@@ -2043,6 +2118,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/cosselftest-cosselftest.Po
 	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/dropboxselftest-dropboxselftest.Po
+	-rm -f ./$(DEPDIR)/endpointselftest-endpointselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
 	-rm -f ./$(DEPDIR)/graphselftest-graphselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po
@@ -2099,6 +2175,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
+	-rm -f ../src/engine/$(DEPDIR)/endpointselftest-cloudendpoint.Po
 	-rm -f ../src/engine/azure/$(DEPDIR)/azureselftest-azureblob.Po
 	-rm -f ../src/engine/b2/$(DEPDIR)/b2selftest-b2json.Po
 	-rm -f ../src/engine/cos/$(DEPDIR)/cosselftest-cossign.Po
@@ -2120,6 +2197,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/cosselftest-cosselftest.Po
 	-rm -f ./$(DEPDIR)/driveselftest-driveselftest.Po
 	-rm -f ./$(DEPDIR)/dropboxselftest-dropboxselftest.Po
+	-rm -f ./$(DEPDIR)/endpointselftest-endpointselftest.Po
 	-rm -f ./$(DEPDIR)/gcsselftest-gcsselftest.Po
 	-rm -f ./$(DEPDIR)/graphselftest-graphselftest.Po
 	-rm -f ./$(DEPDIR)/gui_test-cmpnatural.Po

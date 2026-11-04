@@ -3,6 +3,8 @@
 
 #include "../controlsocket.h"
 
+#include "../cloudendpoint.h"
+
 #include "s3signer.h"
 
 #include <libfilezilla/http/client.hpp>
@@ -121,6 +123,8 @@ protected:
 	void OnVerifyCert(fz::tls_layer* source, fz::tls_session_info& info);
 
 	// endpoint information, filled in by Connect()
+	cloud::endpoint endpoint_;
+
 	std::string host_;     // hostname used for connecting
 	std::string host_hdr_; // Host header value (with port when non-default)
 	unsigned short port_{443};

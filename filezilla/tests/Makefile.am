@@ -47,8 +47,16 @@ if ENABLE_OBS
   MAYBE_OBS_SELFTEST = obsselftest
 endif
 
-TESTS = test $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST) $(MAYBE_GRAPH_SELFTEST) $(MAYBE_DROPBOX_SELFTEST) $(MAYBE_OSS_SELFTEST) $(MAYBE_COS_SELFTEST) $(MAYBE_OBS_SELFTEST)
+TESTS = test endpointselftest $(MAYBE_GUI_TEST) $(MAYBE_S3_SELFTEST) $(MAYBE_B2_SELFTEST) $(MAYBE_AZURE_SELFTEST) $(MAYBE_GCS_SELFTEST) $(MAYBE_DRIVE_SELFTEST) $(MAYBE_GRAPH_SELFTEST) $(MAYBE_DROPBOX_SELFTEST) $(MAYBE_OSS_SELFTEST) $(MAYBE_COS_SELFTEST) $(MAYBE_OBS_SELFTEST)
 check_PROGRAMS = $(TESTS)
+
+# Standalone self-test for the shared HTTP/HTTPS endpoint resolution.
+endpointselftest_SOURCES = \
+	endpointselftest.cpp \
+	../src/engine/cloudendpoint.cpp
+
+endpointselftest_CPPFLAGS = $(LIBFILEZILLA_CFLAGS) -DBUILDING_FILEZILLA
+endpointselftest_LDFLAGS = $(LIBFILEZILLA_LIBS)
 
 # Standalone self-test for the S3 protocol logic (SigV4 signing, XML parsing).
 # Links only against libfilezilla so it builds in seconds.

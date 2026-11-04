@@ -21,7 +21,7 @@
 | F12 | 腾讯云 COS（原生） | `src/engine/cos/` | `--enable-cos` | `cosselftest` 46 项 | ✅ 完成（q-sign + 官方 SDK 头白名单 + 分片） |
 | F13 | 华为云 OBS（原生） | `src/engine/obs/` | `--enable-obs` | `obsselftest` 41 项 | ✅ 完成（OBS 头签名 + 分片，5 组官方 golden 向量） |
 
-合计 **429 项自测断言**，全部通过；每个协议一个独立提交。
+合计 **478 项自测断言**，全部通过；每个协议一个独立提交。
 
 ## 每个协议都实现了什么
 
@@ -44,3 +44,8 @@
 
 各协议签名对照的官方文档/官方 SDK、用到的 golden 向量，以及**无账号下仍无法验证的部分**，
 统一记录在 [`SIGNATURE-NOTES.md`](SIGNATURE-NOTES.md)。
+## HTTP / HTTPS
+
+所有云协议都支持明文 HTTP 与 HTTPS（企业私有化部署、MinIO/Ceph/Azure Stack/LocalStack 等），
+固定域名协议还可用 `api_endpoint` 指向私有网关。参数与解析规则见
+[`HTTP-SUPPORT.md`](HTTP-SUPPORT.md)，共享实现的自测为 `endpointselftest`（49 项断言）。

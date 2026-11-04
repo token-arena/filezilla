@@ -602,6 +602,13 @@ void CGcsControlSocket::Connect(CServer const& server, Credentials const& creden
 		project_ = fz::to_utf8(server.GetExtraParameter("project_id"));
 	}
 
+	// The API host is fixed by the vendor; "api_endpoint" (optionally with its own
+	// scheme and port) and "tls" allow reaching a private gateway or an emulator.
+	auto const api = fz::to_utf8(server.GetExtraParameter("api_endpoint"));
+	has_endpoint_override_ = !api.empty();
+	endpoint_ = cloud::resolve(has_endpoint_override_ ? api : std::string("storage.googleapis.com"),
+		fz::to_utf8(server.GetExtraParameter("tls")), 443);
+
 	Push(std::make_unique<CGcsConnectOpData>(*this));
 }
 
@@ -638,7 +645,8 @@ bool CGcsControlSocket::Submit(std::shared_ptr<GcsRequestResponse> const& rr, st
 
 	auto & req = rr->request_;
 	req.verb_ = verb;
-	if (!req.uri_.parse(url)) {
+	std::string const effective_url = has_endpoint_override_ ? cloud::rebase(url, endpoint_) : url;
+	if (!req.uri_.parse(effective_url)) {
 		log(logmsg::error, L"Could not parse URL: %s", to_wstring(url));
 		return false;
 	}

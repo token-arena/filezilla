@@ -308,8 +308,8 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libfzclient_private_la_LIBADD =
 am__libfzclient_private_la_SOURCES_DIST = activity_logger.cpp \
-	activity_logger_layer.cpp commands.cpp controlsocket.cpp \
-	directorycache.cpp directorylisting.cpp \
+	activity_logger_layer.cpp cloudendpoint.cpp commands.cpp \
+	controlsocket.cpp directorycache.cpp directorylisting.cpp \
 	directorylistingparser.cpp engine_context.cpp \
 	engine_options.cpp engineprivate.cpp externalipresolver.cpp \
 	FileZillaEngine.cpp http/filetransfer.cpp \
@@ -399,6 +399,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_libfzclient_private_la_OBJECTS =  \
 	libfzclient_private_la-activity_logger.lo \
 	libfzclient_private_la-activity_logger_layer.lo \
+	libfzclient_private_la-cloudendpoint.lo \
 	libfzclient_private_la-commands.lo \
 	libfzclient_private_la-controlsocket.lo \
 	libfzclient_private_la-directorycache.lo \
@@ -464,6 +465,7 @@ am__depfiles_remade =  \
 	./$(DEPDIR)/libfzclient_private_la-FileZillaEngine.Plo \
 	./$(DEPDIR)/libfzclient_private_la-activity_logger.Plo \
 	./$(DEPDIR)/libfzclient_private_la-activity_logger_layer.Plo \
+	./$(DEPDIR)/libfzclient_private_la-cloudendpoint.Plo \
 	./$(DEPDIR)/libfzclient_private_la-commands.Plo \
 	./$(DEPDIR)/libfzclient_private_la-controlsocket.Plo \
 	./$(DEPDIR)/libfzclient_private_la-directorycache.Plo \
@@ -572,20 +574,20 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__noinst_HEADERS_DIST = activity_logger_layer.h controlsocket.h \
-	directorycache.h directorylistingparser.h engineprivate.h \
-	filezilla.h http/filetransfer.h http/httpcontrolsocket.h \
-	http/request.h logging_private.h lookup.h oplock_manager.h \
-	pathcache.h proxy.h rtt.h servercapabilities.h tls.h \
-	ftp/chmod.h ftp/cwd.h ftp/delete.h ftp/filetransfer.h \
-	ftp/ftpcontrolsocket.h ftp/list.h ftp/logon.h ftp/mkd.h \
-	ftp/rename.h ftp/rawcommand.h ftp/rawtransfer.h ftp/rmd.h \
-	ftp/transfersocket.h sftp/chmod.h sftp/connect.h sftp/delete.h \
-	sftp/filetransfer.h sftp/list.h sftp/mkd.h sftp/rename.h \
-	sftp/rmd.h sftp/sftpcontrolsocket.h azure/azureblob.h \
-	azure/azurecontrolsocket.h obs/obscontrolsocket.h \
-	obs/obsrequest.h cos/coscontrolsocket.h cos/cossign.h \
-	oss/osscontrolsocket.h oss/ossrequest.h \
+am__noinst_HEADERS_DIST = activity_logger_layer.h cloudendpoint.h \
+	controlsocket.h directorycache.h directorylistingparser.h \
+	engineprivate.h filezilla.h http/filetransfer.h \
+	http/httpcontrolsocket.h http/request.h logging_private.h \
+	lookup.h oplock_manager.h pathcache.h proxy.h rtt.h \
+	servercapabilities.h tls.h ftp/chmod.h ftp/cwd.h ftp/delete.h \
+	ftp/filetransfer.h ftp/ftpcontrolsocket.h ftp/list.h \
+	ftp/logon.h ftp/mkd.h ftp/rename.h ftp/rawcommand.h \
+	ftp/rawtransfer.h ftp/rmd.h ftp/transfersocket.h sftp/chmod.h \
+	sftp/connect.h sftp/delete.h sftp/filetransfer.h sftp/list.h \
+	sftp/mkd.h sftp/rename.h sftp/rmd.h sftp/sftpcontrolsocket.h \
+	azure/azureblob.h azure/azurecontrolsocket.h \
+	obs/obscontrolsocket.h obs/obsrequest.h cos/coscontrolsocket.h \
+	cos/cossign.h oss/osscontrolsocket.h oss/ossrequest.h \
 	dropbox/dropboxcontrolsocket.h dropbox/dropboxjson.h \
 	onedrive/graphcontrolsocket.h onedrive/graphjson.h \
 	gdrive/drivecontrolsocket.h gdrive/drivejson.h \
@@ -807,8 +809,8 @@ lib_LTLIBRARIES = libfzclient-private.la
 libfzclient_private_la_CPPFLAGS = -I$(top_builddir)/config \
 	$(LIBFILEZILLA_CFLAGS) $(LIBFZSSH_CFLAGS) -DBUILDING_FILEZILLA
 libfzclient_private_la_SOURCES = activity_logger.cpp \
-	activity_logger_layer.cpp commands.cpp controlsocket.cpp \
-	directorycache.cpp directorylisting.cpp \
+	activity_logger_layer.cpp cloudendpoint.cpp commands.cpp \
+	controlsocket.cpp directorycache.cpp directorylisting.cpp \
 	directorylistingparser.cpp engine_context.cpp \
 	engine_options.cpp engineprivate.cpp externalipresolver.cpp \
 	FileZillaEngine.cpp http/filetransfer.cpp \
@@ -823,16 +825,16 @@ libfzclient_private_la_SOURCES = activity_logger.cpp \
 	$(am__append_15) $(am__append_17) $(am__append_19) \
 	$(am__append_21) $(am__append_23) $(am__append_25) \
 	$(am__append_27)
-noinst_HEADERS = activity_logger_layer.h controlsocket.h \
-	directorycache.h directorylistingparser.h engineprivate.h \
-	filezilla.h http/filetransfer.h http/httpcontrolsocket.h \
-	http/request.h logging_private.h lookup.h oplock_manager.h \
-	pathcache.h proxy.h rtt.h servercapabilities.h tls.h \
-	$(am__append_2) $(am__append_4) $(am__append_6) \
-	$(am__append_8) $(am__append_10) $(am__append_12) \
-	$(am__append_14) $(am__append_16) $(am__append_18) \
-	$(am__append_20) $(am__append_22) $(am__append_24) \
-	$(am__append_26)
+noinst_HEADERS = activity_logger_layer.h cloudendpoint.h \
+	controlsocket.h directorycache.h directorylistingparser.h \
+	engineprivate.h filezilla.h http/filetransfer.h \
+	http/httpcontrolsocket.h http/request.h logging_private.h \
+	lookup.h oplock_manager.h pathcache.h proxy.h rtt.h \
+	servercapabilities.h tls.h $(am__append_2) $(am__append_4) \
+	$(am__append_6) $(am__append_8) $(am__append_10) \
+	$(am__append_12) $(am__append_14) $(am__append_16) \
+	$(am__append_18) $(am__append_20) $(am__append_22) \
+	$(am__append_24) $(am__append_26)
 libfzclient_private_la_CXXFLAGS = -fvisibility=hidden
 libfzclient_private_la_LDFLAGS = -no-undefined -release \
 	$(ENGINE_VERSION_MAJOR).$(ENGINE_VERSION_MINOR).$(ENGINE_VERSION_MICRO) \
@@ -1153,6 +1155,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfzclient_private_la-FileZillaEngine.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfzclient_private_la-activity_logger.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfzclient_private_la-activity_logger_layer.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfzclient_private_la-cloudendpoint.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfzclient_private_la-commands.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfzclient_private_la-controlsocket.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfzclient_private_la-directorycache.Plo@am__quote@ # am--include-marker
@@ -1279,6 +1282,13 @@ libfzclient_private_la-activity_logger_layer.lo: activity_logger_layer.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='activity_logger_layer.cpp' object='libfzclient_private_la-activity_logger_layer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o libfzclient_private_la-activity_logger_layer.lo `test -f 'activity_logger_layer.cpp' || echo '$(srcdir)/'`activity_logger_layer.cpp
+
+libfzclient_private_la-cloudendpoint.lo: cloudendpoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT libfzclient_private_la-cloudendpoint.lo -MD -MP -MF $(DEPDIR)/libfzclient_private_la-cloudendpoint.Tpo -c -o libfzclient_private_la-cloudendpoint.lo `test -f 'cloudendpoint.cpp' || echo '$(srcdir)/'`cloudendpoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfzclient_private_la-cloudendpoint.Tpo $(DEPDIR)/libfzclient_private_la-cloudendpoint.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='cloudendpoint.cpp' object='libfzclient_private_la-cloudendpoint.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -c -o libfzclient_private_la-cloudendpoint.lo `test -f 'cloudendpoint.cpp' || echo '$(srcdir)/'`cloudendpoint.cpp
 
 libfzclient_private_la-commands.lo: commands.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfzclient_private_la_CPPFLAGS) $(CPPFLAGS) $(libfzclient_private_la_CXXFLAGS) $(CXXFLAGS) -MT libfzclient_private_la-commands.lo -MD -MP -MF $(DEPDIR)/libfzclient_private_la-commands.Tpo -c -o libfzclient_private_la-commands.lo `test -f 'commands.cpp' || echo '$(srcdir)/'`commands.cpp
@@ -2056,6 +2066,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-FileZillaEngine.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-activity_logger.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-activity_logger_layer.Plo
+	-rm -f ./$(DEPDIR)/libfzclient_private_la-cloudendpoint.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-commands.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-controlsocket.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-directorycache.Plo
@@ -2187,6 +2198,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-FileZillaEngine.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-activity_logger.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-activity_logger_layer.Plo
+	-rm -f ./$(DEPDIR)/libfzclient_private_la-cloudendpoint.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-commands.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-controlsocket.Plo
 	-rm -f ./$(DEPDIR)/libfzclient_private_la-directorycache.Plo

@@ -3,6 +3,8 @@
 
 #include "../controlsocket.h"
 
+#include "../cloudendpoint.h"
+
 #include "cossign.h"
 
 #include <libfilezilla/http/client.hpp>
@@ -107,6 +109,7 @@ protected:
 	std::string host_;
 	tcos::credentials cred_;
 
+	cloud::endpoint endpoint_;
 	CCosRequestHandler * pending_handler_{};
 	std::unique_ptr<fz::tls_layer> tls_layer_;
 	std::optional<cos_http_client> client_;

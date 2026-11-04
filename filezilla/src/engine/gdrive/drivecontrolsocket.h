@@ -3,6 +3,8 @@
 
 #include "../controlsocket.h"
 
+#include "../cloudendpoint.h"
+
 #include "drivejson.h"
 
 #include <libfilezilla/http/client.hpp>
@@ -108,6 +110,8 @@ protected:
 	std::string token_;
 	std::map<std::string, std::string> id_cache_; // path -> folder id
 
+	cloud::endpoint endpoint_;
+	bool has_endpoint_override_{};
 	CDriveRequestHandler * pending_handler_{};
 	std::unique_ptr<fz::tls_layer> tls_layer_;
 	std::optional<drive_http_client> client_;

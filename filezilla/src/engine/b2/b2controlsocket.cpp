@@ -125,7 +125,7 @@ public:
 		std::map<std::string, std::string> headers;
 		headers["Authorization"] = "Basic " + basic;
 
-		if (!controlSocket_.Submit(rr_, "https://api.backblazeb2.com/b2api/v3/b2_authorize_account",
+		if (!controlSocket_.Submit(rr_, controlSocket_.authorize_url_,
 				"GET", std::string(), headers, this))
 		{
 			return FZ_REPLY_ERROR;
@@ -878,6 +878,13 @@ void CB2ControlSocket::Connect(CServer const& server, Credentials const& credent
 {
 	currentServer_ = server;
 	credentials_ = credentials;
+
+	// The service API lives on a fixed host by default; "api_endpoint" and "tls"
+	// allow using a private gateway or a plain HTTP emulator instead.
+	auto const api = fz::to_utf8(server.GetExtraParameter("api_endpoint"));
+	endpoint_ = cloud::resolve(api.empty() ? std::string("api.backblazeb2.com") : api,
+		fz::to_utf8(server.GetExtraParameter("tls")), 443);
+	authorize_url_ = endpoint_.url() + "/b2api/v3/b2_authorize_account";
 
 	Push(std::make_unique<CB2ConnectOpData>(*this));
 }

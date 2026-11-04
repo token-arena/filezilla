@@ -771,6 +771,11 @@ void COssControlSocket::Connect(CServer const& server, Credentials const& creden
 		version_ = oss::signature_version::v1;
 	}
 
+	// Endpoints may be plain HTTP (private/on-premise deployments, emulators).
+	endpoint_ = cloud::resolve(host_, fz::to_utf8(server.GetExtraParameter("tls")),
+		server.GetPort() ? server.GetPort() : 443);
+	host_ = endpoint_.host;
+
 	Push(std::make_unique<COssConnectOpData>(*this));
 }
 
@@ -834,8 +839,9 @@ bool COssControlSocket::FillRequest(std::shared_ptr<OssRequestResponse> const& r
 
 	auto & req = rr->request_;
 	req.verb_ = recipe.verb;
-	req.uri_.scheme_ = "https";
-	req.uri_.host_ = host_;
+	req.uri_.scheme_ = endpoint_.scheme;
+	req.uri_.host_ = endpoint_.host;
+	req.uri_.port_ = endpoint_.uri_port();
 
 	std::string path = "/";
 	if (!recipe.bucket.empty()) {
